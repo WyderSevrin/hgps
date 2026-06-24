@@ -1,3 +1,11 @@
+# HGPS (Hobby Gold Prospecting Switzerland)
+
+This is a Project about Gold Prospecting in Switzerland.
+
+
+
+
+
 # hgps-quinoa
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
