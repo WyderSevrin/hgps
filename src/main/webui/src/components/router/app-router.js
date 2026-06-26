@@ -34,37 +34,18 @@ export class AppRouter extends LitElement {
             z-index: 10; /* S'assurer que l'en-tête reste au-dessus du reste */
         }
 
-
-
         main > side-bar-component {
             width: 7%;
+            //overflow: hidden;
         }
 
         main > .pageContainer {
             box-sizing: border-box;
             overflow: hidden;
             min-height: 0;
-            transition: width 0.3s ease;
             z-index: 1;
 
             width: 93%;
-        }
-
-        main > .pageContainer.globalDrawerOpen {
-            width: 73%;
-        }
-
-        main > .drawerContent {
-            box-sizing: border-box;
-            display: flex;
-            min-height: 0;
-            transition: width 0.3s ease;
-            width: 0px;
-            overflow: hidden;
-        }
-
-        main > .drawerContent.globalDrawerOpen {
-            width: 20%;
         }
 
 
@@ -72,38 +53,22 @@ export class AppRouter extends LitElement {
 
     static properties = {
         currentPage: {type: String},
-        drawerOpen: {type: Boolean},
     };
 
     constructor() {
         super();
         this.currentPage = this._getPageFromHash();
-        this.drawerOpen = false;
         this._onHashChange = this._onHashChange.bind(this);
-        this._onOpenDrawer = this._onOpenDrawer.bind(this);
-        this._onCloseDrawer = this._onCloseDrawer.bind(this);
     }
 
     connectedCallback() {
         super.connectedCallback();
         window.addEventListener('hashchange', this._onHashChange);
-        window.addEventListener('open-drawer', this._onOpenDrawer);
-        window.addEventListener('close-drawer', this._onCloseDrawer);
     }
 
     disconnectedCallback() {
         window.removeEventListener('hashchange', this._onHashChange);
-        window.removeEventListener('open-drawer', this._onOpenDrawer);
-        window.removeEventListener('close-drawer', this._onCloseDrawer);
         super.disconnectedCallback();
-    }
-
-    _onOpenDrawer() {
-        this.drawerOpen = true;
-    }
-
-    _onCloseDrawer() {
-        this.drawerOpen = false;
     }
 
     _onHashChange() {
@@ -135,15 +100,11 @@ export class AppRouter extends LitElement {
     render() {
         return html`
             <header-component></header-component>
-
             <main>
                 <side-bar-component></side-bar-component>
-                <div class="pageContainer ${this.drawerOpen ? 'globalDrawerOpen' : ''}">
+                <div class="pageContainer">
                     ${this._renderPage()}
                 </div>
-
-                <!-- Ajoutez le tiroir global ici -->
-                <drawer-component class="drawerContent ${this.drawerOpen ? 'globalDrawerOpen' : ''}"></drawer-component>
             </main>
         `;
     }

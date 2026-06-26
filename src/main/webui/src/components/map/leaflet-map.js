@@ -6,15 +6,16 @@ import 'leaflet/dist/leaflet.css'; // Importer les styles pour que Leaflet fonct
 export class LeafletMap extends LitElement {
     static get styles() {
         return [css`
-              :host {
-                display:block;
+            :host {
+                display: block;
                 height: 200px;
-              }
-            `];
+            }
+        `];
     }
 
     static properties = {
-        editMode: {type: Boolean}
+        editMode: {type: Boolean},
+        clickEvent: {type: Function}
     };
 
 
@@ -41,10 +42,11 @@ export class LeafletMap extends LitElement {
     //Events
     addEvents = () => {
         this.map.on('click', (event) => {
-            const { lat, lng } = event.latlng; // Obtenir les coordonnées de l'événement
-            if(this.editMode){
+            const {lat, lng} = event.latlng;
+            if (this.editMode) {
 
-                console.log(`Latitude: ${lat}, Longitude: ${lng}`); // Afficher les coordonnées dans la console
+                // console.log(`Latitude: ${lat}, Longitude: ${lng}`);
+                this.clickEvent(lat, lng);
             }
         });
 
@@ -52,9 +54,9 @@ export class LeafletMap extends LitElement {
 
     render() {
         return html`
-                <link rel="stylesheet" href="https://cdn.skypack.dev/leaflet/dist/leaflet.css">
-                <div id="mapid" style="height: 100%"></div>
-            `;
+            <link rel="stylesheet" href="https://cdn.skypack.dev/leaflet/dist/leaflet.css">
+            <div id="mapid" style="height: 100%"></div>
+        `;
     }
 }
 

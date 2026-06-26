@@ -5,10 +5,16 @@ export class SideBarComponent extends LitElement {
         aside {
             background-color: #333;
             width: 100%;
-            padding-top: 10px;
-            padding-left: 10px;
-            padding-right: 10px;
+            padding: 0px;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .aside-container {
+            height: 100%;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -38,27 +44,29 @@ export class SideBarComponent extends LitElement {
     render() {
         return html`
             <aside>
-                <custom-button
-                        .active="${this.currentHash === 'home'}"
-                        label="Home"
-                        icon="home"
-                        @click="${() => this.navigateTo('home')}"
-                >
-                </custom-button>
-                <custom-button
-                        .active="${(this.currentHash === 'map')}"
-                        label="Map"
-                        icon="map"
-                        @click="${() => this.navigateTo('map')}"
-                >
-                </custom-button>
-                <custom-button
-                        .active="${(this.currentHash === 'guide')}"
-                        label="Guide"
-                        icon="book"
-                        @click="${() => this.navigateTo('guide')}"
-                >
-                </custom-button>
+                <div class="aside-container">
+                    <custom-button
+                            .active="${this.currentHash === 'home'}"
+                            label="Home"
+                            icon="home"
+                            @click="${() => this.navigateTo('home')}"
+                    >
+                    </custom-button>
+                    <custom-button
+                            .active="${(this.currentHash === 'map')}"
+                            label="Map"
+                            icon="map"
+                            @click="${() => this.navigateTo('map')}"
+                    >
+                    </custom-button>
+                    <custom-button
+                            .active="${(this.currentHash === 'guide')}"
+                            label="Guide"
+                            icon="book"
+                            @click="${() => this.navigateTo('guide')}"
+                    >
+                    </custom-button>
+                </div>
             </aside>
         `;
     }
