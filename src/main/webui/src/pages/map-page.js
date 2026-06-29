@@ -2,6 +2,8 @@ import {css, html, LitElement} from 'lit';
 import '../components/map/leaflet-map.js';
 import '../components/drawer/drawerComponent.js';
 import {Section} from "../models/section.js";
+import {LeafletMap} from "../components/map/leaflet-map.js";
+import {Coordinates} from "../models/coordinates.js";
 
 
 export class MapPage extends LitElement {
@@ -96,7 +98,9 @@ export class MapPage extends LitElement {
     constructor() {
         super();
         this.isEditMode = false;
-        this.newSection = new Section("new Section");
+        this.sections = [];
+        this.selectedSection = new Section("new Section", []);
+
     }
 
     changeMode = () => {
@@ -112,7 +116,10 @@ export class MapPage extends LitElement {
                         <custom-button .active="${this.isEditMode}" icon="brush"
                                        @click="${() => this.changeMode()}"></custom-button>
                     </div>
-                    <leaflet-map .editMode="${this.isEditMode}" .clickEvent="${this.mapAddCoordinate}"></leaflet-map>
+                    <leaflet-map id="map" .editMode="${this.isEditMode}"
+                                 .clickEvent="${this.mapAddCoordinate}"
+                                 .updateSelectedSection="${this.mapMoveCoordinate}"
+                                 .selectedSection="${this.selectedSection}"></leaflet-map>
                 </div>
 
                 <drawer-component
@@ -124,10 +131,10 @@ export class MapPage extends LitElement {
                         <hr>
                         <div class="drawer-content">
                             <div class="drawer-section-detail">
-                                ${this.renderNewSectionCoords()}
+                                ${this.renderCurrentSectionCoords()}
                             </div>
                             <div class="drawer-actions">
-                                <custom-button icon="add"></custom-button>
+                                <custom-button icon="add" @click="${() => this._createSection()}"></custom-button>
                                 <custom-button icon="remove"></custom-button>
                             </div>
                         </div>
@@ -137,20 +144,33 @@ export class MapPage extends LitElement {
         `;
     }
 
-    renderNewSectionCoords = () => {
-        return this.newSection.coordinates.map(coordinate => {
+    renderCurrentSectionCoords = () => {
+        return this.selectedSection.coordinates.map(coordinate => {
             return html`
-                <div>${coordinate.lat}, ${coordinate.lng}</div>`;
+                <div> ${coordinate.index} -->  ${coordinate.lat}, ${coordinate.lng}
+                    <custom-button icon="remove"  @click="${() => this._removePoint(coordinate.uuid)}"></custom-button>
+                </div>`;
         });
     }
 
     mapAddCoordinate = (lat, lng) => {
-        console.log(`Latitude: ${lat}, Longitude: ${lng}`);
-        this.newSection.addCoordinate({lat, lng});
+        this.selectedSection = this.selectedSection.addCoordinate(new Coordinates(this.selectedSection.coordinates.length, lat, lng));
+        this.requestUpdate();
+    }
 
-        // todo : add coordonate point to map
+    mapMoveCoordinate = (uuid, lat, lng) => {
+        this.selectedSection = this.selectedSection.updateCoordinate(uuid, lat, lng);
+        this.requestUpdate();
+    }
 
+    _createSection = () => {
+        this.sections.push(this.selectedSection);
+        this.selectedSection = new Section("new Section");
+    }
 
+    _removePoint = uuid => {
+        this.selectedSection = this.selectedSection.removeCoordinate(uuid);
+        this.selectedSection.updateCoordinateIndexes();
         this.requestUpdate();
     }
 
