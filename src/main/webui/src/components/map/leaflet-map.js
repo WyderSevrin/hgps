@@ -49,8 +49,7 @@ export class LeafletMap extends LitElement {
         let urlTemplate = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         this.map.addLayer(L.tileLayer(urlTemplate, {maxZoom: 19}));
 
-        const marker = L.marker([46.94809, 7.44744]).addTo(this.map);
-        marker.bindPopup("Bern").openPopup();
+        L.marker([46.94809, 7.44744]).addTo(this.map);
 
         this.coordinateLayer = L.layerGroup().addTo(this.map);
 

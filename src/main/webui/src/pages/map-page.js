@@ -174,9 +174,25 @@ export class MapPage extends LitElement {
         this.requestUpdate();
     }
 
+
+    //------------------------------------------------------------------------------------------------------------------
+    // TODO's for this page
+
     //TODO : save section in local storage
+        //todo : remove the 2 button +/- and add save disk and reset
+
 
     //TODO : load sections from local storage
+
+    //TODO : creating a section should also have a custom color to it, for the points and section
+
+    //TODO : a section should have a name and be removable
+
+    //TODO : rename the coordinates of a section to something more accurate (point -> vertex)
+
+    //TODO : clicking on the edge of a section should create a new point
+
+    //TODO : changing to another section when the previous section has been modified should give a warning ? a pop-up ?
 
 }
 
