@@ -27,10 +27,11 @@ export class LeafletMap extends LitElement {
     }
 
     static properties = {
+        data: {type: Object},
         editMode: {type: Boolean},
         clickEvent: {type: Function},
         updateSelectedSection: {type: Function},
-        sections: {type: Array},
+        selectSection: {type: Function},
         selectedSection: {type: Object}
     };
 
@@ -49,6 +50,7 @@ export class LeafletMap extends LitElement {
         let urlTemplate = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         this.map.addLayer(L.tileLayer(urlTemplate, {maxZoom: 19}));
 
+        //Bern
         L.marker([46.94809, 7.44744]).addTo(this.map);
 
         this.coordinateLayer = L.layerGroup().addTo(this.map);
@@ -71,38 +73,74 @@ export class LeafletMap extends LitElement {
 
         this.coordinateLayer.clearLayers();
 
-        const coordinates = this.selectedSection?.coordinates ?? [];
+        //Draw the selected section
+        this.drawSection(this.selectedSection);
 
-        // Draw the polygon first so markers sit on top of it.
+        //Draw the other sections (compare by uuid: editing the selected
+        //section replaces it with a new instance, so reference checks fail).
+        this.data.sections.forEach(section => {
+            if (section?.uuid !== this.selectedSection?.uuid && section?.coordinates?.length > 0) {
+                this.drawSection(section);
+            }
+        });
+    }
+
+
+    drawSection = section => {
+        const coordinates = section?.coordinates ?? [];
+
+        // Draw the polygon first so markers sit on top of it. The selected
+        // section keeps Leaflet's default blue; other sections are coloured.
         let polygon = null;
         if (coordinates.length) {
-            polygon = this.selectedSection.getPolygon();
+            const color = section?.selected === true ? '#3388ff' : '#9333ea';
+            polygon = section.getPolygon({color});
             polygon.addTo(this.coordinateLayer);
+
+            // Log the section's info when its polygon is clicked.
+            polygon.on('click', (event) => {
+                if (!this.editMode) return;
+
+                // Stop the click from bubbling to the map, which would
+                // otherwise add a new coordinate in edit mode.
+                L.DomEvent.stopPropagation(event);
+
+                // Switching only allowed while the current section is empty.
+                // Otherwise we keep editing it and just log.
+                if (this.selectedSection?.coordinates?.length > 0) {
+                    return;
+                }
+
+                this.selectSection?.(section);
+            });
         }
 
-        coordinates.forEach((coordinate, index) => {
+        coordinates.forEach((coordinate) => {
             const marker = L.marker([coordinate.lat, coordinate.lng], {
-                draggable: !!this.editMode,
+                draggable: !!this.editMode && section?.selected === true,
                 icon: this.createIndexIcon(coordinate.index)
             }).addTo(this.coordinateLayer);
 
-            // Live-update the polygon shape while the point is being dragged.
-            marker.on('drag', (event) => {
-                const {lat, lng} = event.latlng;
-                if (polygon) {
-                    const latlngs = coordinates.map(c =>
-                        c.uuid === coordinate.uuid ? [lat, lng] : [c.lat, c.lng]
-                    );
-                    polygon.setLatLngs([latlngs]);
-                }
-            });
+            if(section?.selected === true) {
 
-            // Commit the moved point to the section state on drop. The parent
-            // owns the section and pushes the change back down, redrawing.
-            marker.on('dragend', (event) => {
-                const {lat, lng} = event.target.getLatLng();
-                this.updateSelectedSection?.(coordinate.uuid, lat, lng);
-            });
+                // Live-update the polygon shape while the point is being dragged.
+                marker.on('drag', (event) => {
+                    const {lat, lng} = event.latlng;
+                    if (polygon) {
+                        const latlngs = coordinates.map(c =>
+                            c.uuid === coordinate.uuid ? [lat, lng] : [c.lat, c.lng]
+                        );
+                        polygon.setLatLngs([latlngs]);
+                    }
+                });
+
+                // Commit the moved point to the section state on drop. The parent
+                // owns the section and pushes the change back down, redrawing.
+                marker.on('dragend', (event) => {
+                    const {lat, lng} = event.target.getLatLng();
+                    this.updateSelectedSection?.(coordinate.uuid, lat, lng);
+                });
+            }
         });
     }
 

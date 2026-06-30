@@ -2,28 +2,26 @@ import {Coordinates} from "./coordinates.js";
 
 export class Section {
 
-    constructor(name, coordinates = [], uuid = self.crypto.randomUUID(), selected = false) {
+    constructor(name, coordinates = [], selected = false, uuid = self.crypto.randomUUID()) {
         this.uuid = uuid;
         this.name = name;
         this.coordinates = coordinates;
         this.selected = selected;
     }
 
-    // Return a NEW Section (same uuid) so Lit detects the change by identity.
     addCoordinate(coordinate) {
-        return new Section(this.name, [...this.coordinates, coordinate], this.uuid, this.selected);
+        return new Section(this.name, [...this.coordinates, coordinate], this.selected, this.uuid);
     }
 
     removeCoordinate(uuid) {
         const coordinates = this.coordinates.filter(coordinate => coordinate.uuid !== uuid);
-        return new Section(this.name, coordinates, this.uuid, this.selected);
+        return new Section(this.name, coordinates, this.selected, this.uuid);
     }
 
     updateCoordinateIndexes(){
         this.coordinates.forEach((coordinate, index) => coordinate.index = index);
     }
 
-    // Move an existing coordinate (preserving its uuid) and return a NEW Section.
     updateCoordinate(uuid, lat, lng) {
         const coordinates = this.coordinates.map(coordinate => {
             if (coordinate.uuid !== uuid) return coordinate;
@@ -31,13 +29,19 @@ export class Section {
             updated.uuid = coordinate.uuid;
             return updated;
         });
-        return new Section(this.name, coordinates, this.uuid, this.selected);
+        return new Section(this.name, coordinates, this.selected, this.uuid);
     }
 
-    getPolygon() {
+    getPolygon(options = {}) {
         return L.polygon([
             this.coordinates.map(coordinate => [coordinate.lat, coordinate.lng])
-        ]);
+        ], options);
+    }
+
+
+    static fromJSON(obj) {
+        const coordinates = (obj.coordinates ?? []).map(Coordinates.fromJSON);
+        return new Section(obj.name, coordinates, obj.selected, obj.uuid);
     }
 
 }

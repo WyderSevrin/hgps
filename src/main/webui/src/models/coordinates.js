@@ -7,4 +7,11 @@ export class Coordinates {
         this.lng = lng;
     }
 
+
+    static fromJSON(obj) {
+        const coordinate = new Coordinates(obj.index, obj.lat, obj.lng);
+        coordinate.uuid = obj.uuid;
+        return coordinate;
+    }
+
 }

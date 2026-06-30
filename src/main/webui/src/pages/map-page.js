@@ -2,8 +2,9 @@ import {css, html, LitElement} from 'lit';
 import '../components/map/leaflet-map.js';
 import '../components/drawer/drawerComponent.js';
 import {Section} from "../models/section.js";
-import {LeafletMap} from "../components/map/leaflet-map.js";
 import {Coordinates} from "../models/coordinates.js";
+import {LocalStorageService} from "../services/localStorage/localStorageService.js";
+import {MapData} from "../models/mapData.js";
 
 
 export class MapPage extends LitElement {
@@ -98,9 +99,8 @@ export class MapPage extends LitElement {
     constructor() {
         super();
         this.isEditMode = false;
-        this.sections = [];
-        this.selectedSection = new Section("new Section", []);
-
+        this.selectedSection = new Section("new Section", [], true);
+        this.mapData = LocalStorageService.getMapData() ?? new MapData();
     }
 
     changeMode = () => {
@@ -116,16 +116,19 @@ export class MapPage extends LitElement {
                         <custom-button .active="${this.isEditMode}" icon="brush"
                                        @click="${() => this.changeMode()}"></custom-button>
                     </div>
-                    <leaflet-map id="map" .editMode="${this.isEditMode}"
+                    <leaflet-map id="map" 
+                                 .data="${this.mapData}"
+                                 .editMode="${this.isEditMode}"
                                  .clickEvent="${this.mapAddCoordinate}"
                                  .updateSelectedSection="${this.mapMoveCoordinate}"
+                                 .selectSection="${this.mapSelectSection}"
                                  .selectedSection="${this.selectedSection}"></leaflet-map>
                 </div>
 
                 <drawer-component
                         class="${this.isEditMode ? 'open' : ''}"
                         .open="${this.isEditMode}"
-                        @drawer-close="${() => this.isEditMode = false}">
+                        @drawer-close="${() => this._closeDrawer()}">
                     <div slot="content">
                         <h3>Create new Sections</h3>
                         <hr>
@@ -134,8 +137,8 @@ export class MapPage extends LitElement {
                                 ${this.renderCurrentSectionCoords()}
                             </div>
                             <div class="drawer-actions">
-                                <custom-button icon="add" @click="${() => this._createSection()}"></custom-button>
-                                <custom-button icon="remove"></custom-button>
+                                <custom-button icon="save" @click="${() => this._createSection()}"></custom-button>
+                                <custom-button icon="restart_alt" @click="${() => this._resetCurrentSection()}"></custom-button>
                             </div>
                         </div>
                     </div>
@@ -158,14 +161,16 @@ export class MapPage extends LitElement {
         this.requestUpdate();
     }
 
-    mapMoveCoordinate = (uuid, lat, lng) => {
-        this.selectedSection = this.selectedSection.updateCoordinate(uuid, lat, lng);
+
+    mapSelectSection = (section) => {
+        section.selected = true;
+        this.selectedSection = section;
         this.requestUpdate();
     }
 
-    _createSection = () => {
-        this.sections.push(this.selectedSection);
-        this.selectedSection = new Section("new Section");
+    mapMoveCoordinate = (uuid, lat, lng) => {
+        this.selectedSection = this.selectedSection.updateCoordinate(uuid, lat, lng);
+        this.requestUpdate();
     }
 
     _removePoint = uuid => {
@@ -174,17 +179,37 @@ export class MapPage extends LitElement {
         this.requestUpdate();
     }
 
+    _createSection = () => {
+        this.selectedSection.selected = false;
+        const alreadyExsits = this.mapData.sections.filter(sec => sec.uuid === this.selectedSection.uuid).length > 0
+
+        if(alreadyExsits){
+             const index = this.mapData.sections.findIndex(sec => sec.uuid === this.selectedSection.uuid)
+            this.mapData.sections[index] = this.selectedSection
+        }else{
+            this.mapData.sections.push(this.selectedSection);
+        }
+
+        this.selectedSection = new Section("new Section", [], true);
+
+        LocalStorageService.saveMapData(this.mapData);
+        this.requestUpdate();
+    }
+
+    _resetCurrentSection = () => {
+        this.selectedSection = new Section("new Section", [], true);
+        this.requestUpdate();
+    }
+
+    _closeDrawer = () => {
+        this.selectedSection = new Section("new Section", [], true);
+        this.isEditMode = false
+    }
 
     //------------------------------------------------------------------------------------------------------------------
     // TODO's for this page
 
-    //TODO : save section in local storage
-        //todo : remove the 2 button +/- and add save disk and reset
-
-
-    //TODO : load sections from local storage
-
-    //TODO : creating a section should also have a custom color to it, for the points and section
+    //TODO : show in drawer all sections
 
     //TODO : a section should have a name and be removable
 

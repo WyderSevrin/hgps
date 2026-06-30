@@ -1,11 +1,13 @@
+import {MapData} from "../../models/mapData.js";
+
 export class LocalStorageService {
 
-    static saveSections(data) {
-        localStorage.setItem('sections', JSON.stringify(data));
+    static saveMapData(data) {
+        localStorage.setItem('mapData', JSON.stringify(data));
     }
 
-    static getSections() {
-        return JSON.parse(localStorage.getItem('sections'));
+    static getMapData() {
+        return MapData.fromJSON(JSON.parse(localStorage.getItem('mapData')));
     }
 
     static clearData() {
