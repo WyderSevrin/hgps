@@ -22,11 +22,12 @@ export class MapPage extends LitElement {
             flex-direction: row;
             height: 100%;
             width: 100%;
-            border: 1px solid #ccc;
+            border: 1px solid var(--hgps-border);
             box-sizing: border-box;
         }
 
-        .flex-vertical { /* the wrapper around map-nav + leaflet-map */
+        .flex-vertical { /* the wrapper around the map + the floating nav */
+            position: relative; /* positioning context for the overlaid nav */
             display: flex;
             flex-direction: column;
             flex: 1; /* take all available width */
@@ -35,6 +36,10 @@ export class MapPage extends LitElement {
         }
 
         .map-nav {
+            position: absolute; /* float over the map instead of taking its own row */
+            top: 10px;
+            right: 10px;
+            z-index: 1000; /* above the Leaflet tiles/controls */
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
@@ -45,7 +50,7 @@ export class MapPage extends LitElement {
             flex: 1; /* fill remaining height under the nav */
             width: 100%; /* was 75vw  */
             min-height: 0;
-            border: 1px solid #ccc;
+            border: 1px solid var(--hgps-border);
         }
 
         .map-nav custom-button {
@@ -61,7 +66,7 @@ export class MapPage extends LitElement {
         }
 
         drawer-component.open {
-            width: max(22%, 280px);
+            width: max(28%, 340px);
         }
 
 
@@ -71,7 +76,7 @@ export class MapPage extends LitElement {
             height: 100%;
             box-sizing: border-box;
             padding: 16px;
-            color: #e8e8e8;
+            color: var(--hgps-text);
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
         }
 
@@ -83,11 +88,11 @@ export class MapPage extends LitElement {
             font-size: 1.05rem;
             font-weight: 600;
             letter-spacing: 0.2px;
-            color: #ffffff;
+            color: var(--hgps-text-strong);
         }
 
         .drawer-title custom-icon {
-            color: #ff9800;
+            color: var(--hgps-accent);
         }
 
         .drawer-content-body {
@@ -102,8 +107,8 @@ export class MapPage extends LitElement {
         .card {
             display: flex;
             flex-direction: column;
-            background-color: #2b2b2b;
-            border: 1px solid #3d3d3d;
+            background-color: var(--hgps-surface);
+            border: 1px solid var(--hgps-border);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -118,9 +123,9 @@ export class MapPage extends LitElement {
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.6px;
-            color: #b9b9b9;
-            background-color: #333333;
-            border-bottom: 1px solid #3d3d3d;
+            color: var(--hgps-text-muted);
+            background-color: var(--hgps-surface-2);
+            border-bottom: 1px solid var(--hgps-border);
         }
 
         .badge {
@@ -131,8 +136,8 @@ export class MapPage extends LitElement {
             height: 20px;
             padding: 0 6px;
             border-radius: 999px;
-            background-color: #ff9800;
-            color: #1a1a1a;
+            background-color: var(--hgps-accent);
+            color: var(--hgps-accent-contrast);
             font-size: 0.72rem;
             font-weight: 700;
         }
@@ -144,7 +149,7 @@ export class MapPage extends LitElement {
             flex-direction: column;
             gap: 6px;
             padding: 12px;
-            border-bottom: 1px solid #3d3d3d;
+            border-bottom: 1px solid var(--hgps-border);
         }
 
         .field-label {
@@ -152,29 +157,29 @@ export class MapPage extends LitElement {
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #9a9a9a;
+            color: var(--hgps-text-subtle);
         }
 
         .text-input {
             width: 100%;
             box-sizing: border-box;
             padding: 9px 10px;
-            background-color: #1f1f1f;
-            border: 1px solid #454545;
+            background-color: var(--hgps-bg);
+            border: 1px solid var(--hgps-border-strong);
             border-radius: 6px;
-            color: #f0f0f0;
+            color: var(--hgps-text);
             font-size: 0.9rem;
             outline: none;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .text-input::placeholder {
-            color: #6f6f6f;
+            color: var(--hgps-text-faint);
         }
 
         .text-input:focus {
-            border-color: #ff9800;
-            box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.25);
+            border-color: var(--hgps-accent);
+            box-shadow: 0 0 0 2px var(--hgps-accent-ring);
         }
 
         /* Scrollable list of rows inside a card */
@@ -191,7 +196,7 @@ export class MapPage extends LitElement {
             align-items: center;
             gap: 10px;
             padding: 8px 12px;
-            border-bottom: 1px solid #363636;
+            border-bottom: 1px solid var(--hgps-border);
         }
 
         .row:last-child {
@@ -199,7 +204,7 @@ export class MapPage extends LitElement {
         }
 
         .row:hover {
-            background-color: #343434;
+            background-color: var(--hgps-surface-2);
         }
 
         .row-index {
@@ -209,8 +214,8 @@ export class MapPage extends LitElement {
             min-width: 24px;
             height: 24px;
             border-radius: 6px;
-            background-color: #454545;
-            color: #ff9800;
+            background-color: var(--hgps-surface-3);
+            color: var(--hgps-accent);
             font-size: 0.78rem;
             font-weight: 700;
             flex-shrink: 0;
@@ -227,7 +232,7 @@ export class MapPage extends LitElement {
         .row-title {
             font-size: 0.85rem;
             font-weight: 600;
-            color: #f0f0f0;
+            color: var(--hgps-text);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -235,7 +240,7 @@ export class MapPage extends LitElement {
 
         .row-sub {
             font-size: 0.72rem;
-            color: #9a9a9a;
+            color: var(--hgps-text-subtle);
             font-variant-numeric: tabular-nums;
         }
 
@@ -252,12 +257,12 @@ export class MapPage extends LitElement {
             gap: 6px;
             padding: 20px 12px;
             text-align: center;
-            color: #8a8a8a;
+            color: var(--hgps-text-subtle);
             font-size: 0.8rem;
         }
 
         .empty-state custom-icon {
-            color: #5a5a5a;
+            color: var(--hgps-text-faint);
         }
 
         .drawer-actions {
@@ -265,8 +270,8 @@ export class MapPage extends LitElement {
             flex-direction: row;
             gap: 8px;
             padding: 12px;
-            border-top: 1px solid #3d3d3d;
-            background-color: #262626;
+            border-top: 1px solid var(--hgps-border);
+            background-color: var(--hgps-bg);
         }
 
         .drawer-actions custom-button {

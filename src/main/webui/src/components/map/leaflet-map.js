@@ -15,13 +15,13 @@ export class LeafletMap extends LitElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: #2563eb;
-                color: #fff;
-                border: 2px solid #fff;
+                background: var(--hgps-map-marker);
+                color: var(--hgps-text-strong);
+                border: 2px solid var(--hgps-text-strong);
                 border-radius: 50%;
                 font-size: 12px;
                 font-weight: 600;
-                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 1px 4px var(--hgps-shadow-soft);
             }
         `];
     }
@@ -41,6 +41,7 @@ export class LeafletMap extends LitElement {
         this.map = null;
         this.selectedSection = null;
         this.coordinateLayer = null;
+        this.resizeObserver = null;
     }
 
     firstUpdated() {
@@ -55,8 +56,22 @@ export class LeafletMap extends LitElement {
 
         this.coordinateLayer = L.layerGroup().addTo(this.map);
 
+        // Keep the map in sync with its container size. Leaflet caches the
+        // container dimensions, so when the available width changes (sidebar
+        // collapsing, drawer opening, window resizing) it must be told to
+        // recompute — otherwise tiles render grey/offset. The observer fires
+        // on every frame of the CSS width transition, keeping it seamless.
+        this.resizeObserver = new ResizeObserver(() => this.map?.invalidateSize());
+        this.resizeObserver.observe(mapEl);
+
         this.addEvents();
         this.drawCoordinates();
+    }
+
+    disconnectedCallback() {
+        this.resizeObserver?.disconnect();
+        this.resizeObserver = null;
+        super.disconnectedCallback();
     }
 
     updated(changedProperties) {
@@ -68,6 +83,13 @@ export class LeafletMap extends LitElement {
             || changedProperties.has('data')) {
             this.drawCoordinates();
         }
+    }
+
+    // Resolve a theme token (defined in style.css :root) to a concrete color.
+    // Leaflet needs a plain color string, so var(...) can't be used directly.
+    _themeColor(name, fallback) {
+        const value = getComputedStyle(this).getPropertyValue(name).trim();
+        return value || fallback;
     }
 
     // Clear and redraw every coordinate of the selected section.
@@ -95,7 +117,9 @@ export class LeafletMap extends LitElement {
 
         let polygon = null;
         if (coordinates.length) {
-            const color = section?.selected === true ? '#3388ff' : '#9333ea';
+            const color = section?.selected === true
+                ? this._themeColor('--hgps-map-poly-active', '#f2c94c')
+                : this._themeColor('--hgps-map-poly', '#9333ea');
             polygon = section.getPolygon({color});
             polygon.addTo(this.coordinateLayer);
 

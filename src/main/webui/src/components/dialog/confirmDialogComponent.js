@@ -17,7 +17,7 @@ export class ConfirmDialogComponent extends LitElement {
         .backdrop {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.55);
+            background: var(--hgps-overlay);
             backdrop-filter: blur(2px);
         }
 
@@ -28,11 +28,11 @@ export class ConfirmDialogComponent extends LitElement {
             transform: translate(-50%, -50%);
             width: min(90vw, 380px);
             box-sizing: border-box;
-            background-color: #2b2b2b;
-            border: 1px solid #3d3d3d;
+            background-color: var(--hgps-surface);
+            border: 1px solid var(--hgps-border);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            color: #e8e8e8;
+            box-shadow: 0 10px 30px var(--hgps-shadow);
+            color: var(--hgps-text);
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
             overflow: hidden;
         }
@@ -44,19 +44,19 @@ export class ConfirmDialogComponent extends LitElement {
             padding: 16px;
             font-size: 1.05rem;
             font-weight: 600;
-            color: #ffffff;
-            border-bottom: 1px solid #3d3d3d;
+            color: var(--hgps-text-strong);
+            border-bottom: 1px solid var(--hgps-border);
         }
 
         .dialog-header custom-icon {
-            color: #ef5350;
+            color: var(--hgps-danger-text);
         }
 
         .dialog-body {
             padding: 16px;
             font-size: 0.9rem;
             line-height: 1.5;
-            color: #cfcfcf;
+            color: var(--hgps-text-muted);
         }
 
         .dialog-actions {
@@ -64,8 +64,8 @@ export class ConfirmDialogComponent extends LitElement {
             justify-content: flex-end;
             gap: 8px;
             padding: 12px 16px;
-            border-top: 1px solid #3d3d3d;
-            background-color: #262626;
+            border-top: 1px solid var(--hgps-border);
+            background-color: var(--hgps-bg);
         }
 
         .btn {
@@ -82,21 +82,21 @@ export class ConfirmDialogComponent extends LitElement {
         }
 
         .btn-cancel {
-            background-color: #454545;
-            color: #e8e8e8;
+            background-color: var(--hgps-surface-3);
+            color: var(--hgps-text);
         }
 
         .btn-cancel:hover {
-            background-color: #555555;
+            background-color: var(--hgps-surface-hover);
         }
 
         .btn-danger {
-            background-color: #e53935;
-            color: #ffffff;
+            background-color: var(--hgps-danger);
+            color: var(--hgps-text-strong);
         }
 
         .btn-danger:hover {
-            background-color: #f4433a;
+            background-color: var(--hgps-danger-hover);
         }
 
         .btn-danger custom-icon {

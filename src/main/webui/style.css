@@ -1,21 +1,79 @@
-
-
 :root {
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+    color-scheme: dark;
+
+    /* ---- Brand: gold ---------------------------------------------------- */
+    --hgps-gold:        #d4af37;
+    --hgps-gold-bright: #f2c94c;
+    --hgps-gold-deep:   #b8860b;
+    --hgps-gold-pale:   #ffe27a;
+
+    /* ---- Slate / river neutrals (header gradient stops) ---------------- */
+    --hgps-slate-deep:  #1c2b33;
+    --hgps-slate:       #24363f;
+    --hgps-slate-light: #2e3f47;
+
+    /* ---- Surfaces (dark ramp, tinted toward the header slate) ---------- */
+    --hgps-bg:            #16232a; /* app / page background, deepest        */
+    --hgps-surface:       #1f2e35; /* cards, sidebar, dialogs, drawer       */
+    --hgps-surface-2:     #26363f; /* card headers, chips                   */
+    --hgps-surface-3:     #2f434d; /* raised buttons, row index            */
+    --hgps-surface-hover: #38505c; /* hover state                          */
+
+    /* ---- Borders ------------------------------------------------------- */
+    --hgps-border:        #33474f;
+    --hgps-border-strong: #43606b;
+
+    /* ---- Text ---------------------------------------------------------- */
+    --hgps-text:        #eae4d6; /* warm off-white body text                */
+    --hgps-text-strong: #ffffff;
+    --hgps-text-muted:  #a7b3b8;
+    --hgps-text-subtle: #7d8a90;
+    --hgps-text-faint:  #566368;
+
+    /* ---- Accent (interactive highlights) = brand gold ----------------- */
+    --hgps-accent:          var(--hgps-gold);
+    --hgps-accent-hover:    var(--hgps-gold-bright);
+    --hgps-accent-contrast: #1a1a1a;                 /* text on a gold fill */
+    --hgps-accent-ring:     rgba(212, 175, 55, 0.30); /* focus ring         */
+
+    /* ---- Header -------------------------------------------------------- */
+    --hgps-header-bg: linear-gradient(120deg, #1c2b33 0%, #24363f 45%, #3a3220 100%);
+    --hgps-header-border:   var(--hgps-gold);
+    --hgps-on-header:       #f5e9c8; /* cream text on the header           */
+    --hgps-on-header-muted: #cbb98c;
+    --hgps-header-control:  rgba(20, 30, 35, 0.65);  /* language selector   */
+    --hgps-header-control-hover: rgba(40, 55, 62, 0.85);
+
+    /* ---- Danger -------------------------------------------------------- */
+    --hgps-danger:       #e53935;
+    --hgps-danger-hover: #f4433a;
+    --hgps-danger-text:  #ef5350;
+
+    /* ---- Utility (overlays / shadows) --------------------------------- */
+    --hgps-overlay:     rgba(0, 0, 0, 0.55);
+    --hgps-shadow:      rgba(0, 0, 0, 0.5);
+    --hgps-shadow-soft: rgba(0, 0, 0, 0.4);
+
+    /* ---- Map (functional state colors; read from JS via getComputedStyle) */
+    --hgps-map-marker:      #2563eb;
+    --hgps-map-poly:        #9333ea;
+    --hgps-map-poly-active: var(--hgps-gold-bright);
+
+    /* Base document colors derived from the tokens above */
+    color: var(--hgps-text);
+    background-color: var(--hgps-bg);
 }
 
 body {
-  margin: 0;
+    margin: 0;
 }
 
-.flex-vertical{
-  display: flex;
-  flex-direction: column;
+.flex-vertical {
+    display: flex;
+    flex-direction: column;
 }
 
-.flex-horizontal{
-  display: flex;
-  flex-direction: row;
+.flex-horizontal {
+    display: flex;
+    flex-direction: row;
 }

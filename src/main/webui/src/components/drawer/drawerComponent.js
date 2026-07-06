@@ -8,7 +8,7 @@ export class DrawerComponent extends LitElement {
             width: 100%;
             height: 100%;
             box-sizing: border-box;
-            background-color: #333;
+            background-color: var(--hgps-surface);
         }
 
         .drawer {

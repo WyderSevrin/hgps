@@ -4,7 +4,7 @@ import { LitElement, html, css } from 'lit';
 export class NotFoundPage extends LitElement {
     static styles = css`
     h1 {
-      color: red;
+      color: var(--hgps-danger);
     }
   `;
 

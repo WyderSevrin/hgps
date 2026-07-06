@@ -29,14 +29,13 @@ export class AppRouter extends LitElement {
             top: 0;
             left: 0;
             width: 100%;
-            background: #ffffff; /* Couleur de l'arrière-plan pour couvrir ce qui est derrière */
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Optionnel : Une ombre pour donner un effet de profondeur */
+            background: var(--hgps-bg); /* Couleur de l'arrière-plan pour couvrir ce qui est derrière */
+            box-shadow: 0px 2px 5px var(--hgps-shadow-soft); /* Optionnel : Une ombre pour donner un effet de profondeur */
             z-index: 10; /* S'assurer que l'en-tête reste au-dessus du reste */
         }
 
         main > side-bar-component {
-            width: 7%;
-            //overflow: hidden;
+            flex: 0 0 auto; /* width is driven by the sidebar's own (collapsible) content */
         }
 
         main > .pageContainer {
@@ -45,7 +44,8 @@ export class AppRouter extends LitElement {
             min-height: 0;
             z-index: 1;
 
-            width: 93%;
+            flex: 1 1 auto; /* take the remaining width */
+            min-width: 0;
         }
 
 

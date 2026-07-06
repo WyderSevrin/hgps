@@ -14,8 +14,8 @@ export class ButtonComponent extends LitElement {
         }
 
         button {
-            background: #555;
-            color: white;
+            background: var(--hgps-surface-3);
+            color: var(--hgps-text);
             border: none;
             padding: 10px;
             font-size: 16px;
@@ -25,16 +25,28 @@ export class ButtonComponent extends LitElement {
             display: flex;
             align-items: center; /* Aligner l'icône et le texte proprement */
             gap: 8px; /* Espacement entre l'icône et le texte */
-
+            box-sizing: border-box;
+            white-space: nowrap; /* avoid label wrapping while the sidebar resizes */
+            overflow: hidden;
         }
-        
+
+        button.icon-only {
+            justify-content: center; /* center the lone icon when the label is hidden */
+            gap: 0;
+        }
+
         button.active {
-            background-color: #ff9800; /* Couleur spécifique pour la page active */
+            background-color: var(--hgps-accent); /* Couleur spécifique pour la page active */
+            color: var(--hgps-accent-contrast);
             font-weight: bold;
         }
 
         button:hover {
-            background-color: #777;
+            background-color: var(--hgps-surface-hover);
+        }
+
+        button.active:hover {
+            background-color: var(--hgps-accent-hover);
         }
 
         .icon {
@@ -48,17 +60,19 @@ export class ButtonComponent extends LitElement {
         page: {type: String},
         active: {type: Boolean},
         icon: {type: String},
+        iconOnly: {type: Boolean}, // hide the label and show only the icon
     };
 
     render() {
         return html`
             <button
-                    class="${this.active === true ? "active" : ""}"
+                    class="${this.active === true ? "active" : ""} ${this.iconOnly ? "icon-only" : ""}"
+                    title="${this.label}"
                     @click=${this._navigate}>
                 ${this.icon
-                        ? html` <custom-icon label="${this.icon}"></custom-icon>`
+                        ? html`<custom-icon label="${this.icon}"></custom-icon>`
                         : null}
-                ${this.label}
+                ${this.iconOnly ? null : this.label}
             </button>
         `;
     }

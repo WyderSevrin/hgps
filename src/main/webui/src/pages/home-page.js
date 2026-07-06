@@ -14,7 +14,7 @@ export class HomePage extends LitElement {
         custom-icon{
             height: 30px;
             width: 30px;
-            background-color: grey;
+            background-color: var(--hgps-surface-2);
         }
     `;
 

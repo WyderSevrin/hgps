@@ -4,7 +4,7 @@ import { LitElement, html, css } from 'lit';
 export class GuidePage extends LitElement {
     static styles = css`
     h1 {
-      color: #007acc;
+      color: var(--hgps-accent);
     }
   `;
 
