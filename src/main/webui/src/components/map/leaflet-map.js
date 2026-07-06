@@ -60,9 +60,12 @@ export class LeafletMap extends LitElement {
     }
 
     updated(changedProperties) {
-        // Redraw the section's points whenever the selected section changes,
-        // or when toggling edit mode (which controls marker draggability).
-        if (changedProperties.has('selectedSection') || changedProperties.has('editMode')) {
+        // Redraw whenever the selected section changes, edit mode toggles
+        // (which controls marker draggability), or the underlying data set
+        // changes (e.g. a section was added or deleted).
+        if (changedProperties.has('selectedSection')
+            || changedProperties.has('editMode')
+            || changedProperties.has('data')) {
             this.drawCoordinates();
         }
     }
@@ -89,29 +92,20 @@ export class LeafletMap extends LitElement {
     drawSection = section => {
         const coordinates = section?.coordinates ?? [];
 
-        // Draw the polygon first so markers sit on top of it. The selected
-        // section keeps Leaflet's default blue; other sections are coloured.
+
         let polygon = null;
         if (coordinates.length) {
             const color = section?.selected === true ? '#3388ff' : '#9333ea';
             polygon = section.getPolygon({color});
             polygon.addTo(this.coordinateLayer);
 
-            // Log the section's info when its polygon is clicked.
+
+            //Click event on Section
             polygon.on('click', (event) => {
-                if (!this.editMode) return;
-
-                // Stop the click from bubbling to the map, which would
-                // otherwise add a new coordinate in edit mode.
-                L.DomEvent.stopPropagation(event);
-
-                // Switching only allowed while the current section is empty.
-                // Otherwise we keep editing it and just log.
-                if (this.selectedSection?.coordinates?.length > 0) {
-                    return;
+                if(this.editMode){
+                    L.DomEvent.stopPropagation(event);
+                    this.selectSection?.(section);
                 }
-
-                this.selectSection?.(section);
             });
         }
 
@@ -122,8 +116,7 @@ export class LeafletMap extends LitElement {
             }).addTo(this.coordinateLayer);
 
             if(section?.selected === true) {
-
-                // Live-update the polygon shape while the point is being dragged.
+                //Start drag event
                 marker.on('drag', (event) => {
                     const {lat, lng} = event.latlng;
                     if (polygon) {
@@ -134,8 +127,7 @@ export class LeafletMap extends LitElement {
                     }
                 });
 
-                // Commit the moved point to the section state on drop. The parent
-                // owns the section and pushes the change back down, redrawing.
+                //End drag event
                 marker.on('dragend', (event) => {
                     const {lat, lng} = event.target.getLatLng();
                     this.updateSelectedSection?.(coordinate.uuid, lat, lng);

@@ -21,6 +21,10 @@ export class DrawerComponent extends LitElement {
             display: flex;
             flex-direction: row;
         }
+        
+        .drawer-content{
+            height: 100%;
+        }
     `;
 
     static properties = {
