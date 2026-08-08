@@ -2,6 +2,7 @@ import {css, html, LitElement} from 'lit';
 import '../components/map/leaflet-map.js';
 import '../components/drawer/drawerComponent.js';
 import '../components/dialog/confirmDialogComponent.js';
+import '../components/dropdown/dropdown-component.js';
 import {Section} from "../models/section.js";
 import {Coordinates} from "../models/coordinates.js";
 import {LocalStorageService} from "../services/localStorage/localStorageService.js";
@@ -298,7 +299,11 @@ export class MapPage extends LitElement {
         super();
         this.isEditMode = false;
         this.sectionToDelete = null;
-        this.selectedSection = new Section("new Section", "", [], true);
+        this.defaultSectionColor = "#008000";
+        this.defaultGoldPresence = "0";
+        // For now name and value are the same numbers (1, 2, 3).
+        this.goldPresenceOptions = [1, 2, 3].map(n => ({name: n, value: n}));
+        this.selectedSection = new Section("new Section", "", [], this.defaultSectionColor, this.defaultGoldPresence, true);
         this.mapData = LocalStorageService.getMapData() ?? new MapData();
     }
 
@@ -329,62 +334,7 @@ export class MapPage extends LitElement {
                                  .selectSection="${this.mapSelectSection}"
                                  .selectedSection="${this.selectedSection}"></leaflet-map>
                 </div>
-
-                <drawer-component
-                        class="${this.isEditMode ? 'open' : ''}"
-                        .open="${this.isEditMode}"
-                        @drawer-close="${() => this._closeDrawer()}">
-                    <div class="drawer-content" slot="content">
-                        <h3 class="drawer-title">
-                            <custom-icon label="edit_location_alt"></custom-icon>
-                            Section editor
-                        </h3>
-                        <div class="drawer-content-body">
-                            <div class="card">
-                                <div class="card-header">
-                                    <span>Current section</span>
-                                    <span class="badge">${this.selectedSection.coordinates.length}</span>
-                                </div>
-                                <div class="field">
-                                    <label class="field-label" for="section-name">Name</label>
-                                    <input id="section-name" type="text" class="text-input"
-                                           placeholder="Section name"
-                                           .value="${this.selectedSection.name}"
-                                           @input="${this._updateSectionName}">
-
-                                    <label class="field-label" for="section-name">Description</label>
-                                    <textarea id="section-descriptor" class="text-input"
-                                           rows="5" cols="15"
-                                           placeholder="Description"
-                                           .value="${this.selectedSection.description}"
-                                           @input="${this._updateSectionDescription}">
-                                    </textarea>
-                                </div>
-                                <div class="row-list">
-                                    ${this.renderCurrentSectionCoords()}
-                                </div>
-                                <div class="drawer-actions">
-                                    <input type="color" id="favcolor" name="favcolor" value="#ff0000">
-                                    <custom-button label="Save" icon="save" .active="${true}"
-                                                   @click="${() => this._createSection()}"></custom-button>
-                                    <custom-button label="Reset" icon="restart_alt"
-                                                   @click="${() => this._resetCurrentSection()}"></custom-button>
-                                </div>
-                            </div>
-
-                            <div class="card">
-                                <div class="card-header">
-                                    <span>Saved sections</span>
-                                    <span class="badge">${this.mapData.sections.length}</span>
-                                </div>
-                                <div class="row-list">
-                                    ${this.renderSections()}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </drawer-component>
-
+                ${this._renderDrawer()}
                 <confirm-dialog
                         .open="${this.sectionToDelete !== null}"
                         title="Delete section"
@@ -400,7 +350,81 @@ export class MapPage extends LitElement {
         `;
     }
 
-    renderCurrentSectionCoords = () => {
+    _renderDrawer() {
+        return html`
+            <drawer-component
+                    class="${this.isEditMode ? 'open' : ''}"
+                    .open="${this.isEditMode}"
+                    @drawer-close="${() => this._closeDrawer()}">
+                <div class="drawer-content" slot="content">
+                    <h3 class="drawer-title">
+                        <custom-icon label="edit_location_alt"></custom-icon>
+                        Section editor
+                    </h3>
+                    <div class="drawer-content-body">
+                        <div class="card">
+                            <div class="card-header">
+                                <span>Current section</span>
+                                <span class="badge">${this.selectedSection.coordinates.length}</span>
+                            </div>
+                            <div class="field">
+                                <label class="field-label" for="section-name">Name</label>
+                                <div class="row">
+                                    <input id="section-name" type="text" class="text-input"
+                                           placeholder="Section name"
+                                           .value="${this.selectedSection.name}"
+                                           @input="${this._updateSectionName}">
+                                    <input type="color" id="favcolor" name="favcolor"
+                                           .value="${this.selectedSection.color}"
+                                           @input="${this._updateSectionColor}">
+                                </div>
+
+
+                                <label class="field-label" for="section-name">Description</label>
+                                <textarea id="section-descriptor" class="text-input"
+                                          rows="5" cols="15"
+                                          placeholder="Description"
+                                          .value="${this.selectedSection.description}"
+                                          @input="${this._updateSectionDescription}">
+                                    </textarea>
+                            </div>
+                            <div class="field row-list">
+                                ${this._renderCurrentSectionCoords()}
+                            </div>
+
+                            <div class="field">
+                                <custom-dropdown
+                                        label="Gold presence"
+                                        .options="${this.goldPresenceOptions}"
+                                        .value="${this.selectedSection.goldPresence}"
+                                        @dropdown-change="${this._updateSectionGoldPresence}">
+                                </custom-dropdown>
+                            </div>
+
+                            <div class="drawer-actions">
+                                <custom-button label="Save" icon="save" .active="${true}"
+                                               @click="${() => this._createSection()}"></custom-button>
+                                <custom-button label="Reset" icon="restart_alt"
+                                               @click="${() => this._resetCurrentSection()}"></custom-button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <span>Saved sections</span>
+                                <span class="badge">${this.mapData.sections.length}</span>
+                            </div>
+                            <div class="row-list">
+                                ${this._renderSections()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </drawer-component>
+        `
+    }
+
+    _renderCurrentSectionCoords = () => {
         if (this.selectedSection.coordinates.length === 0) {
             return html`
                 <div class="empty-state">
@@ -425,7 +449,7 @@ export class MapPage extends LitElement {
         });
     }
 
-    renderSections = () => {
+    _renderSections = () => {
         if (this.mapData.sections.length === 0) {
             return html`
                 <div class="empty-state">
@@ -484,6 +508,14 @@ export class MapPage extends LitElement {
         this.selectedSection.description = e.target.value;
     }
 
+    _updateSectionColor = e => {
+        this.selectedSection.color = e.target.value;
+    }
+
+    _updateSectionGoldPresence = e => {
+        this.selectedSection.goldPresence = e.detail.value;
+    }
+
     _editSection = section => {
         this.mapSelectSection(section);
     }
@@ -512,7 +544,7 @@ export class MapPage extends LitElement {
         // editor so it also disappears from the map right away.
         if (this.selectedSection?.uuid === uuid) {
             this.selectedSection.selected = false;
-            this.selectedSection = new Section("new Section", "",[], true);
+            this.selectedSection = new Section("new Section", "",[], this.defaultSectionColor, this.defaultGoldPresence, true);
         }
 
         this.reLoad();
@@ -529,20 +561,20 @@ export class MapPage extends LitElement {
             this.mapData.sections.push(this.selectedSection);
         }
 
-        this.selectedSection = new Section("new Section", "",[], true);
+        this.selectedSection = new Section("new Section", "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
 
         LocalStorageService.saveMapData(this.mapData);
         this.reLoad();
     }
 
     _resetCurrentSection = () => {
-        this.selectedSection = new Section("new Section", "",[], true);
+        this.selectedSection = new Section("new Section", "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
         this.reLoad();
     }
 
     _closeDrawer = () => {
         this.selectedSection.selected = false;
-        this.selectedSection = new Section("new Section", "",[], true);
+        this.selectedSection = new Section("new Section", "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
         this.isEditMode = false
     }
 

@@ -87,9 +87,8 @@ export class LeafletMap extends LitElement {
 
     // Resolve a theme token (defined in style.css :root) to a concrete color.
     // Leaflet needs a plain color string, so var(...) can't be used directly.
-    _themeColor(name, fallback) {
-        const value = getComputedStyle(this).getPropertyValue(name).trim();
-        return value || fallback;
+    _themeColor(selectedColor, fallback) {
+        return selectedColor || fallback;
     }
 
     // Clear and redraw every coordinate of the selected section.
@@ -118,8 +117,8 @@ export class LeafletMap extends LitElement {
         let polygon = null;
         if (coordinates.length) {
             const color = section?.selected === true
-                ? this._themeColor('--hgps-map-poly-active', '#f2c94c')
-                : this._themeColor('--hgps-map-poly', '#9333ea');
+                ? this._themeColor(getComputedStyle(this).getPropertyValue('--hgps-map-poly-active').trim(), '#f2c94c')
+                : this._themeColor(section.color, '#9333ea');
             polygon = section.getPolygon({color});
             polygon.addTo(this.coordinateLayer);
 

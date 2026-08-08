@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Hobby Gold Prospecting">
+    <!-- Dark rounded tile for contrast in browser tabs -->
+    <rect x="0" y="0" width="32" height="32" rx="7" fill="#26343b"/>
+    <!-- Gold pickaxe: curved double-pointed head + straight handle -->
+    <g fill="none" stroke="#d4af37" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 11.5c5-4.5 15-4.5 20 0"/>
+        <path d="M6 11.5 11 16"/>
+        <path d="M26 11.5 21 16"/>
+        <path d="M16 8.5 16 26"/>
+    </g>
+</svg>

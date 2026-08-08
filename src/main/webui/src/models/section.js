@@ -2,21 +2,24 @@ import {Coordinates} from "./coordinates.js";
 
 export class Section {
 
-    constructor(name, description, coordinates = [], selected = false, uuid = self.crypto.randomUUID()) {
+    constructor(name, description, coordinates = [], color = "#008000", goldPresence = 0, selected = false, uuid = self.crypto.randomUUID()) {
         this.uuid = uuid;
         this.name = name;
         this.description = description;
         this.coordinates = coordinates;
+        this.color = color;
+        this.private = true;
+        this.goldPresence = goldPresence;
         this.selected = selected;
     }
 
     addCoordinate(coordinate) {
-        return new Section(this.name, this.description, [...this.coordinates, coordinate], this.selected, this.uuid);
+        return new Section(this.name, this.description, [...this.coordinates, coordinate], this.color, this.goldPresence, this.selected, this.uuid);
     }
 
     removeCoordinate(uuid) {
         const coordinates = this.coordinates.filter(coordinate => coordinate.uuid !== uuid);
-        return new Section(this.name, this.description,  coordinates, this.selected, this.uuid);
+        return new Section(this.name, this.description,  coordinates, this.color, this.goldPresence, this.selected, this.uuid);
     }
 
     updateCoordinateIndexes(){
@@ -30,7 +33,7 @@ export class Section {
             updated.uuid = coordinate.uuid;
             return updated;
         });
-        return new Section(this.name, this.description, coordinates, this.selected, this.uuid);
+        return new Section(this.name, this.description, coordinates, this.color, this.goldPresence, this.selected, this.uuid);
     }
 
     getPolygon(options = {}) {
@@ -42,7 +45,7 @@ export class Section {
 
     static fromJSON(obj) {
         const coordinates = (obj.coordinates ?? []).map(Coordinates.fromJSON);
-        return new Section(obj.name, obj.description, coordinates, obj.selected, obj.uuid);
+        return new Section(obj.name, obj.description, coordinates,  obj.color, obj.goldPresence, obj.selected, obj.uuid);
     }
 
 }
