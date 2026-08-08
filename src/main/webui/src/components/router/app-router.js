@@ -20,8 +20,8 @@ export class AppRouter extends LitElement {
         }
         
         main > * {
-            display: flex;
-            flex-direction: row;
+            //display: flex;
+            //flex-direction: row;
         }
 
         header-component {

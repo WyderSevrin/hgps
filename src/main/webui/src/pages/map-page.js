@@ -17,12 +17,16 @@ export class MapPage extends LitElement {
             box-sizing: border-box;
         }
 
+        textarea {
+            resize: none;
+        }
+
         .map-container {
             display: flex;
             flex-direction: row;
             height: 100%;
             width: 100%;
-            border: 1px solid var(--hgps-border);
+            border: thin solid var(--hgps-border);
             box-sizing: border-box;
         }
 
@@ -37,24 +41,24 @@ export class MapPage extends LitElement {
 
         .map-nav {
             position: absolute; /* float over the map instead of taking its own row */
-            top: 10px;
-            right: 10px;
+            top: var(--hgps-size-3);
+            right: var(--hgps-size-3);
             z-index: 1000; /* above the Leaflet tiles/controls */
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
-            gap: 5px;
+            gap: var(--hgps-size-1);
         }
 
         leaflet-map {
             flex: 1; /* fill remaining height under the nav */
             width: 100%; /* was 75vw  */
             min-height: 0;
-            border: 1px solid var(--hgps-border);
+            border: thin solid var(--hgps-border);
         }
 
         .map-nav custom-button {
-            width: 100px;
+            width: 6.25rem;
         }
 
         /* The drawer is a flex sibling of the map; it slides open via its width. */
@@ -66,7 +70,7 @@ export class MapPage extends LitElement {
         }
 
         drawer-component.open {
-            width: max(28%, 340px);
+            width: max(28%, 21.25rem);
         }
 
 
@@ -75,7 +79,7 @@ export class MapPage extends LitElement {
         .drawer-content {
             height: 100%;
             box-sizing: border-box;
-            padding: 16px;
+            padding: var(--hgps-size-4);
             color: var(--hgps-text);
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
         }
@@ -83,11 +87,11 @@ export class MapPage extends LitElement {
         .drawer-title {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin: 0 0 12px;
+            gap: var(--hgps-size-2);
+            margin: 0 0 var(--hgps-size-3);
             font-size: 1.05rem;
             font-weight: 600;
-            letter-spacing: 0.2px;
+            letter-spacing: 0.0125rem;
             color: var(--hgps-text-strong);
         }
 
@@ -98,8 +102,8 @@ export class MapPage extends LitElement {
         .drawer-content-body {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            height: calc(100% - 40px);
+            gap: var(--hgps-size-4);
+            height: calc(100% - var(--hgps-size-10));
         }
 
         /* Card wrapper for each logical block of the drawer */
@@ -108,8 +112,8 @@ export class MapPage extends LitElement {
             display: flex;
             flex-direction: column;
             background-color: var(--hgps-surface);
-            border: 1px solid var(--hgps-border);
-            border-radius: 10px;
+            border: thin solid var(--hgps-border);
+            border-radius: var(--hgps-size-3);
             overflow: hidden;
         }
 
@@ -117,25 +121,25 @@ export class MapPage extends LitElement {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
-            padding: 10px 12px;
+            gap: var(--hgps-size-2);
+            padding: var(--hgps-size-3);
             font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.0375rem;
             color: var(--hgps-text-muted);
             background-color: var(--hgps-surface-2);
-            border-bottom: 1px solid var(--hgps-border);
+            border-bottom: thin solid var(--hgps-border);
         }
 
         .badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 22px;
-            height: 20px;
-            padding: 0 6px;
-            border-radius: 999px;
+            min-width: var(--hgps-size-6);
+            height: var(--hgps-size-5);
+            padding: 0 var(--hgps-size-2);
+            border-radius: var(--hgps-size-10);
             background-color: var(--hgps-accent);
             color: var(--hgps-accent-contrast);
             font-size: 0.72rem;
@@ -147,26 +151,26 @@ export class MapPage extends LitElement {
         .field {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            padding: 12px;
-            border-bottom: 1px solid var(--hgps-border);
+            gap: var(--hgps-size-2);
+            padding: var(--hgps-size-3);
+            border-bottom: thin solid var(--hgps-border);
         }
 
         .field-label {
             font-size: 0.72rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.03125rem;
             color: var(--hgps-text-subtle);
         }
 
         .text-input {
             width: 100%;
             box-sizing: border-box;
-            padding: 9px 10px;
+            padding: var(--hgps-size-2) var(--hgps-size-3);
             background-color: var(--hgps-bg);
-            border: 1px solid var(--hgps-border-strong);
-            border-radius: 6px;
+            border: thin solid var(--hgps-border-strong);
+            border-radius: var(--hgps-size-2);
             color: var(--hgps-text);
             font-size: 0.9rem;
             outline: none;
@@ -179,7 +183,7 @@ export class MapPage extends LitElement {
 
         .text-input:focus {
             border-color: var(--hgps-accent);
-            box-shadow: 0 0 0 2px var(--hgps-accent-ring);
+            box-shadow: 0 0 0 var(--hgps-size-1) var(--hgps-accent-ring);
         }
 
         /* Scrollable list of rows inside a card */
@@ -187,16 +191,16 @@ export class MapPage extends LitElement {
         .row-list {
             display: flex;
             flex-direction: column;
-            max-height: 240px;
+            height: 15rem;
             overflow-y: auto;
         }
 
         .row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            border-bottom: 1px solid var(--hgps-border);
+            gap: var(--hgps-size-3);
+            padding: var(--hgps-size-2) var(--hgps-size-3);
+            border-bottom: thin solid var(--hgps-border);
         }
 
         .row:last-child {
@@ -211,9 +215,9 @@ export class MapPage extends LitElement {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 24px;
-            height: 24px;
-            border-radius: 6px;
+            min-width: var(--hgps-size-6);
+            height: var(--hgps-size-6);
+            border-radius: var(--hgps-size-2);
             background-color: var(--hgps-surface-3);
             color: var(--hgps-accent);
             font-size: 0.78rem;
@@ -224,7 +228,7 @@ export class MapPage extends LitElement {
         .row-main {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: var(--hgps-size-1);
             flex: 1;
             min-width: 0;
         }
@@ -246,7 +250,7 @@ export class MapPage extends LitElement {
 
         .row-actions {
             display: flex;
-            gap: 4px;
+            gap: var(--hgps-size-1);
             flex-shrink: 0;
         }
 
@@ -254,8 +258,8 @@ export class MapPage extends LitElement {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
-            padding: 20px 12px;
+            gap: var(--hgps-size-2);
+            padding: var(--hgps-size-5) var(--hgps-size-3);
             text-align: center;
             color: var(--hgps-text-subtle);
             font-size: 0.8rem;
@@ -268,9 +272,9 @@ export class MapPage extends LitElement {
         .drawer-actions {
             display: flex;
             flex-direction: row;
-            gap: 8px;
-            padding: 12px;
-            border-top: 1px solid var(--hgps-border);
+            gap: var(--hgps-size-2);
+            padding: var(--hgps-size-3);
+            border-top: thin solid var(--hgps-border);
             background-color: var(--hgps-bg);
         }
 
@@ -281,7 +285,7 @@ export class MapPage extends LitElement {
         /* Compact icon-only buttons used inside rows */
 
         .icon-btn {
-            width: 36px;
+            width: var(--hgps-size-9);
         }
     `;
 
@@ -294,7 +298,7 @@ export class MapPage extends LitElement {
         super();
         this.isEditMode = false;
         this.sectionToDelete = null;
-        this.selectedSection = new Section("new Section", [], true);
+        this.selectedSection = new Section("new Section", "", [], true);
         this.mapData = LocalStorageService.getMapData() ?? new MapData();
     }
 
@@ -347,11 +351,20 @@ export class MapPage extends LitElement {
                                            placeholder="Section name"
                                            .value="${this.selectedSection.name}"
                                            @input="${this._updateSectionName}">
+
+                                    <label class="field-label" for="section-name">Description</label>
+                                    <textarea id="section-descriptor" class="text-input"
+                                           rows="5" cols="15"
+                                           placeholder="Description"
+                                           .value="${this.selectedSection.description}"
+                                           @input="${this._updateSectionDescription}">
+                                    </textarea>
                                 </div>
                                 <div class="row-list">
                                     ${this.renderCurrentSectionCoords()}
                                 </div>
                                 <div class="drawer-actions">
+                                    <input type="color" id="favcolor" name="favcolor" value="#ff0000">
                                     <custom-button label="Save" icon="save" .active="${true}"
                                                    @click="${() => this._createSection()}"></custom-button>
                                     <custom-button label="Reset" icon="restart_alt"
@@ -398,7 +411,7 @@ export class MapPage extends LitElement {
 
         return this.selectedSection.coordinates.map(coordinate => {
             return html`
-                <div class="row">
+                <div class="row point-row">
                     <span class="row-index">${coordinate.index + 1}</span>
                     <div class="row-main">
                         <span class="row-title">Point ${coordinate.index + 1}</span>
@@ -423,7 +436,7 @@ export class MapPage extends LitElement {
 
         return this.mapData.sections.map(section => {
             return html`
-                <div class="row">
+                <div class="row" @click="${() => this._editSection(section)}">
                     <custom-icon label="hexagon"></custom-icon>
                     <div class="row-main">
                         <span class="row-title">${section.name}</span>
@@ -467,6 +480,10 @@ export class MapPage extends LitElement {
         this.selectedSection.name = e.target.value;
     }
 
+    _updateSectionDescription = e => {
+        this.selectedSection.description = e.target.value;
+    }
+
     _editSection = section => {
         this.mapSelectSection(section);
     }
@@ -495,7 +512,7 @@ export class MapPage extends LitElement {
         // editor so it also disappears from the map right away.
         if (this.selectedSection?.uuid === uuid) {
             this.selectedSection.selected = false;
-            this.selectedSection = new Section("new Section", [], true);
+            this.selectedSection = new Section("new Section", "",[], true);
         }
 
         this.reLoad();
@@ -512,29 +529,26 @@ export class MapPage extends LitElement {
             this.mapData.sections.push(this.selectedSection);
         }
 
-        this.selectedSection = new Section("new Section", [], true);
+        this.selectedSection = new Section("new Section", "",[], true);
 
         LocalStorageService.saveMapData(this.mapData);
         this.reLoad();
     }
 
     _resetCurrentSection = () => {
-        this.selectedSection = new Section("new Section", [], true);
+        this.selectedSection = new Section("new Section", "",[], true);
         this.reLoad();
     }
 
     _closeDrawer = () => {
         this.selectedSection.selected = false;
-        this.selectedSection = new Section("new Section", [], true);
+        this.selectedSection = new Section("new Section", "",[], true);
         this.isEditMode = false
     }
 
     //------------------------------------------------------------------------------------------------------------------
     // TODO's for this page
 
-    //TODO : show in drawer all sections
-        //TODO : make the drawer have something like 2 parts, this should be an Optional paramether
-        //TODO : make it possible that a section can be deleted
 
     //TODO : a section should have a name and a custom color (maybe a color picker)
 
@@ -542,8 +556,6 @@ export class MapPage extends LitElement {
 
     //TODO : clicking on the edge of a section should create a new point
 
-    //TODO : changing to another section when the previous section has been modified should give a warning ? a pop-up ?
-        //TODO : if a new section is created but not saved and the drawer is closed a pop up should appear to warn the user
 
 }
 
