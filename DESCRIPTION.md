@@ -87,4 +87,6 @@ Each User can create an account and login to add their own spots.
 # TODOS (things to implement)
 - Map needs to a header that will give the possibility to fillter the areas I want to see.
 by 
+- Add an account parameter
+  - Add a friend section 
 

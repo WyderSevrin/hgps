@@ -1,7 +1,9 @@
 {
   "header": {
     "title": "Hobby Gold Prospecting",
-    "selectLanguage": "Seleziona la lingua"
+    "selectLanguage": "Seleziona la lingua",
+    "friends": "Amici",
+    "userOptions": "Opzioni utente"
   },
   "sidebar": {
     "toggle": "Mostra/nascondi menu",
@@ -13,7 +15,8 @@
     "close": "Chiudi",
     "confirm": "Conferma",
     "cancel": "Annulla",
-    "areYouSure": "Sei sicuro?"
+    "areYouSure": "Sei sicuro?",
+    "save": "Salva"
   },
   "home": {
     "welcome": "Benvenuto nella pagina iniziale"
@@ -78,6 +81,54 @@
     "origin": {
       "title": "Da dove viene l'oro",
       "text": "L'oro ha origine nelle profondità della Terra, viene portato in superficie dall'attività geologica e, nel tempo, l'erosione lo trasporta nei fiumi."
+    }
+  },
+  "friends": {
+    "searchPlaceholder": "Cerca per nome o nome utente…",
+    "add": "Aggiungi",
+    "list": "I miei amici",
+    "empty": "Ancora nessun amico. Cerca qualcuno per aggiungerlo.",
+    "areas_one": "{{count}} area",
+    "areas_other": "{{count}} aree",
+    "viewAreas": "Vedi le aree",
+    "viewAreasOf": "Vedi le aree di {{name}}",
+    "remove": "Rimuovi amico",
+    "removeNamed": "Rimuovi {{name}} dagli amici",
+    "requests": "Richieste di amicizia",
+    "wantsToBeFriend": "vuole essere tuo amico",
+    "accept": "Accetta",
+    "acceptNamed": "Accetta la richiesta di {{name}}",
+    "decline": "Rifiuta",
+    "declineNamed": "Rifiuta la richiesta di {{name}}"
+  },
+  "notifications": {
+    "title": "Notifiche",
+    "empty": "Non hai notifiche.",
+    "unread": "Non letta",
+    "unreadCount_one": "{{count}} non letta",
+    "unreadCount_other": "{{count}} non lette",
+    "types": {
+      "friendRequest": "{{name}} ti ha inviato una richiesta di amicizia",
+      "requestAccepted": "{{name}} ha accettato la tua richiesta di amicizia",
+      "areaShared": "{{name}} ha condiviso con te l'area «{{area}}»"
+    }
+  },
+  "userOptions": {
+    "categoriesLabel": "Categorie di opzioni",
+    "empty": "Nessuna opzione ancora disponibile.",
+    "categories": {
+      "account": {
+        "title": "Account",
+        "description": "Il tuo profilo e le impostazioni dell'account."
+      },
+      "map": {
+        "title": "Mappa",
+        "description": "Vista predefinita della mappa, aree e spot."
+      },
+      "appearance": {
+        "title": "Aspetto",
+        "description": "Tema, colori e preferenze di visualizzazione."
+      }
     }
   }
 }

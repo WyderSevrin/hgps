@@ -1,7 +1,9 @@
 {
   "header": {
     "title": "Hobby Gold Prospecting",
-    "selectLanguage": "Sprache wählen"
+    "selectLanguage": "Sprache wählen",
+    "friends": "Freunde",
+    "userOptions": "Benutzeroptionen"
   },
   "sidebar": {
     "toggle": "Menü ein-/ausblenden",
@@ -13,7 +15,8 @@
     "close": "Schliessen",
     "confirm": "Bestätigen",
     "cancel": "Abbrechen",
-    "areYouSure": "Sind Sie sicher?"
+    "areYouSure": "Sind Sie sicher?",
+    "save": "Speichern"
   },
   "home": {
     "welcome": "Willkommen auf der Startseite"
@@ -78,6 +81,54 @@
     "origin": {
       "title": "Woher das Gold kommt",
       "text": "Gold entsteht tief im Erdinneren, wird durch geologische Aktivität an die Oberfläche gebracht und im Laufe der Zeit durch Erosion in die Flüsse getragen."
+    }
+  },
+  "friends": {
+    "searchPlaceholder": "Nach Name oder Benutzername suchen…",
+    "add": "Hinzufügen",
+    "list": "Meine Freunde",
+    "empty": "Noch keine Freunde. Suche nach jemandem, um ihn hinzuzufügen.",
+    "areas_one": "{{count}} Gebiet",
+    "areas_other": "{{count}} Gebiete",
+    "viewAreas": "Gebiete anzeigen",
+    "viewAreasOf": "Gebiete von {{name}} anzeigen",
+    "remove": "Freund entfernen",
+    "removeNamed": "{{name}} aus Freunden entfernen",
+    "requests": "Freundschaftsanfragen",
+    "wantsToBeFriend": "möchte dein Freund sein",
+    "accept": "Annehmen",
+    "acceptNamed": "Anfrage von {{name}} annehmen",
+    "decline": "Ablehnen",
+    "declineNamed": "Anfrage von {{name}} ablehnen"
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "empty": "Du hast keine Benachrichtigungen.",
+    "unread": "Ungelesen",
+    "unreadCount_one": "{{count}} ungelesen",
+    "unreadCount_other": "{{count}} ungelesen",
+    "types": {
+      "friendRequest": "{{name}} hat dir eine Freundschaftsanfrage gesendet",
+      "requestAccepted": "{{name}} hat deine Freundschaftsanfrage angenommen",
+      "areaShared": "{{name}} hat das Gebiet «{{area}}» mit dir geteilt"
+    }
+  },
+  "userOptions": {
+    "categoriesLabel": "Optionskategorien",
+    "empty": "Noch keine Optionen verfügbar.",
+    "categories": {
+      "account": {
+        "title": "Konto",
+        "description": "Dein Profil und deine Kontoeinstellungen."
+      },
+      "map": {
+        "title": "Karte",
+        "description": "Standardansicht der Karte, Gebiete und Spots."
+      },
+      "appearance": {
+        "title": "Darstellung",
+        "description": "Design, Farben und Anzeigeeinstellungen."
+      }
     }
   }
 }

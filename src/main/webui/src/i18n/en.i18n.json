@@ -1,7 +1,9 @@
 {
   "header": {
     "title": "Hobby Gold Prospecting",
-    "selectLanguage": "Select language"
+    "selectLanguage": "Select language",
+    "friends": "Friends",
+    "userOptions": "User options"
   },
   "sidebar": {
     "toggle": "Toggle menu",
@@ -13,7 +15,8 @@
     "close": "Close",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "areYouSure": "Are you sure?"
+    "areYouSure": "Are you sure?",
+    "save": "Save"
   },
   "home": {
     "welcome": "Welcome to the Home Page"
@@ -78,6 +81,54 @@
     "origin": {
       "title": "Where the gold comes from",
       "text": "Gold originates deep within the earth and is carried to the surface by geological activity, then eroded into rivers over time."
+    }
+  },
+  "friends": {
+    "searchPlaceholder": "Search by name or username…",
+    "add": "Add",
+    "list": "My friends",
+    "empty": "No friends yet. Search for someone to add them.",
+    "areas_one": "{{count}} area",
+    "areas_other": "{{count}} areas",
+    "viewAreas": "View areas",
+    "viewAreasOf": "View the areas of {{name}}",
+    "remove": "Remove friend",
+    "removeNamed": "Remove {{name}} from friends",
+    "requests": "Friend requests",
+    "wantsToBeFriend": "wants to be your friend",
+    "accept": "Accept",
+    "acceptNamed": "Accept the request from {{name}}",
+    "decline": "Decline",
+    "declineNamed": "Decline the request from {{name}}"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "You have no notifications.",
+    "unread": "Unread",
+    "unreadCount_one": "{{count}} unread",
+    "unreadCount_other": "{{count}} unread",
+    "types": {
+      "friendRequest": "{{name}} sent you a friend request",
+      "requestAccepted": "{{name}} accepted your friend request",
+      "areaShared": "{{name}} shared the area \"{{area}}\" with you"
+    }
+  },
+  "userOptions": {
+    "categoriesLabel": "Option categories",
+    "empty": "No options available yet.",
+    "categories": {
+      "account": {
+        "title": "Account",
+        "description": "Your profile and account settings."
+      },
+      "map": {
+        "title": "Map",
+        "description": "Default map view, areas and spots."
+      },
+      "appearance": {
+        "title": "Appearance",
+        "description": "Theme, colors and display preferences."
+      }
     }
   }
 }

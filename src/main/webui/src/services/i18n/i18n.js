@@ -8,10 +8,11 @@ import it from '../../i18n/it.i18n.json';
 const STORAGE_KEY = 'language';
 
 export const SUPPORTED_LANGUAGES = [
-    {code: 'en', label: 'EN'},
-    {code: 'fr', label: 'FR'},
-    {code: 'de', label: 'DE'},
-    {code: 'it', label: 'IT'},
+    // name: the language's own name, shown untranslated in the language menu
+    {code: 'en', label: 'EN', name: 'English'},
+    {code: 'fr', label: 'FR', name: 'Français'},
+    {code: 'de', label: 'DE', name: 'Deutsch'},
+    {code: 'it', label: 'IT', name: 'Italiano'},
 ];
 
 const supportedCodes = SUPPORTED_LANGUAGES.map(l => l.code);

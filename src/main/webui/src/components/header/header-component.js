@@ -1,6 +1,11 @@
 import { LitElement, html, css } from 'lit';
-import { live } from 'lit/directives/live.js';
-import { I18nController, SUPPORTED_LANGUAGES, getLanguage, setLanguage, t } from '../../services/i18n/i18n.js';
+import '../icon/icon.js';
+import '../modal/modal-component.js';
+import '../friends/friends-panel.js';
+import '../notifications/notifications-menu.js';
+import '../language/language-menu.js';
+import '../user-options/user-options-panel.js';
+import { I18nController, t } from '../../services/i18n/i18n.js';
 
 export class HeaderComponent extends LitElement {
     static styles = css`
@@ -43,45 +48,41 @@ export class HeaderComponent extends LitElement {
             color: var(--hgps-gold-bright);
         }
 
-        /* Language selector pinned to the far right */
-        .lang {
+        /* Actions (friends, user options, language) pinned to the far right */
+        .actions {
             margin-left: auto;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .lang select {
-            appearance: none;
-            -webkit-appearance: none;
+        .icon-btn {
+            all: unset;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
             background: var(--hgps-header-control);
-            color: var(--hgps-on-header);
             border: 1px solid var(--hgps-gold);
-            border-radius: 6px;
-            padding: 5px 28px 5px 10px;
-            font-size: 13px;
-            font-weight: 600;
+            color: var(--hgps-gold-bright);
             cursor: pointer;
             transition: background-color 0.25s ease, border-color 0.25s ease;
-            /* Custom golden chevron */
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            background-size: 14px;
         }
-        .lang select:hover {
+        .icon-btn:hover {
             background-color: var(--hgps-header-control-hover);
             border-color: var(--hgps-gold-bright);
         }
-        .lang select:focus {
+        .icon-btn:focus-visible {
             outline: none;
             border-color: var(--hgps-gold-bright);
             box-shadow: 0 0 0 2px var(--hgps-accent-ring);
         }
-        .lang option {
-            background: var(--hgps-slate);
-            color: var(--hgps-on-header);
+        .icon-btn custom-icon {
+            font-size: 20px;
         }
+
 
         @media (max-width: 520px) {
             header { padding: 6px 12px; }
@@ -90,18 +91,15 @@ export class HeaderComponent extends LitElement {
     `;
 
     static properties = {
-        language: { type: String },
+        friendsOpen: { type: Boolean, state: true },
+        optionsOpen: { type: Boolean, state: true },
     };
 
     constructor() {
         super();
         this.i18n = new I18nController(this);
-        this.language = getLanguage();
-    }
-
-    onLanguageChange(event) {
-        this.language = event.target.value;
-        setLanguage(this.language);
+        this.friendsOpen = false;
+        this.optionsOpen = false;
     }
 
     render() {
@@ -130,18 +128,44 @@ export class HeaderComponent extends LitElement {
                     <h1 class="title">${t('header.title')}</h1>
                 </div>
 
-                <!-- Far-right language selector -->
-                <div class="lang">
-                    <select
-                        aria-label="${t('header.selectLanguage')}"
-                        .value="${live(this.language)}"
-                        @change="${this.onLanguageChange}"
-                    >
-                        ${SUPPORTED_LANGUAGES.map(lang => html`
-                            <option value="${lang.code}" ?selected="${lang.code === this.language}">${lang.label}</option>`)}
-                    </select>
+                <!-- Far-right actions: notifications, friends, user options, language -->
+                <div class="actions">
+                    <notifications-menu></notifications-menu>
+                    <button class="icon-btn"
+                            title="${t('header.friends')}"
+                            aria-label="${t('header.friends')}"
+                            aria-haspopup="dialog"
+                            @click="${() => this.friendsOpen = true}">
+                        <custom-icon label="group"></custom-icon>
+                    </button>
+                    <button class="icon-btn"
+                            title="${t('header.userOptions')}"
+                            aria-label="${t('header.userOptions')}"
+                            aria-haspopup="dialog"
+                            @click="${() => this.optionsOpen = true}">
+                        <custom-icon label="manage_accounts"></custom-icon>
+                    </button>
+                    <language-menu></language-menu>
                 </div>
             </header>
+
+            <modal-dialog icon="group"
+                          style="--modal-width: 34rem; --modal-max-height: 44rem"
+                          heading="${t('header.friends')}"
+                          ?open="${this.friendsOpen}"
+                          @modal-save="${() => this.friendsOpen = false}"
+                          @modal-cancel="${() => this.friendsOpen = false}">
+                <friends-panel></friends-panel>
+            </modal-dialog>
+
+            <modal-dialog icon="manage_accounts"
+                          style="--modal-width: 46rem; --modal-body-padding: 0"
+                          heading="${t('header.userOptions')}"
+                          ?open="${this.optionsOpen}"
+                          @modal-save="${() => this.optionsOpen = false}"
+                          @modal-cancel="${() => this.optionsOpen = false}">
+                <user-options-panel></user-options-panel>
+            </modal-dialog>
         `;
     }
 }

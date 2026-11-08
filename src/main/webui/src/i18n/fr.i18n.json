@@ -1,7 +1,9 @@
 {
   "header": {
     "title": "Hobby Gold Prospecting",
-    "selectLanguage": "Choisir la langue"
+    "selectLanguage": "Choisir la langue",
+    "friends": "Amis",
+    "userOptions": "Options utilisateur"
   },
   "sidebar": {
     "toggle": "Afficher/masquer le menu",
@@ -13,7 +15,8 @@
     "close": "Fermer",
     "confirm": "Confirmer",
     "cancel": "Annuler",
-    "areYouSure": "Êtes-vous sûr ?"
+    "areYouSure": "Êtes-vous sûr ?",
+    "save": "Enregistrer"
   },
   "home": {
     "welcome": "Bienvenue sur la page d'accueil"
@@ -78,6 +81,54 @@
     "origin": {
       "title": "D'où vient l'or",
       "text": "L'or provient des profondeurs de la Terre. Il est remonté à la surface par l'activité géologique, puis, avec le temps, l'érosion l'entraîne dans les rivières."
+    }
+  },
+  "friends": {
+    "searchPlaceholder": "Rechercher par nom ou nom d'utilisateur…",
+    "add": "Ajouter",
+    "list": "Mes amis",
+    "empty": "Pas encore d'amis. Recherchez quelqu'un pour l'ajouter.",
+    "areas_one": "{{count}} zone",
+    "areas_other": "{{count}} zones",
+    "viewAreas": "Voir les zones",
+    "viewAreasOf": "Voir les zones de {{name}}",
+    "remove": "Retirer l'ami",
+    "removeNamed": "Retirer {{name}} des amis",
+    "requests": "Demandes d'amis",
+    "wantsToBeFriend": "souhaite devenir votre ami",
+    "accept": "Accepter",
+    "acceptNamed": "Accepter la demande de {{name}}",
+    "decline": "Refuser",
+    "declineNamed": "Refuser la demande de {{name}}"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Vous n'avez aucune notification.",
+    "unread": "Non lue",
+    "unreadCount_one": "{{count}} non lue",
+    "unreadCount_other": "{{count}} non lues",
+    "types": {
+      "friendRequest": "{{name}} vous a envoyé une demande d'ami",
+      "requestAccepted": "{{name}} a accepté votre demande d'ami",
+      "areaShared": "{{name}} a partagé la zone « {{area}} » avec vous"
+    }
+  },
+  "userOptions": {
+    "categoriesLabel": "Catégories d'options",
+    "empty": "Aucune option disponible pour l'instant.",
+    "categories": {
+      "account": {
+        "title": "Compte",
+        "description": "Votre profil et les paramètres du compte."
+      },
+      "map": {
+        "title": "Carte",
+        "description": "Vue par défaut de la carte, zones et spots."
+      },
+      "appearance": {
+        "title": "Apparence",
+        "description": "Thème, couleurs et préférences d'affichage."
+      }
     }
   }
 }
