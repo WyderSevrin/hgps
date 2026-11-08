@@ -1,4 +1,4 @@
-export class Coordinates {
+export class Vertex {
 
     constructor(index, lat, lng) {
         this.uuid = self.crypto.randomUUID();
@@ -9,9 +9,9 @@ export class Coordinates {
 
 
     static fromJSON(obj) {
-        const coordinate = new Coordinates(obj.index, obj.lat, obj.lng);
-        coordinate.uuid = obj.uuid;
-        return coordinate;
+        const vertex = new Vertex(obj.index, obj.lat, obj.lng);
+        vertex.uuid = obj.uuid;
+        return vertex;
     }
 
 }

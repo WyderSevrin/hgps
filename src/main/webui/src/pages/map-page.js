@@ -3,8 +3,9 @@ import '../components/map/leaflet-map.js';
 import '../components/drawer/drawerComponent.js';
 import '../components/dialog/confirmDialogComponent.js';
 import '../components/dropdown/dropdown-component.js';
-import {Section} from "../models/section.js";
-import {Coordinates} from "../models/coordinates.js";
+import '../components/collapsible/collapsible-component.js';
+import {Area} from "../models/area.js";
+import {Vertex} from "../models/vertex.js";
 import {LocalStorageService} from "../services/localStorage/localStorageService.js";
 import {MapData} from "../models/mapData.js";
 import {I18nController, t} from "../services/i18n/i18n.js";
@@ -148,7 +149,7 @@ export class MapPage extends LitElement {
             font-weight: 700;
         }
 
-        /* Labeled form field (e.g. section name) inside a card */
+        /* Labeled form field (e.g. area name) inside a card */
 
         .field {
             display: flex;
@@ -293,19 +294,19 @@ export class MapPage extends LitElement {
 
     static properties = {
         isEditMode: {type: Boolean, state: true},
-        sectionToDelete: {type: Object, state: true},
+        areaToDelete: {type: Object, state: true},
     };
 
     constructor() {
         super();
         this.i18n = new I18nController(this);
         this.isEditMode = false;
-        this.sectionToDelete = null;
-        this.defaultSectionColor = "#008000";
+        this.areaToDelete = null;
+        this.defaultAreaColor = "#008000";
         this.defaultGoldPresence = "0";
         // For now name and value are the same numbers (1, 2, 3).
         this.goldPresenceOptions = [1, 2, 3].map(n => ({name: n, value: n}));
-        this.selectedSection = new Section(t('map.newSection'), "", [], this.defaultSectionColor, this.defaultGoldPresence, true);
+        this.selectedArea = new Area(t('map.newSection'), "", [], this.defaultAreaColor, this.defaultGoldPresence, true);
         this.mapData = LocalStorageService.getMapData() ?? new MapData();
     }
 
@@ -331,22 +332,22 @@ export class MapPage extends LitElement {
                     <leaflet-map id="map" 
                                  .data="${this.mapData}"
                                  .editMode="${this.isEditMode}"
-                                 .clickEvent="${this.mapAddCoordinate}"
-                                 .updateSelectedSection="${this.mapMoveCoordinate}"
-                                 .selectSection="${this.mapSelectSection}"
-                                 .selectedSection="${this.selectedSection}"></leaflet-map>
+                                 .clickEvent="${this.mapAddVertex}"
+                                 .updateSelectedArea="${this.mapMoveVertex}"
+                                 .selectArea="${this.mapSelectArea}"
+                                 .selectedArea="${this.selectedArea}"></leaflet-map>
                 </div>
                 ${this._renderDrawer()}
                 <confirm-dialog
-                        .open="${this.sectionToDelete !== null}"
+                        .open="${this.areaToDelete !== null}"
                         title="${t('map.deleteTitle')}"
-                        message="${this.sectionToDelete
-                                ? t('map.deleteMessage', {name: this.sectionToDelete.name})
+                        message="${this.areaToDelete
+                                ? t('map.deleteMessage', {name: this.areaToDelete.name})
                                 : ''}"
                         confirmLabel="${t('map.delete')}"
                         cancelLabel="${t('common.cancel')}"
-                        @confirm="${() => this._confirmRemoveSection()}"
-                        @cancel="${() => this._cancelRemoveSection()}">
+                        @confirm="${() => this._confirmRemoveArea()}"
+                        @cancel="${() => this._cancelRemoveArea()}">
                 </confirm-dialog>
             </div>
         `;
@@ -367,67 +368,64 @@ export class MapPage extends LitElement {
                         <div class="card">
                             <div class="card-header">
                                 <span>${t('map.currentSection')}</span>
-                                <span class="badge">${this.selectedSection.coordinates.length}</span>
+                                <span class="badge">${this.selectedArea.vertices.length}</span>
                             </div>
                             <div class="field">
-                                <label class="field-label" for="section-name">${t('map.name')}</label>
+                                <label class="field-label" for="area-name">${t('map.name')}</label>
                                 <div class="row">
-                                    <input id="section-name" type="text" class="text-input"
+                                    <input id="area-name" type="text" class="text-input"
                                            placeholder="${t('map.namePlaceholder')}"
-                                           .value="${this.selectedSection.name}"
-                                           @input="${this._updateSectionName}">
+                                           .value="${this.selectedArea.name}"
+                                           @input="${this._updateAreaName}">
                                     <input type="color" id="favcolor" name="favcolor"
-                                           .value="${this.selectedSection.color}"
-                                           @input="${this._updateSectionColor}">
+                                           .value="${this.selectedArea.color}"
+                                           @input="${this._updateAreaColor}">
                                 </div>
 
 
-                                <label class="field-label" for="section-descriptor">${t('map.description')}</label>
-                                <textarea id="section-descriptor" class="text-input"
+                                <label class="field-label" for="area-descriptor">${t('map.description')}</label>
+                                <textarea id="area-descriptor" class="text-input"
                                           rows="5" cols="15"
                                           placeholder="${t('map.descriptionPlaceholder')}"
-                                          .value="${this.selectedSection.description}"
-                                          @input="${this._updateSectionDescription}">
+                                          .value="${this.selectedArea.description}"
+                                          @input="${this._updateAreaDescription}">
                                     </textarea>
                             </div>
                             <div class="field row-list">
-                                ${this._renderCurrentSectionCoords()}
+                                ${this._renderCurrentAreaVertices()}
                             </div>
 
                             <div class="field">
                                 <custom-dropdown
                                         label="${t('map.goldPresence')}"
                                         .options="${this.goldPresenceOptions}"
-                                        .value="${this.selectedSection.goldPresence}"
-                                        @dropdown-change="${this._updateSectionGoldPresence}">
+                                        .value="${this.selectedArea.goldPresence}"
+                                        @dropdown-change="${this._updateAreaGoldPresence}">
                                 </custom-dropdown>
                             </div>
 
                             <div class="drawer-actions">
                                 <custom-button label="${t('map.save')}" icon="save" .active="${true}"
-                                               @click="${() => this._createSection()}"></custom-button>
+                                               @click="${() => this._createArea()}"></custom-button>
                                 <custom-button label="${t('map.reset')}" icon="restart_alt"
-                                               @click="${() => this._resetCurrentSection()}"></custom-button>
+                                               @click="${() => this._resetCurrentArea()}"></custom-button>
                             </div>
                         </div>
 
-                        <div class="card">
-                            <div class="card-header">
-                                <span>${t('map.savedSections')}</span>
-                                <span class="badge">${this.mapData.sections.length}</span>
-                            </div>
+                        <collapsible-component label="${t('map.savedSections')}" open>
+                            <span slot="header-end" class="badge">${this.mapData.areas.length}</span>
                             <div class="row-list">
-                                ${this._renderSections()}
+                                ${this._renderAreas()}
                             </div>
-                        </div>
+                        </collapsible-component>
                     </div>
                 </div>
             </drawer-component>
         `
     }
 
-    _renderCurrentSectionCoords = () => {
-        if (this.selectedSection.coordinates.length === 0) {
+    _renderCurrentAreaVertices = () => {
+        if (this.selectedArea.vertices.length === 0) {
             return html`
                 <div class="empty-state">
                     <custom-icon label="add_location_alt"></custom-icon>
@@ -435,24 +433,24 @@ export class MapPage extends LitElement {
                 </div>`;
         }
 
-        return this.selectedSection.coordinates.map(coordinate => {
+        return this.selectedArea.vertices.map(vertex => {
             return html`
                 <div class="row point-row">
-                    <span class="row-index">${coordinate.index + 1}</span>
+                    <span class="row-index">${vertex.index + 1}</span>
                     <div class="row-main">
-                        <span class="row-title">${t('map.point', {number: coordinate.index + 1})}</span>
-                        <span class="row-sub">${coordinate.lat.toFixed(5)}, ${coordinate.lng.toFixed(5)}</span>
+                        <span class="row-title">${t('map.point', {number: vertex.index + 1})}</span>
+                        <span class="row-sub">${vertex.lat.toFixed(5)}, ${vertex.lng.toFixed(5)}</span>
                     </div>
                     <div class="row-actions">
                         <custom-button class="icon-btn" icon="remove"
-                                       @click="${() => this._removePoint(coordinate.uuid)}"></custom-button>
+                                       @click="${() => this._removePoint(vertex.uuid)}"></custom-button>
                     </div>
                 </div>`;
         });
     }
 
-    _renderSections = () => {
-        if (this.mapData.sections.length === 0) {
+    _renderAreas = () => {
+        if (this.mapData.areas.length === 0) {
             return html`
                 <div class="empty-state">
                     <custom-icon label="layers_clear"></custom-icon>
@@ -460,123 +458,123 @@ export class MapPage extends LitElement {
                 </div>`;
         }
 
-        return this.mapData.sections.map(section => {
+        return this.mapData.areas.map(area => {
             return html`
-                <div class="row" @click="${() => this._editSection(section)}">
+                <div class="row" @click="${() => this._editArea(area)}">
                     <custom-icon label="hexagon"></custom-icon>
                     <div class="row-main">
-                        <span class="row-title">${section.name}</span>
-                        <span class="row-sub">${t('map.points', {count: section.coordinates.length})}</span>
+                        <span class="row-title">${area.name}</span>
+                        <span class="row-sub">${t('map.points', {count: area.vertices.length})}</span>
                     </div>
                     <div class="row-actions">
                         <custom-button class="icon-btn" icon="edit"
-                                       @click="${() => this._editSection(section)}"></custom-button>
+                                       @click="${() => this._editArea(area)}"></custom-button>
                         <custom-button class="icon-btn" icon="delete"
-                                       @click="${() => this._requestRemoveSection(section)}"></custom-button>
+                                       @click="${() => this._requestRemoveArea(area)}"></custom-button>
                     </div>
                 </div>`;
         })
     }
 
-    mapAddCoordinate = (lat, lng) => {
-        this.selectedSection = this.selectedSection.addCoordinate(new Coordinates(this.selectedSection.coordinates.length, lat, lng));
+    mapAddVertex = (lat, lng) => {
+        this.selectedArea = this.selectedArea.addVertex(new Vertex(this.selectedArea.vertices.length, lat, lng));
         this.reLoad();
     }
 
 
-    mapSelectSection = (section) => {
-        section.selected = true;
-        this.selectedSection.selected = false;
-        this.selectedSection = section;
+    mapSelectArea = (area) => {
+        area.selected = true;
+        this.selectedArea.selected = false;
+        this.selectedArea = area;
         this.reLoad();
     }
 
-    mapMoveCoordinate = (uuid, lat, lng) => {
-        this.selectedSection = this.selectedSection.updateCoordinate(uuid, lat, lng);
+    mapMoveVertex = (uuid, lat, lng) => {
+        this.selectedArea = this.selectedArea.updateVertex(uuid, lat, lng);
         this.reLoad();
     }
 
     _removePoint = uuid => {
-        this.selectedSection = this.selectedSection.removeCoordinate(uuid);
-        this.selectedSection.updateCoordinateIndexes();
+        this.selectedArea = this.selectedArea.removeVertex(uuid);
+        this.selectedArea.updateVertexIndexes();
         this.reLoad();
     }
 
-    _updateSectionName = e => {
-        this.selectedSection.name = e.target.value;
+    _updateAreaName = e => {
+        this.selectedArea.name = e.target.value;
     }
 
-    _updateSectionDescription = e => {
-        this.selectedSection.description = e.target.value;
+    _updateAreaDescription = e => {
+        this.selectedArea.description = e.target.value;
     }
 
-    _updateSectionColor = e => {
-        this.selectedSection.color = e.target.value;
+    _updateAreaColor = e => {
+        this.selectedArea.color = e.target.value;
     }
 
-    _updateSectionGoldPresence = e => {
-        this.selectedSection.goldPresence = e.detail.value;
+    _updateAreaGoldPresence = e => {
+        this.selectedArea.goldPresence = e.detail.value;
     }
 
-    _editSection = section => {
-        this.mapSelectSection(section);
+    _editArea = area => {
+        this.mapSelectArea(area);
     }
 
-    // Open the confirmation dialog for the given section.
-    _requestRemoveSection = section => {
-        this.sectionToDelete = section;
+    // Open the confirmation dialog for the given area.
+    _requestRemoveArea = area => {
+        this.areaToDelete = area;
     }
 
-    _confirmRemoveSection = () => {
-        if (this.sectionToDelete) {
-            this._removeSection(this.sectionToDelete.uuid);
+    _confirmRemoveArea = () => {
+        if (this.areaToDelete) {
+            this._removeArea(this.areaToDelete.uuid);
         }
-        this.sectionToDelete = null;
+        this.areaToDelete = null;
     }
 
-    _cancelRemoveSection = () => {
-        this.sectionToDelete = null;
+    _cancelRemoveArea = () => {
+        this.areaToDelete = null;
     }
 
-    _removeSection = uuid => {
-        this.mapData.sections = this.mapData.sections.filter(sec => sec.uuid !== uuid);
+    _removeArea = uuid => {
+        this.mapData.areas = this.mapData.areas.filter(area => area.uuid !== uuid);
         LocalStorageService.saveMapData(this.mapData);
 
-        // If the section being edited is the one deleted, drop it from the
+        // If the area being edited is the one deleted, drop it from the
         // editor so it also disappears from the map right away.
-        if (this.selectedSection?.uuid === uuid) {
-            this.selectedSection.selected = false;
-            this.selectedSection = new Section(t('map.newSection'), "",[], this.defaultSectionColor, this.defaultGoldPresence, true);
+        if (this.selectedArea?.uuid === uuid) {
+            this.selectedArea.selected = false;
+            this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultAreaColor, this.defaultGoldPresence, true);
         }
 
         this.reLoad();
     }
 
-    _createSection = () => {
-        this.selectedSection.selected = false;
-        const alreadyExsits = this.mapData.sections.filter(sec => sec.uuid === this.selectedSection.uuid).length > 0
+    _createArea = () => {
+        this.selectedArea.selected = false;
+        const alreadyExsits = this.mapData.areas.filter(area => area.uuid === this.selectedArea.uuid).length > 0
 
         if(alreadyExsits){
-             const index = this.mapData.sections.findIndex(sec => sec.uuid === this.selectedSection.uuid)
-            this.mapData.sections[index] = this.selectedSection
+             const index = this.mapData.areas.findIndex(area => area.uuid === this.selectedArea.uuid)
+            this.mapData.areas[index] = this.selectedArea
         }else{
-            this.mapData.sections.push(this.selectedSection);
+            this.mapData.areas.push(this.selectedArea);
         }
 
-        this.selectedSection = new Section(t('map.newSection'), "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
+        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultAreaColor, this.defaultGoldPresence,true);
 
         LocalStorageService.saveMapData(this.mapData);
         this.reLoad();
     }
 
-    _resetCurrentSection = () => {
-        this.selectedSection = new Section(t('map.newSection'), "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
+    _resetCurrentArea = () => {
+        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultAreaColor, this.defaultGoldPresence,true);
         this.reLoad();
     }
 
     _closeDrawer = () => {
-        this.selectedSection.selected = false;
-        this.selectedSection = new Section(t('map.newSection'), "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
+        this.selectedArea.selected = false;
+        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultAreaColor, this.defaultGoldPresence,true);
         this.isEditMode = false
     }
 
@@ -584,11 +582,10 @@ export class MapPage extends LitElement {
     // TODO's for this page
 
 
-    //TODO : a section should have a name and a custom color (maybe a color picker)
+    //TODO : an area should have a name and a custom color (maybe a color picker)
 
-    //TODO : rename the coordinates of a section to something more accurate (point -> vertex)
 
-    //TODO : clicking on the edge of a section should create a new point
+    //TODO : clicking on the edge of an area should create a new point
 
 
 }

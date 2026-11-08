@@ -11,7 +11,7 @@ export class LeafletMap extends LitElement {
                 height: 200px;
             }
 
-            .coordinate-marker {
+            .vertex-marker {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -30,17 +30,17 @@ export class LeafletMap extends LitElement {
         data: {type: Object},
         editMode: {type: Boolean},
         clickEvent: {type: Function},
-        updateSelectedSection: {type: Function},
-        selectSection: {type: Function},
-        selectedSection: {type: Object}
+        updateSelectedArea: {type: Function},
+        selectArea: {type: Function},
+        selectedArea: {type: Object}
     };
 
 
     constructor() {
         super();
         this.map = null;
-        this.selectedSection = null;
-        this.coordinateLayer = null;
+        this.selectedArea = null;
+        this.vertexLayer = null;
         this.resizeObserver = null;
     }
 
@@ -54,7 +54,7 @@ export class LeafletMap extends LitElement {
         //Bern
         L.marker([46.94809, 7.44744]).addTo(this.map);
 
-        this.coordinateLayer = L.layerGroup().addTo(this.map);
+        this.vertexLayer = L.layerGroup().addTo(this.map);
 
         // Keep the map in sync with its container size. Leaflet caches the
         // container dimensions, so when the available width changes (sidebar
@@ -65,7 +65,7 @@ export class LeafletMap extends LitElement {
         this.resizeObserver.observe(mapEl);
 
         this.addEvents();
-        this.drawCoordinates();
+        this.drawVertices();
     }
 
     disconnectedCallback() {
@@ -75,13 +75,13 @@ export class LeafletMap extends LitElement {
     }
 
     updated(changedProperties) {
-        // Redraw whenever the selected section changes, edit mode toggles
+        // Redraw whenever the selected area changes, edit mode toggles
         // (which controls marker draggability), or the underlying data set
-        // changes (e.g. a section was added or deleted).
-        if (changedProperties.has('selectedSection')
+        // changes (e.g. an area was added or deleted).
+        if (changedProperties.has('selectedArea')
             || changedProperties.has('editMode')
             || changedProperties.has('data')) {
-            this.drawCoordinates();
+            this.drawVertices();
         }
     }
 
@@ -91,60 +91,60 @@ export class LeafletMap extends LitElement {
         return selectedColor || fallback;
     }
 
-    // Clear and redraw every coordinate of the selected section.
-    drawCoordinates() {
-        if (!this.coordinateLayer) return;
+    // Clear and redraw every vertex of the selected area.
+    drawVertices() {
+        if (!this.vertexLayer) return;
 
-        this.coordinateLayer.clearLayers();
+        this.vertexLayer.clearLayers();
 
-        //Draw the selected section
-        this.drawSection(this.selectedSection);
+        //Draw the selected area
+        this.drawArea(this.selectedArea);
 
-        //Draw the other sections (compare by uuid: editing the selected
-        //section replaces it with a new instance, so reference checks fail).
-        this.data.sections.forEach(section => {
-            if (section?.uuid !== this.selectedSection?.uuid && section?.coordinates?.length > 0) {
-                this.drawSection(section);
+        //Draw the other areas (compare by uuid: editing the selected
+        //area replaces it with a new instance, so reference checks fail).
+        this.data.areas.forEach(area => {
+            if (area?.uuid !== this.selectedArea?.uuid && area?.vertices?.length > 0) {
+                this.drawArea(area);
             }
         });
     }
 
 
-    drawSection = section => {
-        const coordinates = section?.coordinates ?? [];
+    drawArea = area => {
+        const vertices = area?.vertices ?? [];
 
 
         let polygon = null;
-        if (coordinates.length) {
-            const color = section?.selected === true
+        if (vertices.length) {
+            const color = area?.selected === true
                 ? this._themeColor(getComputedStyle(this).getPropertyValue('--hgps-map-poly-active').trim(), '#f2c94c')
-                : this._themeColor(section.color, '#9333ea');
-            polygon = section.getPolygon({color});
-            polygon.addTo(this.coordinateLayer);
+                : this._themeColor(area.color, '#9333ea');
+            polygon = area.getPolygon({color});
+            polygon.addTo(this.vertexLayer);
 
 
-            //Click event on Section
+            //Click event on Area
             polygon.on('click', (event) => {
                 if(this.editMode){
                     L.DomEvent.stopPropagation(event);
-                    this.selectSection?.(section);
+                    this.selectArea?.(area);
                 }
             });
         }
 
-        coordinates.forEach((coordinate) => {
-            const marker = L.marker([coordinate.lat, coordinate.lng], {
-                draggable: !!this.editMode && section?.selected === true,
-                icon: this.createIndexIcon(coordinate.index)
-            }).addTo(this.coordinateLayer);
+        vertices.forEach((vertex) => {
+            const marker = L.marker([vertex.lat, vertex.lng], {
+                draggable: !!this.editMode && area?.selected === true,
+                icon: this.createIndexIcon(vertex.index)
+            }).addTo(this.vertexLayer);
 
-            if(section?.selected === true) {
+            if(area?.selected === true) {
                 //Start drag event
                 marker.on('drag', (event) => {
                     const {lat, lng} = event.latlng;
                     if (polygon) {
-                        const latlngs = coordinates.map(c =>
-                            c.uuid === coordinate.uuid ? [lat, lng] : [c.lat, c.lng]
+                        const latlngs = vertices.map(c =>
+                            c.uuid === vertex.uuid ? [lat, lng] : [c.lat, c.lng]
                         );
                         polygon.setLatLngs([latlngs]);
                     }
@@ -153,16 +153,16 @@ export class LeafletMap extends LitElement {
                 //End drag event
                 marker.on('dragend', (event) => {
                     const {lat, lng} = event.target.getLatLng();
-                    this.updateSelectedSection?.(coordinate.uuid, lat, lng);
+                    this.updateSelectedArea?.(vertex.uuid, lat, lng);
                 });
             }
         });
     }
 
-    // Build a marker icon that shows the coordinate's index.
+    // Build a marker icon that shows the vertex's index.
     createIndexIcon(index) {
         return L.divIcon({
-            className: 'coordinate-marker',
+            className: 'vertex-marker',
             html: `<span>${index}</span>`,
             iconSize: [26, 26],
             iconAnchor: [13, 13]
@@ -174,8 +174,8 @@ export class LeafletMap extends LitElement {
         this.map.on('click', (event) => {
             const {lat, lng} = event.latlng;
             if (this.editMode) {
-                // Notify the parent; it owns the section and will push new
-                // coordinates back down through the `coordinates` property.
+                // Notify the parent; it owns the area and will push new
+                // vertices back down through the `vertices` property.
                 this.clickEvent(lat, lng);
             }
         });
