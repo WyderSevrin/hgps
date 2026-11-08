@@ -79,14 +79,25 @@ Each User can create an account and login to add their own spots.
 - Quinoa
 - Lit
 - Keyckloak
-- 
+- S3 something ? 
 
 
 
 
 # TODOS (things to implement)
-- Map needs to a header that will give the possibility to fillter the areas I want to see.
-by 
-- Add an account parameter
-  - Add a friend section 
-
+- Map needs to a header that will give the possibility to filter the areas I want to see.
+- Add tables in the database
+  - User, friends, parameters, areas, friend requests 
+- Add a login system with keycloak
+  - Able to login as a guest (default ?) --> should the main page be the landing page, visite the site in read only mode by default ?
+  Header should have in big, Create account or login to unlock full functionality. 
+  - Able to create account, login/logout 
+- API's with permissions
+  - User search
+  - User Parameters
+  - Add/Alter/Delete Areas
+  - Friend Requests
+- Load data from the API
+- Front add themes
+- Front add map themes ?
+- Side Menu, bottom add contact link and a legal information
