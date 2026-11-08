@@ -30,6 +30,7 @@
     "description": "Description",
     "descriptionPlaceholder": "Description",
     "goldPresence": "Gold presence",
+    "goldPresenceUnset": "Not set",
     "save": "Save",
     "reset": "Reset",
     "savedSections": "Saved sections",
@@ -41,6 +42,13 @@
     "deleteTitle": "Delete section",
     "deleteMessage": "Delete “{{name}}”? This action cannot be undone.",
     "delete": "Delete"
+  },
+  "mapFilters": {
+    "open": "Show search and filters",
+    "close": "Hide search and filters",
+    "searchPlaceholder": "Search…",
+    "goldPresence": "Filter by gold presence",
+    "showAll": "Show all"
   },
   "guide": {
     "showSummary": "Show summary",

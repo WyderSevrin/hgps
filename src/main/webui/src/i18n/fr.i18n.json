@@ -30,6 +30,7 @@
     "description": "Description",
     "descriptionPlaceholder": "Description",
     "goldPresence": "Présence d'or",
+    "goldPresenceUnset": "Non défini",
     "save": "Enregistrer",
     "reset": "Réinitialiser",
     "savedSections": "Sections enregistrées",
@@ -41,6 +42,13 @@
     "deleteTitle": "Supprimer la section",
     "deleteMessage": "Supprimer « {{name}} » ? Cette action est irréversible.",
     "delete": "Supprimer"
+  },
+  "mapFilters": {
+    "open": "Afficher la recherche et les filtres",
+    "close": "Masquer la recherche et les filtres",
+    "searchPlaceholder": "Rechercher…",
+    "goldPresence": "Filtrer par présence d'or",
+    "showAll": "Tout afficher"
   },
   "guide": {
     "showSummary": "Afficher le sommaire",

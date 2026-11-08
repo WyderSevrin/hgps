@@ -56,8 +56,16 @@
 
     /* ---- Map (functional state colors; read from JS via getComputedStyle) */
     --hgps-map-marker: #2563eb;
-    --hgps-map-poly: #9333ea;
-    --hgps-map-poly-active: var(--hgps-gold-bright);
+
+    /* ---- Gold presence palette (area color on the map) ---------------
+       0 = not determined yet, then a cold -> hot scale from traces (1)
+       up to a lot of gold (5). Read from JS via Area.goldPresenceColorVar(). */
+    --hgps-gold-level-0: #7d8a91;
+    --hgps-gold-level-1: #4a90d9;
+    --hgps-gold-level-2: #26a69a;
+    --hgps-gold-level-3: #7cb342;
+    --hgps-gold-level-4: #f2b705;
+    --hgps-gold-level-5: #e65100;
 
     /* Base document colors derived from the tokens above */
     color: var(--hgps-text);

@@ -2,7 +2,9 @@ import {css, html, LitElement} from 'lit';
 import '../components/map/leaflet-map.js';
 import '../components/drawer/drawerComponent.js';
 import '../components/dialog/confirmDialogComponent.js';
-import '../components/dropdown/dropdown-component.js';
+import '../components/slider/slider-component.js';
+import '../components/top-drawer/top-drawer-component.js';
+import {GoldPresenceFilter} from '../components/filter/gold-presence-filter.js';
 import '../components/collapsible/collapsible-component.js';
 import {Area} from "../models/area.js";
 import {Vertex} from "../models/vertex.js";
@@ -51,6 +53,31 @@ export class MapPage extends LitElement {
             flex-direction: row;
             justify-content: flex-end;
             gap: var(--hgps-size-1);
+        }
+
+        /* Top drawer (search + filters), floating over the top center of the map */
+
+        .top-drawer-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--hgps-size-4);
+        }
+
+        .search {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search custom-icon {
+            position: absolute;
+            left: var(--hgps-size-3);
+            color: var(--hgps-text-subtle);
+            pointer-events: none;
+        }
+
+        .search .text-input {
+            padding-left: calc(var(--hgps-size-3) * 2 + 1.25rem);
         }
 
         leaflet-map {
@@ -295,6 +322,11 @@ export class MapPage extends LitElement {
     static properties = {
         isEditMode: {type: Boolean, state: true},
         areaToDelete: {type: Object, state: true},
+        // Reactive so assigning a new area (e.g. while sliding the gold
+        // presence) re-renders the drawer and redraws the map immediately.
+        selectedArea: {type: Object, state: true},
+        // Gold presence levels whose areas are shown on the map (top drawer filter).
+        visibleGoldPresence: {type: Array, state: true},
     };
 
     constructor() {
@@ -302,11 +334,10 @@ export class MapPage extends LitElement {
         this.i18n = new I18nController(this);
         this.isEditMode = false;
         this.areaToDelete = null;
-        this.defaultAreaColor = "#008000";
-        this.defaultGoldPresence = "0";
-        // For now name and value are the same numbers (1, 2, 3).
-        this.goldPresenceOptions = [1, 2, 3].map(n => ({name: n, value: n}));
-        this.selectedArea = new Area(t('map.newSection'), "", [], this.defaultAreaColor, this.defaultGoldPresence, true);
+        // 0 = not determined yet; 1..5 = rated gold presence.
+        this.defaultGoldPresence = 0;
+        this.visibleGoldPresence = [...GoldPresenceFilter.ALL_LEVELS];
+        this.selectedArea = new Area(t('map.newSection'), "", [], this.defaultGoldPresence, true);
         this.mapData = LocalStorageService.getMapData() ?? new MapData();
     }
 
@@ -329,8 +360,25 @@ export class MapPage extends LitElement {
                         <custom-button .active="${this.isEditMode}" icon="brush"
                                        @click="${() => this.changeMode()}"></custom-button>
                     </div>
-                    <leaflet-map id="map" 
+                    <top-drawer openLabel="${t('mapFilters.open')}"
+                                closeLabel="${t('mapFilters.close')}">
+                        <div class="top-drawer-content">
+                            <!-- Search: UI only for now, not wired to anything yet -->
+                            <div class="search">
+                                <custom-icon label="search"></custom-icon>
+                                <input type="search" class="text-input"
+                                       placeholder="${t('mapFilters.searchPlaceholder')}"
+                                       aria-label="${t('mapFilters.searchPlaceholder')}">
+                            </div>
+                            <gold-presence-filter
+                                    .levels="${this.visibleGoldPresence}"
+                                    @filter-change="${e => this.visibleGoldPresence = e.detail.levels}">
+                            </gold-presence-filter>
+                        </div>
+                    </top-drawer>
+                    <leaflet-map id="map"
                                  .data="${this.mapData}"
+                                 .visibleGoldPresence="${this.visibleGoldPresence}"
                                  .editMode="${this.isEditMode}"
                                  .clickEvent="${this.mapAddVertex}"
                                  .updateSelectedArea="${this.mapMoveVertex}"
@@ -372,15 +420,10 @@ export class MapPage extends LitElement {
                             </div>
                             <div class="field">
                                 <label class="field-label" for="area-name">${t('map.name')}</label>
-                                <div class="row">
-                                    <input id="area-name" type="text" class="text-input"
-                                           placeholder="${t('map.namePlaceholder')}"
-                                           .value="${this.selectedArea.name}"
-                                           @input="${this._updateAreaName}">
-                                    <input type="color" id="favcolor" name="favcolor"
-                                           .value="${this.selectedArea.color}"
-                                           @input="${this._updateAreaColor}">
-                                </div>
+                                <input id="area-name" type="text" class="text-input"
+                                       placeholder="${t('map.namePlaceholder')}"
+                                       .value="${this.selectedArea.name}"
+                                       @input="${this._updateAreaName}">
 
 
                                 <label class="field-label" for="area-descriptor">${t('map.description')}</label>
@@ -391,18 +434,26 @@ export class MapPage extends LitElement {
                                           @input="${this._updateAreaDescription}">
                                     </textarea>
                             </div>
+                            <div class="field">
+                                <custom-slider
+                                        style="--slider-color: var(${this.selectedArea.colorVar})"
+                                        label="${t('map.goldPresence')}"
+                                        .min="${Area.GOLD_PRESENCE_MIN}"
+                                        .max="${Area.GOLD_PRESENCE_MAX}"
+                                        .step="${1}"
+                                        .value="${this.selectedArea.goldPresence}"
+                                        .format="${v => v === Area.GOLD_PRESENCE_MIN
+                                                ? t('map.goldPresenceUnset')
+                                                : `${v} / ${Area.GOLD_PRESENCE_MAX}`}"
+                                        @slider-change="${this._updateAreaGoldPresence}">
+                                </custom-slider>
+                            </div>
+                            
                             <div class="field row-list">
                                 ${this._renderCurrentAreaVertices()}
                             </div>
 
-                            <div class="field">
-                                <custom-dropdown
-                                        label="${t('map.goldPresence')}"
-                                        .options="${this.goldPresenceOptions}"
-                                        .value="${this.selectedArea.goldPresence}"
-                                        @dropdown-change="${this._updateAreaGoldPresence}">
-                                </custom-dropdown>
-                            </div>
+
 
                             <div class="drawer-actions">
                                 <custom-button label="${t('map.save')}" icon="save" .active="${true}"
@@ -461,7 +512,7 @@ export class MapPage extends LitElement {
         return this.mapData.areas.map(area => {
             return html`
                 <div class="row" @click="${() => this._editArea(area)}">
-                    <custom-icon label="hexagon"></custom-icon>
+                    <custom-icon label="hexagon" style="color: var(${area.colorVar})"></custom-icon>
                     <div class="row-main">
                         <span class="row-title">${area.name}</span>
                         <span class="row-sub">${t('map.points', {count: area.vertices.length})}</span>
@@ -508,12 +559,9 @@ export class MapPage extends LitElement {
         this.selectedArea.description = e.target.value;
     }
 
-    _updateAreaColor = e => {
-        this.selectedArea.color = e.target.value;
-    }
-
+    // A new instance is assigned so the map redraws and previews the color live.
     _updateAreaGoldPresence = e => {
-        this.selectedArea.goldPresence = e.detail.value;
+        this.selectedArea = this.selectedArea.withGoldPresence(e.detail.value);
     }
 
     _editArea = area => {
@@ -544,7 +592,7 @@ export class MapPage extends LitElement {
         // editor so it also disappears from the map right away.
         if (this.selectedArea?.uuid === uuid) {
             this.selectedArea.selected = false;
-            this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultAreaColor, this.defaultGoldPresence, true);
+            this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultGoldPresence, true);
         }
 
         this.reLoad();
@@ -561,28 +609,25 @@ export class MapPage extends LitElement {
             this.mapData.areas.push(this.selectedArea);
         }
 
-        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultAreaColor, this.defaultGoldPresence,true);
+        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultGoldPresence,true);
 
         LocalStorageService.saveMapData(this.mapData);
         this.reLoad();
     }
 
     _resetCurrentArea = () => {
-        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultAreaColor, this.defaultGoldPresence,true);
+        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultGoldPresence,true);
         this.reLoad();
     }
 
     _closeDrawer = () => {
         this.selectedArea.selected = false;
-        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultAreaColor, this.defaultGoldPresence,true);
+        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultGoldPresence,true);
         this.isEditMode = false
     }
 
     //------------------------------------------------------------------------------------------------------------------
     // TODO's for this page
-
-
-    //TODO : an area should have a name and a custom color (maybe a color picker)
 
 
     //TODO : clicking on the edge of an area should create a new point

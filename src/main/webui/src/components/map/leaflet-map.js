@@ -32,7 +32,9 @@ export class LeafletMap extends LitElement {
         clickEvent: {type: Function},
         updateSelectedArea: {type: Function},
         selectArea: {type: Function},
-        selectedArea: {type: Object}
+        selectedArea: {type: Object},
+        // Gold presence levels to show; null/undefined = show every area.
+        visibleGoldPresence: {type: Array},
     };
 
 
@@ -80,15 +82,16 @@ export class LeafletMap extends LitElement {
         // changes (e.g. an area was added or deleted).
         if (changedProperties.has('selectedArea')
             || changedProperties.has('editMode')
-            || changedProperties.has('data')) {
+            || changedProperties.has('data')
+            || changedProperties.has('visibleGoldPresence')) {
             this.drawVertices();
         }
     }
 
     // Resolve a theme token (defined in style.css :root) to a concrete color.
     // Leaflet needs a plain color string, so var(...) can't be used directly.
-    _themeColor(selectedColor, fallback) {
-        return selectedColor || fallback;
+    _themeColor(token, fallback) {
+        return getComputedStyle(this).getPropertyValue(token).trim() || fallback;
     }
 
     // Clear and redraw every vertex of the selected area.
@@ -97,13 +100,18 @@ export class LeafletMap extends LitElement {
 
         this.vertexLayer.clearLayers();
 
-        //Draw the selected area
+        //Draw the selected area (always, even if the filter hides its level,
+        //so the area being edited never disappears)
         this.drawArea(this.selectedArea);
+
+        const visible = this.visibleGoldPresence ? new Set(this.visibleGoldPresence) : null;
 
         //Draw the other areas (compare by uuid: editing the selected
         //area replaces it with a new instance, so reference checks fail).
         this.data.areas.forEach(area => {
-            if (area?.uuid !== this.selectedArea?.uuid && area?.vertices?.length > 0) {
+            if (area?.uuid !== this.selectedArea?.uuid
+                && area?.vertices?.length > 0
+                && (!visible || visible.has(area.goldPresence))) {
                 this.drawArea(area);
             }
         });
@@ -116,10 +124,15 @@ export class LeafletMap extends LitElement {
 
         let polygon = null;
         if (vertices.length) {
-            const color = area?.selected === true
-                ? this._themeColor(getComputedStyle(this).getPropertyValue('--hgps-map-poly-active').trim(), '#f2c94c')
-                : this._themeColor(area.color, '#9333ea');
-            polygon = area.getPolygon({color});
+            // Color comes from the gold presence; the selected area keeps its
+            // color (so the slider previews it live) and gets a bolder outline.
+            const color = this._themeColor(area.colorVar, '#7d8a91');
+            const selected = area?.selected === true;
+            polygon = area.getPolygon({
+                color,
+                weight: selected ? 4 : 2,
+                fillOpacity: selected ? 0.4 : 0.25,
+            });
             polygon.addTo(this.vertexLayer);
 
 
