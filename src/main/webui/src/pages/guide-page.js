@@ -1,5 +1,6 @@
 // guide-page.js
 import { LitElement, html, css } from 'lit';
+import { I18nController, t } from '../services/i18n/i18n.js';
 
 export class GuidePage extends LitElement {
     static styles = css`
@@ -133,54 +134,45 @@ export class GuidePage extends LitElement {
 
     constructor() {
         super();
+        this.i18n = new I18nController(this);
         this.summaryCollapsed = false;
     }
 
-    static sections = [
-        {
-            id: 'where-to-find-the-gold',
-            title: 'Where to find the Gold',
-            content: html`
-                <p>
-                    Gold is most often found in rivers and streams where the current slows down,
-                    allowing the heavy metal to settle.
-                </p>
-                <ul>
-                    <li>Inside bends of a river, where the flow is weakest.</li>
-                    <li>Behind large boulders that break the current.</li>
-                    <li>In cracks and crevices of the bedrock.</li>
-                </ul>
-                <img src="/quinoa/river.png" alt="Gold Panning" />
-            `,
-        },
-        {
-            id: 'how-to-pan-for-gold',
-            title: 'How to Pan for Gold',
-            content: html`
-                <p>
-                    Fill your pan with gravel, submerge it, and swirl gently so lighter material
-                    washes away while the gold sinks to the bottom.
-                </p>
-                <ol>
-                    <li>Scoop gravel into the pan and remove the largest rocks.</li>
-                    <li>Submerge the pan and shake it side to side to settle the gold.</li>
-                    <li>Tilt and swirl to wash off the lighter sediment.</li>
-                    <li>Repeat until only the heavy black sand and gold remain.</li>
-                </ol>
-                <img src="/quinoa/guide.png" alt="Gold Panning" />
-            `,
-        },
-        {
-            id: 'from-where-comes-the-gold',
-            title: 'From where comes the Gold',
-            content: html`
-                <p>
-                    Gold originates deep within the earth and is carried to the surface by
-                    geological activity, then eroded into rivers over time.
-                </p>
-            `,
-        },
-    ];
+    // Built on every render so the texts follow the current language.
+    get sections() {
+        const list = key => t(key, { returnObjects: true });
+        return [
+            {
+                id: 'where-to-find-the-gold',
+                title: t('guide.whereToFind.title'),
+                content: html`
+                    <p>${t('guide.whereToFind.text')}</p>
+                    <ul>
+                        ${list('guide.whereToFind.items').map(item => html`<li>${item}</li>`)}
+                    </ul>
+                    <img src="/quinoa/river.png" alt="${t('guide.imageAlt')}" />
+                `,
+            },
+            {
+                id: 'how-to-pan-for-gold',
+                title: t('guide.howToPan.title'),
+                content: html`
+                    <p>${t('guide.howToPan.text')}</p>
+                    <ol>
+                        ${list('guide.howToPan.steps').map(step => html`<li>${step}</li>`)}
+                    </ol>
+                    <img src="/quinoa/guide.png" alt="${t('guide.imageAlt')}" />
+                `,
+            },
+            {
+                id: 'from-where-comes-the-gold',
+                title: t('guide.origin.title'),
+                content: html`
+                    <p>${t('guide.origin.text')}</p>
+                `,
+            },
+        ];
+    }
 
     scrollToSection(id) {
         const target = this.renderRoot.getElementById(id);
@@ -192,20 +184,21 @@ export class GuidePage extends LitElement {
     }
 
     render() {
+        const sections = this.sections;
         return html`
         <div class="page">
             <div class="page-content">
                 <div class="summary ${this.summaryCollapsed ? 'collapsed' : ''}">
                     <button
                         class="summary-toggle"
-                        aria-label="${this.summaryCollapsed ? 'Show summary' : 'Hide summary'}"
+                        aria-label="${this.summaryCollapsed ? t('guide.showSummary') : t('guide.hideSummary')}"
                         aria-expanded="${!this.summaryCollapsed}"
                         @click=${() => this.toggleSummary()}
                     >
                         <custom-icon label="menu"></custom-icon>
                     </button>
                     <div class="summary-items">
-                        ${GuidePage.sections.map(section => html`
+                        ${sections.map(section => html`
                             <button
                                 class="summary-item"
                                 @click=${() => this.scrollToSection(section.id)}
@@ -214,14 +207,10 @@ export class GuidePage extends LitElement {
                     </div>
                 </div>
                 <div class="guide-content">
-                    <h1>Welcome to the Guide Page</h1>
-                    <p>
-                        In this guide you will learn about the where and how to find the gold.
-                        You will learn how the Gold finds it's ways inside a river, what types of indicators are important.
-                    </p>
-                    
-                    
-                    ${GuidePage.sections.map(section => html`
+                    <h1>${t('guide.welcome')}</h1>
+                    <p>${t('guide.intro')}</p>
+
+                    ${sections.map(section => html`
                         <div id=${section.id} class="guide-section">
                             <h1>${section.title}</h1>
                             ${section.content}

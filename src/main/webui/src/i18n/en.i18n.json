@@ -1,0 +1,75 @@
+{
+  "header": {
+    "title": "Hobby Gold Prospecting",
+    "selectLanguage": "Select language"
+  },
+  "sidebar": {
+    "toggle": "Toggle menu",
+    "home": "Home",
+    "map": "Map",
+    "guide": "Guide"
+  },
+  "common": {
+    "close": "Close",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "areYouSure": "Are you sure?"
+  },
+  "home": {
+    "welcome": "Welcome to the Home Page"
+  },
+  "notFound": {
+    "title": "404 - Page Not Found"
+  },
+  "map": {
+    "newSection": "New section",
+    "editor": "Section editor",
+    "currentSection": "Current section",
+    "name": "Name",
+    "namePlaceholder": "Section name",
+    "description": "Description",
+    "descriptionPlaceholder": "Description",
+    "goldPresence": "Gold presence",
+    "save": "Save",
+    "reset": "Reset",
+    "savedSections": "Saved sections",
+    "emptyPoints": "Click on the map to add points.",
+    "emptySections": "No saved sections yet.",
+    "point": "Point {{number}}",
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
+    "deleteTitle": "Delete section",
+    "deleteMessage": "Delete “{{name}}”? This action cannot be undone.",
+    "delete": "Delete"
+  },
+  "guide": {
+    "showSummary": "Show summary",
+    "hideSummary": "Hide summary",
+    "welcome": "Welcome to the Guide Page",
+    "intro": "In this guide you will learn where and how to find gold. You will learn how gold finds its way into a river and which indicators are important.",
+    "imageAlt": "Gold panning",
+    "whereToFind": {
+      "title": "Where to find the gold",
+      "text": "Gold is most often found in rivers and streams where the current slows down, allowing the heavy metal to settle.",
+      "items": [
+        "Inside bends of a river, where the flow is weakest.",
+        "Behind large boulders that break the current.",
+        "In cracks and crevices of the bedrock."
+      ]
+    },
+    "howToPan": {
+      "title": "How to pan for gold",
+      "text": "Fill your pan with gravel, submerge it, and swirl gently so lighter material washes away while the gold sinks to the bottom.",
+      "steps": [
+        "Scoop gravel into the pan and remove the largest rocks.",
+        "Submerge the pan and shake it side to side to settle the gold.",
+        "Tilt and swirl to wash off the lighter sediment.",
+        "Repeat until only the heavy black sand and gold remain."
+      ]
+    },
+    "origin": {
+      "title": "Where the gold comes from",
+      "text": "Gold originates deep within the earth and is carried to the surface by geological activity, then eroded into rivers over time."
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "header": {
+    "title": "Hobby Gold Prospecting",
+    "selectLanguage": "Seleziona la lingua"
+  },
+  "sidebar": {
+    "toggle": "Mostra/nascondi menu",
+    "home": "Home",
+    "map": "Mappa",
+    "guide": "Guida"
+  },
+  "common": {
+    "close": "Chiudi",
+    "confirm": "Conferma",
+    "cancel": "Annulla",
+    "areYouSure": "Sei sicuro?"
+  },
+  "home": {
+    "welcome": "Benvenuto nella pagina iniziale"
+  },
+  "notFound": {
+    "title": "404 - Pagina non trovata"
+  },
+  "map": {
+    "newSection": "Nuova sezione",
+    "editor": "Editor della sezione",
+    "currentSection": "Sezione corrente",
+    "name": "Nome",
+    "namePlaceholder": "Nome della sezione",
+    "description": "Descrizione",
+    "descriptionPlaceholder": "Descrizione",
+    "goldPresence": "Presenza d'oro",
+    "save": "Salva",
+    "reset": "Reimposta",
+    "savedSections": "Sezioni salvate",
+    "emptyPoints": "Clicca sulla mappa per aggiungere punti.",
+    "emptySections": "Nessuna sezione salvata.",
+    "point": "Punto {{number}}",
+    "points_one": "{{count}} punto",
+    "points_other": "{{count}} punti",
+    "deleteTitle": "Elimina sezione",
+    "deleteMessage": "Eliminare «{{name}}»? Questa azione non può essere annullata.",
+    "delete": "Elimina"
+  },
+  "guide": {
+    "showSummary": "Mostra il sommario",
+    "hideSummary": "Nascondi il sommario",
+    "welcome": "Benvenuto nella guida",
+    "intro": "In questa guida imparerai dove e come trovare l'oro. Scoprirai come l'oro arriva in un fiume e quali indizi sono importanti.",
+    "imageAlt": "Ricerca dell'oro con la batea",
+    "whereToFind": {
+      "title": "Dove trovare l'oro",
+      "text": "L'oro si trova soprattutto nei fiumi e nei torrenti, dove la corrente rallenta e permette al metallo pesante di depositarsi.",
+      "items": [
+        "All'interno delle anse del fiume, dove la corrente è più debole.",
+        "Dietro i grandi massi che spezzano la corrente.",
+        "Nelle crepe e nelle fessure della roccia madre."
+      ]
+    },
+    "howToPan": {
+      "title": "Come cercare l'oro con la batea",
+      "text": "Riempi la batea di ghiaia, immergila e falla ruotare delicatamente: il materiale leggero viene portato via mentre l'oro scende sul fondo.",
+      "steps": [
+        "Versa la ghiaia nella batea e togli i sassi più grandi.",
+        "Immergi la batea e scuotila da un lato all'altro per far depositare l'oro.",
+        "Inclina e ruota per eliminare il sedimento leggero.",
+        "Ripeti finché restano solo la sabbia nera pesante e l'oro."
+      ]
+    },
+    "origin": {
+      "title": "Da dove viene l'oro",
+      "text": "L'oro ha origine nelle profondità della Terra, viene portato in superficie dall'attività geologica e, nel tempo, l'erosione lo trasporta nei fiumi."
+    }
+  }
+}

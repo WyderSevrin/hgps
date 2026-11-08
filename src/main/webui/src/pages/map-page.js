@@ -7,6 +7,7 @@ import {Section} from "../models/section.js";
 import {Coordinates} from "../models/coordinates.js";
 import {LocalStorageService} from "../services/localStorage/localStorageService.js";
 import {MapData} from "../models/mapData.js";
+import {I18nController, t} from "../services/i18n/i18n.js";
 
 
 export class MapPage extends LitElement {
@@ -297,13 +298,14 @@ export class MapPage extends LitElement {
 
     constructor() {
         super();
+        this.i18n = new I18nController(this);
         this.isEditMode = false;
         this.sectionToDelete = null;
         this.defaultSectionColor = "#008000";
         this.defaultGoldPresence = "0";
         // For now name and value are the same numbers (1, 2, 3).
         this.goldPresenceOptions = [1, 2, 3].map(n => ({name: n, value: n}));
-        this.selectedSection = new Section("new Section", "", [], this.defaultSectionColor, this.defaultGoldPresence, true);
+        this.selectedSection = new Section(t('map.newSection'), "", [], this.defaultSectionColor, this.defaultGoldPresence, true);
         this.mapData = LocalStorageService.getMapData() ?? new MapData();
     }
 
@@ -337,12 +339,12 @@ export class MapPage extends LitElement {
                 ${this._renderDrawer()}
                 <confirm-dialog
                         .open="${this.sectionToDelete !== null}"
-                        title="Delete section"
+                        title="${t('map.deleteTitle')}"
                         message="${this.sectionToDelete
-                                ? `Delete “${this.sectionToDelete.name}”? This action cannot be undone.`
+                                ? t('map.deleteMessage', {name: this.sectionToDelete.name})
                                 : ''}"
-                        confirmLabel="Delete"
-                        cancelLabel="Cancel"
+                        confirmLabel="${t('map.delete')}"
+                        cancelLabel="${t('common.cancel')}"
                         @confirm="${() => this._confirmRemoveSection()}"
                         @cancel="${() => this._cancelRemoveSection()}">
                 </confirm-dialog>
@@ -359,19 +361,19 @@ export class MapPage extends LitElement {
                 <div class="drawer-content" slot="content">
                     <h3 class="drawer-title">
                         <custom-icon label="edit_location_alt"></custom-icon>
-                        Section editor
+                        ${t('map.editor')}
                     </h3>
                     <div class="drawer-content-body">
                         <div class="card">
                             <div class="card-header">
-                                <span>Current section</span>
+                                <span>${t('map.currentSection')}</span>
                                 <span class="badge">${this.selectedSection.coordinates.length}</span>
                             </div>
                             <div class="field">
-                                <label class="field-label" for="section-name">Name</label>
+                                <label class="field-label" for="section-name">${t('map.name')}</label>
                                 <div class="row">
                                     <input id="section-name" type="text" class="text-input"
-                                           placeholder="Section name"
+                                           placeholder="${t('map.namePlaceholder')}"
                                            .value="${this.selectedSection.name}"
                                            @input="${this._updateSectionName}">
                                     <input type="color" id="favcolor" name="favcolor"
@@ -380,10 +382,10 @@ export class MapPage extends LitElement {
                                 </div>
 
 
-                                <label class="field-label" for="section-name">Description</label>
+                                <label class="field-label" for="section-descriptor">${t('map.description')}</label>
                                 <textarea id="section-descriptor" class="text-input"
                                           rows="5" cols="15"
-                                          placeholder="Description"
+                                          placeholder="${t('map.descriptionPlaceholder')}"
                                           .value="${this.selectedSection.description}"
                                           @input="${this._updateSectionDescription}">
                                     </textarea>
@@ -394,7 +396,7 @@ export class MapPage extends LitElement {
 
                             <div class="field">
                                 <custom-dropdown
-                                        label="Gold presence"
+                                        label="${t('map.goldPresence')}"
                                         .options="${this.goldPresenceOptions}"
                                         .value="${this.selectedSection.goldPresence}"
                                         @dropdown-change="${this._updateSectionGoldPresence}">
@@ -402,16 +404,16 @@ export class MapPage extends LitElement {
                             </div>
 
                             <div class="drawer-actions">
-                                <custom-button label="Save" icon="save" .active="${true}"
+                                <custom-button label="${t('map.save')}" icon="save" .active="${true}"
                                                @click="${() => this._createSection()}"></custom-button>
-                                <custom-button label="Reset" icon="restart_alt"
+                                <custom-button label="${t('map.reset')}" icon="restart_alt"
                                                @click="${() => this._resetCurrentSection()}"></custom-button>
                             </div>
                         </div>
 
                         <div class="card">
                             <div class="card-header">
-                                <span>Saved sections</span>
+                                <span>${t('map.savedSections')}</span>
                                 <span class="badge">${this.mapData.sections.length}</span>
                             </div>
                             <div class="row-list">
@@ -429,7 +431,7 @@ export class MapPage extends LitElement {
             return html`
                 <div class="empty-state">
                     <custom-icon label="add_location_alt"></custom-icon>
-                    <span>Click on the map to add points.</span>
+                    <span>${t('map.emptyPoints')}</span>
                 </div>`;
         }
 
@@ -438,7 +440,7 @@ export class MapPage extends LitElement {
                 <div class="row point-row">
                     <span class="row-index">${coordinate.index + 1}</span>
                     <div class="row-main">
-                        <span class="row-title">Point ${coordinate.index + 1}</span>
+                        <span class="row-title">${t('map.point', {number: coordinate.index + 1})}</span>
                         <span class="row-sub">${coordinate.lat.toFixed(5)}, ${coordinate.lng.toFixed(5)}</span>
                     </div>
                     <div class="row-actions">
@@ -454,7 +456,7 @@ export class MapPage extends LitElement {
             return html`
                 <div class="empty-state">
                     <custom-icon label="layers_clear"></custom-icon>
-                    <span>No saved sections yet.</span>
+                    <span>${t('map.emptySections')}</span>
                 </div>`;
         }
 
@@ -464,7 +466,7 @@ export class MapPage extends LitElement {
                     <custom-icon label="hexagon"></custom-icon>
                     <div class="row-main">
                         <span class="row-title">${section.name}</span>
-                        <span class="row-sub">${section.coordinates.length} points</span>
+                        <span class="row-sub">${t('map.points', {count: section.coordinates.length})}</span>
                     </div>
                     <div class="row-actions">
                         <custom-button class="icon-btn" icon="edit"
@@ -544,7 +546,7 @@ export class MapPage extends LitElement {
         // editor so it also disappears from the map right away.
         if (this.selectedSection?.uuid === uuid) {
             this.selectedSection.selected = false;
-            this.selectedSection = new Section("new Section", "",[], this.defaultSectionColor, this.defaultGoldPresence, true);
+            this.selectedSection = new Section(t('map.newSection'), "",[], this.defaultSectionColor, this.defaultGoldPresence, true);
         }
 
         this.reLoad();
@@ -561,20 +563,20 @@ export class MapPage extends LitElement {
             this.mapData.sections.push(this.selectedSection);
         }
 
-        this.selectedSection = new Section("new Section", "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
+        this.selectedSection = new Section(t('map.newSection'), "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
 
         LocalStorageService.saveMapData(this.mapData);
         this.reLoad();
     }
 
     _resetCurrentSection = () => {
-        this.selectedSection = new Section("new Section", "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
+        this.selectedSection = new Section(t('map.newSection'), "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
         this.reLoad();
     }
 
     _closeDrawer = () => {
         this.selectedSection.selected = false;
-        this.selectedSection = new Section("new Section", "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
+        this.selectedSection = new Section(t('map.newSection'), "",[], this.defaultSectionColor, this.defaultGoldPresence,true);
         this.isEditMode = false
     }
 

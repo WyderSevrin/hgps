@@ -1,0 +1,75 @@
+{
+  "header": {
+    "title": "Hobby Gold Prospecting",
+    "selectLanguage": "Choisir la langue"
+  },
+  "sidebar": {
+    "toggle": "Afficher/masquer le menu",
+    "home": "Accueil",
+    "map": "Carte",
+    "guide": "Guide"
+  },
+  "common": {
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "areYouSure": "Êtes-vous sûr ?"
+  },
+  "home": {
+    "welcome": "Bienvenue sur la page d'accueil"
+  },
+  "notFound": {
+    "title": "404 - Page introuvable"
+  },
+  "map": {
+    "newSection": "Nouvelle section",
+    "editor": "Éditeur de section",
+    "currentSection": "Section actuelle",
+    "name": "Nom",
+    "namePlaceholder": "Nom de la section",
+    "description": "Description",
+    "descriptionPlaceholder": "Description",
+    "goldPresence": "Présence d'or",
+    "save": "Enregistrer",
+    "reset": "Réinitialiser",
+    "savedSections": "Sections enregistrées",
+    "emptyPoints": "Cliquez sur la carte pour ajouter des points.",
+    "emptySections": "Aucune section enregistrée pour l'instant.",
+    "point": "Point {{number}}",
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
+    "deleteTitle": "Supprimer la section",
+    "deleteMessage": "Supprimer « {{name}} » ? Cette action est irréversible.",
+    "delete": "Supprimer"
+  },
+  "guide": {
+    "showSummary": "Afficher le sommaire",
+    "hideSummary": "Masquer le sommaire",
+    "welcome": "Bienvenue sur la page du guide",
+    "intro": "Dans ce guide, vous apprendrez où et comment trouver de l'or. Vous découvrirez comment l'or arrive dans une rivière et quels indices sont importants.",
+    "imageAlt": "Orpaillage à la batée",
+    "whereToFind": {
+      "title": "Où trouver de l'or",
+      "text": "L'or se trouve le plus souvent dans les rivières et les ruisseaux, là où le courant ralentit et permet au métal lourd de se déposer.",
+      "items": [
+        "À l'intérieur des méandres, là où le courant est le plus faible.",
+        "Derrière les gros rochers qui brisent le courant.",
+        "Dans les fissures et les crevasses du socle rocheux."
+      ]
+    },
+    "howToPan": {
+      "title": "Comment orpailler à la batée",
+      "text": "Remplissez votre batée de gravier, immergez-la et faites-la tourner doucement : les matériaux légers sont emportés tandis que l'or coule au fond.",
+      "steps": [
+        "Versez du gravier dans la batée et retirez les plus grosses pierres.",
+        "Immergez la batée et secouez-la de gauche à droite pour faire descendre l'or.",
+        "Inclinez et faites tourner pour évacuer les sédiments légers.",
+        "Répétez jusqu'à ce qu'il ne reste que le sable noir lourd et l'or."
+      ]
+    },
+    "origin": {
+      "title": "D'où vient l'or",
+      "text": "L'or provient des profondeurs de la Terre. Il est remonté à la surface par l'activité géologique, puis, avec le temps, l'érosion l'entraîne dans les rivières."
+    }
+  }
+}

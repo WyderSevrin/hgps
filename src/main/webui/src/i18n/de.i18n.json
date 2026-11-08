@@ -1,0 +1,75 @@
+{
+  "header": {
+    "title": "Hobby Gold Prospecting",
+    "selectLanguage": "Sprache wählen"
+  },
+  "sidebar": {
+    "toggle": "Menü ein-/ausblenden",
+    "home": "Startseite",
+    "map": "Karte",
+    "guide": "Anleitung"
+  },
+  "common": {
+    "close": "Schliessen",
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen",
+    "areYouSure": "Sind Sie sicher?"
+  },
+  "home": {
+    "welcome": "Willkommen auf der Startseite"
+  },
+  "notFound": {
+    "title": "404 - Seite nicht gefunden"
+  },
+  "map": {
+    "newSection": "Neuer Abschnitt",
+    "editor": "Abschnitt-Editor",
+    "currentSection": "Aktueller Abschnitt",
+    "name": "Name",
+    "namePlaceholder": "Name des Abschnitts",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Beschreibung",
+    "goldPresence": "Goldvorkommen",
+    "save": "Speichern",
+    "reset": "Zurücksetzen",
+    "savedSections": "Gespeicherte Abschnitte",
+    "emptyPoints": "Klicken Sie auf die Karte, um Punkte hinzuzufügen.",
+    "emptySections": "Noch keine gespeicherten Abschnitte.",
+    "point": "Punkt {{number}}",
+    "points_one": "{{count}} Punkt",
+    "points_other": "{{count}} Punkte",
+    "deleteTitle": "Abschnitt löschen",
+    "deleteMessage": "«{{name}}» löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "delete": "Löschen"
+  },
+  "guide": {
+    "showSummary": "Inhaltsverzeichnis anzeigen",
+    "hideSummary": "Inhaltsverzeichnis ausblenden",
+    "welcome": "Willkommen bei der Anleitung",
+    "intro": "In dieser Anleitung erfahren Sie, wo und wie man Gold findet. Sie lernen, wie das Gold in einen Fluss gelangt und welche Hinweise wichtig sind.",
+    "imageAlt": "Goldwaschen",
+    "whereToFind": {
+      "title": "Wo man Gold findet",
+      "text": "Gold findet man meist in Flüssen und Bächen, wo die Strömung nachlässt und sich das schwere Metall absetzen kann.",
+      "items": [
+        "An den Innenseiten von Flussbiegungen, wo die Strömung am schwächsten ist.",
+        "Hinter grossen Felsblöcken, die die Strömung brechen.",
+        "In Rissen und Spalten des Grundgesteins."
+      ]
+    },
+    "howToPan": {
+      "title": "Wie man Gold wäscht",
+      "text": "Füllen Sie Ihre Pfanne mit Kies, tauchen Sie sie unter und schwenken Sie sie sanft, damit leichtes Material weggespült wird, während das Gold auf den Boden sinkt.",
+      "steps": [
+        "Kies in die Pfanne schöpfen und die grössten Steine entfernen.",
+        "Die Pfanne untertauchen und seitlich schütteln, damit sich das Gold absetzt.",
+        "Kippen und schwenken, um das leichte Sediment auszuwaschen.",
+        "Wiederholen, bis nur noch der schwere schwarze Sand und das Gold übrig sind."
+      ]
+    },
+    "origin": {
+      "title": "Woher das Gold kommt",
+      "text": "Gold entsteht tief im Erdinneren, wird durch geologische Aktivität an die Oberfläche gebracht und im Laufe der Zeit durch Erosion in die Flüsse getragen."
+    }
+  }
+}

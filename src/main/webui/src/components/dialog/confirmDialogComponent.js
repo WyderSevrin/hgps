@@ -1,5 +1,6 @@
 import {LitElement, html, css} from 'lit';
 import '../icon/icon.js';
+import {I18nController, t} from '../../services/i18n/i18n.js';
 
 export class ConfirmDialogComponent extends LitElement {
     static styles = css`
@@ -114,11 +115,13 @@ export class ConfirmDialogComponent extends LitElement {
 
     constructor() {
         super();
+        this.i18n = new I18nController(this);
         this.open = false;
-        this.title = 'Confirm';
-        this.message = 'Are you sure?';
-        this.confirmLabel = 'Confirm';
-        this.cancelLabel = 'Cancel';
+        // Left empty so the translated defaults are used at render time.
+        this.title = '';
+        this.message = '';
+        this.confirmLabel = '';
+        this.cancelLabel = '';
         this._onKeyDown = this._onKeyDown.bind(this);
     }
 
@@ -152,16 +155,16 @@ export class ConfirmDialogComponent extends LitElement {
             <div class="dialog" role="dialog" aria-modal="true">
                 <div class="dialog-header">
                     <custom-icon label="warning"></custom-icon>
-                    <span>${this.title}</span>
+                    <span>${this.title || t('common.confirm')}</span>
                 </div>
-                <div class="dialog-body">${this.message}</div>
+                <div class="dialog-body">${this.message || t('common.areYouSure')}</div>
                 <div class="dialog-actions">
                     <button class="btn btn-cancel" @click="${() => this._cancel()}">
-                        ${this.cancelLabel}
+                        ${this.cancelLabel || t('common.cancel')}
                     </button>
                     <button class="btn btn-danger" @click="${() => this._confirm()}">
                         <custom-icon label="delete"></custom-icon>
-                        ${this.confirmLabel}
+                        ${this.confirmLabel || t('common.confirm')}
                     </button>
                 </div>
             </div>

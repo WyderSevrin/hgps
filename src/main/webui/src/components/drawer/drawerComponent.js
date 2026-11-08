@@ -1,4 +1,5 @@
 import {LitElement, html, css} from 'lit';
+import {I18nController, t} from '../../services/i18n/i18n.js';
 
 export class DrawerComponent extends LitElement {
     static styles = css`
@@ -33,6 +34,7 @@ export class DrawerComponent extends LitElement {
 
     constructor() {
         super();
+        this.i18n = new I18nController(this);
         this.open = false; // Fermé par défaut
     }
 
@@ -48,7 +50,7 @@ export class DrawerComponent extends LitElement {
 
                 <div class="drawer-header">
                     <custom-button
-                            label="Close"
+                            label="${t('common.close')}"
                             icon="close"
                             @click="${() => this._closeDrawer()}"
                     >

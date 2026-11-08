@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { I18nController, t } from '../../services/i18n/i18n.js';
 
 export class SideBarComponent extends LitElement {
     static styles = css`
@@ -38,6 +39,7 @@ export class SideBarComponent extends LitElement {
 
     constructor() {
         super();
+        this.i18n = new I18nController(this);
         this.currentHash = window.location.hash.replace('#', '') || 'home'; // Page par défaut ou hash actuel
         this.collapsed = false;
     }
@@ -63,6 +65,7 @@ export class SideBarComponent extends LitElement {
                 <div class="aside-container">
                     <custom-button
                             class="toggle"
+                            label="${t('sidebar.toggle')}"
                             icon="${this.collapsed ? 'menu' : 'menu_open'}"
                             .iconOnly="${true}"
                             @click="${() => this.toggleCollapsed()}"
@@ -70,7 +73,7 @@ export class SideBarComponent extends LitElement {
                     </custom-button>
                     <custom-button
                             .active="${this.currentHash === 'home'}"
-                            label="Home"
+                            label="${t('sidebar.home')}"
                             icon="home"
                             .iconOnly="${this.collapsed}"
                             @click="${() => this.navigateTo('home')}"
@@ -78,7 +81,7 @@ export class SideBarComponent extends LitElement {
                     </custom-button>
                     <custom-button
                             .active="${(this.currentHash === 'map')}"
-                            label="Map"
+                            label="${t('sidebar.map')}"
                             icon="map"
                             .iconOnly="${this.collapsed}"
                             @click="${() => this.navigateTo('map')}"
@@ -86,7 +89,7 @@ export class SideBarComponent extends LitElement {
                     </custom-button>
                     <custom-button
                             .active="${(this.currentHash === 'guide')}"
-                            label="Guide"
+                            label="${t('sidebar.guide')}"
                             icon="book"
                             .iconOnly="${this.collapsed}"
                             @click="${() => this.navigateTo('guide')}"

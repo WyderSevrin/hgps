@@ -1,4 +1,6 @@
 import { LitElement, html, css } from 'lit';
+import { live } from 'lit/directives/live.js';
+import { I18nController, SUPPORTED_LANGUAGES, getLanguage, setLanguage, t } from '../../services/i18n/i18n.js';
 
 export class HeaderComponent extends LitElement {
     static styles = css`
@@ -93,13 +95,13 @@ export class HeaderComponent extends LitElement {
 
     constructor() {
         super();
-        // Design-only: default language. No i18n logic wired up yet.
-        this.language = 'en';
+        this.i18n = new I18nController(this);
+        this.language = getLanguage();
     }
 
     onLanguageChange(event) {
-        // Placeholder — captures the selection for future i18n wiring.
         this.language = event.target.value;
+        setLanguage(this.language);
     }
 
     render() {
@@ -125,20 +127,18 @@ export class HeaderComponent extends LitElement {
                         <path d="M12 6 12 20" />
                     </svg>
 
-                    <h1 class="title">Hobby Gold Prospecting</h1>
+                    <h1 class="title">${t('header.title')}</h1>
                 </div>
 
-                <!-- Far-right language selector (design only) -->
+                <!-- Far-right language selector -->
                 <div class="lang">
                     <select
-                        aria-label="Select language"
-                        .value="${this.language}"
+                        aria-label="${t('header.selectLanguage')}"
+                        .value="${live(this.language)}"
                         @change="${this.onLanguageChange}"
                     >
-                        <option value="en">EN</option>
-                        <option value="fr">FR</option>
-                        <option value="ger">GER</option>
-                        <option value="it">IT</option>
+                        ${SUPPORTED_LANGUAGES.map(lang => html`
+                            <option value="${lang.code}" ?selected="${lang.code === this.language}">${lang.label}</option>`)}
                     </select>
                 </div>
             </header>
