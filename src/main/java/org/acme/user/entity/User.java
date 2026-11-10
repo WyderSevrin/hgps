@@ -33,6 +33,10 @@ public class User {
     @Setter(AccessLevel.NONE)
     private UUID id;
 
+    /** Id of the matching Keycloak account (the token's "sub" claim), set on the first login. */
+    @Column(name = "keycloak_id", unique = true)
+    private String keycloakId;
+
     /** The "@handle", always stored in lower case. */
     @Column(nullable = false, length = 30)
     private String username;

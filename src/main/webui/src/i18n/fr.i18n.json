@@ -130,5 +130,14 @@
         "description": "Thème, couleurs et préférences d'affichage."
       }
     }
+  },
+  "auth": {
+    "subtitle": "Cartographiez les spots aurifères en Suisse, suivez vos trouvailles et partagez-les avec d’autres orpailleurs.",
+    "login": "Se connecter",
+    "register": "Créer un compte",
+    "logout": "Se déconnecter",
+    "logoutAs": "Se déconnecter ({{username}})",
+    "demoHint": "Développement : connectez-vous avec l’utilisateur par défaut",
+    "unavailable": "Le service de connexion est momentanément indisponible. Veuillez réessayer dans un instant."
   }
 }

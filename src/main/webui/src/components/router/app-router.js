@@ -1,4 +1,5 @@
 import {LitElement, html, css} from 'lit';
+import {auth, AuthController} from '../../services/auth/authService.js';
 
 export class AppRouter extends LitElement {
     static styles = css`
@@ -59,6 +60,11 @@ export class AppRouter extends LitElement {
         super();
         this.currentPage = this._getPageFromHash();
         this._onHashChange = this._onHashChange.bind(this);
+        // Re-render on login / logout; nothing is shown until Keycloak answered
+        this.authState = new AuthController(this);
+        // After a login the hash still holds Keycloak's callback (#state=...&code=...)
+        // until keycloak-js cleans it with replaceState, which fires no hashchange.
+        auth.init().then(() => this.currentPage = this._getPageFromHash());
     }
 
     connectedCallback() {
@@ -98,6 +104,12 @@ export class AppRouter extends LitElement {
     }
 
     render() {
+        if (!auth.initialized) {
+            return html``;
+        }
+        if (!auth.authenticated) {
+            return html`<login-page></login-page>`;
+        }
         return html`
             <header-component></header-component>
             <main>

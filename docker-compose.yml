@@ -17,6 +17,28 @@ services:
       timeout: 5s
       retries: 10
 
+  # Identity provider. The hgps realm (clients + default user demo/demo) is imported
+  # from docker/keycloak/hgps-realm.json on first start.
+  # Admin console: http://localhost:8180/admin (admin/admin)
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.0
+    container_name: hgps_keycloak
+    restart: unless-stopped
+    command: ["start-dev", "--import-realm", "--http-port=8180", "--health-enabled=true"]
+    ports:
+      - "8180:8180"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - ./docker/keycloak/hgps-realm.json:/opt/keycloak/data/import/hgps-realm.json:ro
+    healthcheck:
+      # No curl in the image: talk HTTP to the management port (9000) with bash
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q '\"UP\"' <&3"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
 volumes:
   postgres_data:
     driver: local

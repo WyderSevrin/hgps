@@ -6,6 +6,7 @@ import '../notifications/notifications-menu.js';
 import '../language/language-menu.js';
 import '../user-options/user-options-panel.js';
 import { I18nController, t } from '../../services/i18n/i18n.js';
+import { auth } from '../../services/auth/authService.js';
 
 export class HeaderComponent extends LitElement {
     static styles = css`
@@ -146,6 +147,12 @@ export class HeaderComponent extends LitElement {
                         <custom-icon label="manage_accounts"></custom-icon>
                     </button>
                     <language-menu></language-menu>
+                    <button class="icon-btn"
+                            title="${t('auth.logoutAs', {username: auth.user?.username})}"
+                            aria-label="${t('auth.logout')}"
+                            @click="${() => auth.logout()}">
+                        <custom-icon label="logout"></custom-icon>
+                    </button>
                 </div>
             </header>
 

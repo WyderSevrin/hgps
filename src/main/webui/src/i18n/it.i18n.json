@@ -130,5 +130,14 @@
         "description": "Tema, colori e preferenze di visualizzazione."
       }
     }
+  },
+  "auth": {
+    "subtitle": "Mappa i siti auriferi in Svizzera, tieni traccia dei tuoi ritrovamenti e condividili con altri cercatori d’oro.",
+    "login": "Accedi",
+    "register": "Crea un account",
+    "logout": "Esci",
+    "logoutAs": "Esci ({{username}})",
+    "demoHint": "Sviluppo: accedi con l’utente predefinito",
+    "unavailable": "Il servizio di accesso non è al momento raggiungibile. Riprova tra un attimo."
   }
 }

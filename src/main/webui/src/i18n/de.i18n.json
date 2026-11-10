@@ -130,5 +130,14 @@
         "description": "Design, Farben und Anzeigeeinstellungen."
       }
     }
+  },
+  "auth": {
+    "subtitle": "Kartiere Goldfundstellen in der Schweiz, behalte deine Funde im Blick und teile sie mit anderen Goldsuchern.",
+    "login": "Anmelden",
+    "register": "Konto erstellen",
+    "logout": "Abmelden",
+    "logoutAs": "Abmelden ({{username}})",
+    "demoHint": "Entwicklung: Anmeldung mit dem Standardbenutzer",
+    "unavailable": "Der Anmeldedienst ist zurzeit nicht erreichbar. Bitte versuche es gleich noch einmal."
   }
 }

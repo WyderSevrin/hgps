@@ -130,5 +130,14 @@
         "description": "Theme, colors and display preferences."
       }
     }
+  },
+  "auth": {
+    "subtitle": "Map gold spots in Switzerland, keep track of your finds and share them with other prospectors.",
+    "login": "Log in",
+    "register": "Create an account",
+    "logout": "Log out",
+    "logoutAs": "Log out ({{username}})",
+    "demoHint": "Development: log in with the default user",
+    "unavailable": "The login service is not reachable right now. Please try again in a moment."
   }
 }

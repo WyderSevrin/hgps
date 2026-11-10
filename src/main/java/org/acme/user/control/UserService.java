@@ -20,6 +20,7 @@ import java.util.UUID;
 public class UserService {
 
     private static final String DEFAULT_LANGUAGE = "en";
+    private static final List<String> SUPPORTED_LANGUAGES = List.of("en", "de", "fr", "it");
 
     private final EntityManager em;
 
@@ -55,6 +56,70 @@ public class UserService {
     public void delete(UUID id) {
         // The user's areas and friend invitations are removed by ON DELETE CASCADE.
         em.remove(getUser(id));
+    }
+
+    /**
+     * Returns the application user behind a Keycloak account, creating it on the first login.
+     * <ol>
+     *     <li>already linked: found by its Keycloak id ("sub" claim)</li>
+     *     <li>existing user with the same e-mail, not linked yet: linked to the account</li>
+     *     <li>otherwise: a new user is created from the token claims</li>
+     * </ol>
+     */
+    @Transactional
+    public UserResponseDto findOrCreateFromToken(TokenUser token) {
+        User user = em.createQuery("SELECT u FROM User u WHERE u.keycloakId = :sub", User.class)
+                .setParameter("sub", token.subject())
+                .getResultStream()
+                .findFirst()
+                .orElseGet(() -> linkOrCreate(token));
+        return UserResponseDto.from(user);
+    }
+
+    private User linkOrCreate(TokenUser token) {
+        if (token.email() != null) {
+            User existing = em.createQuery(
+                            "SELECT u FROM User u WHERE lower(u.email) = lower(:email) AND u.keycloakId IS NULL", User.class)
+                    .setParameter("email", token.email().trim())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if (existing != null) {
+                existing.setKeycloakId(token.subject());
+                return existing;
+            }
+        }
+
+        String username = availableUsername(token.username());
+        User user = new User();
+        user.setKeycloakId(token.subject());
+        user.setUsername(username);
+        user.setEmail(token.email() != null ? token.email().trim() : username + "@users.hgps.local");
+        user.setDisplayName(token.name() != null && !token.name().isBlank() ? token.name().trim() : username);
+        // List.of(...).contains(null) throws, and the locale claim is often missing
+        user.setLanguage(token.locale() != null && SUPPORTED_LANGUAGES.contains(token.locale())
+                ? token.locale() : DEFAULT_LANGUAGE);
+        em.persist(user);
+        em.flush(); // so the generated id and timestamps are set in the response
+        return user;
+    }
+
+    /**
+     * Turns a Keycloak username into one that fits app_user (^[a-z0-9._-]{3,30}$)
+     * and is not taken yet, adding a number at the end if needed.
+     */
+    private String availableUsername(String keycloakUsername) {
+        String base = keycloakUsername == null ? "" : keycloakUsername.trim().toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9._-]", ".");
+        if (base.length() < 3) {
+            base = (base + "user").substring(0, Math.max(base.length(), 4));
+        }
+        base = base.substring(0, Math.min(base.length(), 26)); // room for a numeric suffix
+        String candidate = base;
+        for (int i = 2; isTaken("username", candidate, null); i++) {
+            candidate = base + i;
+        }
+        return candidate;
     }
 
     private User getUser(UUID id) {

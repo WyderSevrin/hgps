@@ -12,6 +12,7 @@
     "@material-icons/font": "^1.0.36",
     "fa-icons": "^0.2.0",
     "i18next": "^27.0.1",
+    "keycloak-js": "^26.2.5",
     "leaflet": "^1.9.4",
     "lit": "^3.2.0"
   },

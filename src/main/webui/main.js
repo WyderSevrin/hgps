@@ -18,6 +18,7 @@ import './src/pages/home-page.js';
 import './src/pages/map-page.js';
 import './src/pages/guide-page.js';
 import './src/pages/not-found-page.js';
+import './src/pages/login-page.js';
 
 
 

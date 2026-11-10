@@ -14,6 +14,21 @@ If you want to learn more about Quarkus, please visit its website: <https://quar
 
 ## Running the application in dev mode
 
+Start PostgreSQL and Keycloak first:
+
+```shell script
+docker compose up -d --wait
+```
+
+| Service  | URL                          | Login                                   |
+|----------|------------------------------|-----------------------------------------|
+| App      | <http://localhost:8080>      | `demo` / `demo` (default user)          |
+| Keycloak | <http://localhost:8180/admin> | `admin` / `admin` (admin console)      |
+
+The `hgps` realm (frontend client + default user) is imported from
+`docker/keycloak/hgps-realm.json` the first time the container starts.
+After changing that file, recreate the container: `docker compose up -d --force-recreate keycloak`.
+
 You can run your application in dev mode that enables live coding using:
 
 ```shell script
