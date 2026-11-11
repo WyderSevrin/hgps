@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.acme.user.control.dto.UserCreateDto;
 import org.acme.user.control.dto.UserDto;
+import org.acme.user.control.dto.UserPublicDto;
 import org.acme.user.entity.User;
 
 import java.util.List;
@@ -82,6 +83,48 @@ public class UserService {
                 .getResultStream()
                 .findFirst()
                 .orElseGet(() -> linkOrCreate(token));
+    }
+
+    /**
+     * Users whose username or display name contains the search term (case-insensitive),
+     * the logged-in user excluded. Served by the trigram indexes of V2__add_user_search_indexes.sql.
+     * <p>
+     * Order: matches at the start of the username or of a word of the display name first
+     * ("mar" finds "Alice Martin" before "Omar"), then by username.
+     *
+     * @param term  what the user typed; a leading "@" is ignored, % and _ are taken literally
+     * @param limit maximum number of results
+     */
+    @Transactional
+    public List<UserPublicDto> search(TokenUser token, String term, int limit) {
+        User me = currentUser(token);
+        String text = term.trim().toLowerCase(Locale.ROOT);
+        if (text.startsWith("@")) {
+            text = text.substring(1);
+        }
+        if (text.isEmpty()) {
+            return List.of();
+        }
+        String escaped = text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+
+        return em.createQuery("""
+                        SELECT u FROM User u
+                        WHERE u.id <> :me
+                          AND (lower(u.username) LIKE :contains ESCAPE '\\'
+                               OR lower(u.displayName) LIKE :contains ESCAPE '\\')
+                        ORDER BY CASE WHEN lower(u.username) LIKE :prefix ESCAPE '\\'
+                                        OR lower(u.displayName) LIKE :prefix ESCAPE '\\'
+                                        OR lower(u.displayName) LIKE :wordPrefix ESCAPE '\\'
+                                      THEN 0 ELSE 1 END,
+                                 u.username""", User.class)
+                .setParameter("me", me.getId())
+                .setParameter("contains", "%" + escaped + "%")
+                .setParameter("prefix", escaped + "%")
+                .setParameter("wordPrefix", "% " + escaped + "%")
+                .setMaxResults(limit)
+                .getResultStream()
+                .map(UserPublicDto::from)
+                .toList();
     }
 
     /** Looks a user up by its public uuid, for other services. */

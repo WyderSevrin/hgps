@@ -4,16 +4,20 @@ import {apiRequest} from "./apiClient.js";
  * Friend invitations of the logged-in user, from the backend (/api/invitations).
  * Returns the API objects as they are:
  *   {id, sender: {id, username, displayName}, receiver: {...}, status, createdAt, respondedAt}
- * status: PENDING, ACCEPTED, DECLINED or CANCELLED.
+ * status: PENDING, ACCEPTED (= the two users are friends) or DECLINED.
  * Errors are thrown as ApiError.
  *
- * Invitations are never deleted (they are kept as history): an invitation is
- * removed from the open ones by cancelling it (sender) or declining it (receiver).
+ * Lifecycle:
+ *   send()    -> PENDING
+ *   accept()  -> ACCEPTED, by the receiver
+ *   decline() -> DECLINED, by the receiver; kept, the sender can send a new request
+ *   cancel()  -> deleted, by the sender of a PENDING request
+ *   removeFriend() -> deleted, by either friend of an ACCEPTED invitation
  */
 export class InvitationService {
 
     static DIRECTION = Object.freeze({INCOMING: 'incoming', OUTGOING: 'outgoing'});
-    static STATUS = Object.freeze({PENDING: 'PENDING', ACCEPTED: 'ACCEPTED', DECLINED: 'DECLINED', CANCELLED: 'CANCELLED'});
+    static STATUS = Object.freeze({PENDING: 'PENDING', ACCEPTED: 'ACCEPTED', DECLINED: 'DECLINED'});
 
     /**
      * @param {object} [filter]
@@ -30,13 +34,37 @@ export class InvitationService {
         return apiRequest('GET', `/invitations/${id}`);
     }
 
-    /** The sender withdraws a pending invitation. @returns {Promise<object>} the updated invitation */
-    static cancel(id) {
-        return apiRequest('POST', `/invitations/${id}/cancel`);
+    /**
+     * Sends a friend request to a user.
+     * 409 (ApiError.conflict) when already friends or a request between the two is pending.
+     * @param {string} userId public id of the user to invite
+     * @returns {Promise<object>} the new invitation (PENDING)
+     */
+    static send(userId) {
+        return apiRequest('POST', `/invitations/to/${userId}`);
     }
 
-    /** The receiver declines a pending invitation. @returns {Promise<object>} the updated invitation */
+    /** The receiver accepts a pending request. @returns {Promise<object>} the invitation, now ACCEPTED */
+    static accept(id) {
+        return apiRequest('POST', `/invitations/${id}/accept`);
+    }
+
+    /** The receiver declines a pending request. @returns {Promise<object>} the invitation, now DECLINED */
     static decline(id) {
         return apiRequest('POST', `/invitations/${id}/decline`);
+    }
+
+    /** The sender withdraws a pending request. It is deleted, not kept. */
+    static cancel(id) {
+        return InvitationService.#delete(id);
+    }
+
+    /** Ends a friendship: deletes the ACCEPTED invitation. Either friend can do it. */
+    static removeFriend(invitationId) {
+        return InvitationService.#delete(invitationId);
+    }
+
+    static async #delete(id) {
+        await apiRequest('DELETE', `/invitations/${id}`);
     }
 }

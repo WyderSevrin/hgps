@@ -1,6 +1,7 @@
 package org.acme.invitation.boundary;
 
 import io.quarkus.security.Authenticated;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -25,12 +26,13 @@ import java.util.UUID;
  * REST API for the friend invitations of the logged-in user: /api/invitations
  * Requires a valid Keycloak bearer token. Errors are mapped in ExceptionMappers.
  * <pre>
- * GET  /invitations?direction=incoming|outgoing&amp;status=pending   list (both filters optional)
- * GET  /invitations/{id}                                          one invitation
- * POST /invitations/to/{userId}                                   invite a user
- * POST /invitations/{id}/accept                                   receiver accepts
- * POST /invitations/{id}/decline                                  receiver declines
- * POST /invitations/{id}/cancel                                   sender withdraws
+ * GET    /invitations?direction=incoming|outgoing&amp;status=pending  list (both filters optional)
+ * GET    /invitations/{id}                                         one invitation
+ * POST   /invitations/to/{userId}                                  invite a user
+ * POST   /invitations/{id}/accept                                  receiver accepts: friends
+ * POST   /invitations/{id}/decline                                 receiver declines (kept, can be re-sent)
+ * DELETE /invitations/{id}                                         sender withdraws a pending request,
+ *                                                                  or a friend ends the friendship (deleted)
  * </pre>
  */
 @Path("/invitations")
@@ -79,10 +81,11 @@ public class InvitationResource {
         return invitationService.decline(me(), id);
     }
 
-    @POST
-    @Path("/{id}/cancel")
-    public InvitationDto cancel(@PathParam("id") UUID id) {
-        return invitationService.cancel(me(), id);
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@PathParam("id") UUID id) {
+        invitationService.delete(me(), id);
+        return Response.noContent().build();
     }
 
     private TokenUser me() {

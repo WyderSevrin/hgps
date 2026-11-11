@@ -22,7 +22,8 @@ import java.util.UUID;
  * Every method acts on behalf of the logged-in user (the token), who only ever
  * sees invitations they sent or received.
  * <p>
- * Lifecycle: PENDING, then ACCEPTED or DECLINED (by the receiver) or CANCELLED (by the sender).
+ * Lifecycle: PENDING, then ACCEPTED or DECLINED by the receiver. A PENDING invitation withdrawn
+ * by its sender, and an ACCEPTED one (friendship) ended by one of the friends, are deleted.
  * <p>
  * All methods are transactional because resolving the logged-in user may create it (first login).
  */
@@ -104,15 +105,31 @@ public class InvitationService {
         return respondAsReceiver(token, id, InvitationStatus.DECLINED);
     }
 
-    /** The sender withdraws an invitation that was not answered yet. */
+    /**
+     * Deletes an invitation, without keeping any history:
+     * <ul>
+     *     <li>PENDING: the sender withdraws the request (the receiver declines instead)</li>
+     *     <li>ACCEPTED: one of the two friends ends the friendship</li>
+     *     <li>DECLINED: not possible, it is kept and does not block a new invitation</li>
+     * </ul>
+     * Afterwards the two users can invite each other again.
+     */
     @Transactional
-    public InvitationDto cancel(TokenUser token, UUID id) {
+    public void delete(TokenUser token, UUID id) {
         User me = userService.currentUser(token);
         FriendInvitation invitation = getForParticipant(me, id);
-        if (!isSender(me, invitation)) {
-            throw new InvitationForbiddenException("Only the sender can cancel an invitation");
+        switch (invitation.getStatus()) {
+            case PENDING -> {
+                if (!isSender(me, invitation)) {
+                    throw new InvitationForbiddenException("Only the sender can withdraw a request, the receiver can decline it");
+                }
+            }
+            case ACCEPTED -> {
+                // either friend may end the friendship
+            }
+            case DECLINED -> throw new InvitationConflictException("A declined invitation cannot be deleted");
         }
-        return close(invitation, InvitationStatus.CANCELLED);
+        em.remove(invitation);
     }
 
     private InvitationDto respondAsReceiver(TokenUser token, UUID id, InvitationStatus newStatus) {
