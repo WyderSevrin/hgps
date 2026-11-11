@@ -1,8 +1,9 @@
 import {Vertex} from "./vertex.js";
+import {Region} from "./region.js";
 
 export class Area {
 
-    constructor(name, description, vertices = [], goldPresence = 0, selected = false, uuid = self.crypto.randomUUID()) {
+    constructor(name, description, vertices = [], goldPresence = 0, selected = false, uuid = self.crypto.randomUUID(), region = null) {
         this.uuid = uuid;
         this.name = name;
         this.description = description;
@@ -10,6 +11,7 @@ export class Area {
         this.private = true;
         this.goldPresence = Area.normalizeGoldPresence(goldPresence);
         this.selected = selected;
+        this.region = Region.normalizeCode(region); // canton code (BE, LU, ...), null = not set yet
     }
 
     static GOLD_PRESENCE_MIN = 0; // 0 = not determined yet
@@ -33,13 +35,17 @@ export class Area {
         return Area.goldPresenceColorVar(this.goldPresence);
     }
 
+    // Copy of this area with some fields changed; everything else (uuid, region, ...) is kept.
+    #copy({vertices = this.vertices, goldPresence = this.goldPresence, region = this.region} = {}) {
+        return new Area(this.name, this.description, vertices, goldPresence, this.selected, this.uuid, region);
+    }
+
     addVertex(vertex) {
-        return new Area(this.name, this.description, [...this.vertices, vertex], this.goldPresence, this.selected, this.uuid);
+        return this.#copy({vertices: [...this.vertices, vertex]});
     }
 
     removeVertex(uuid) {
-        const vertices = this.vertices.filter(vertex => vertex.uuid !== uuid);
-        return new Area(this.name, this.description, vertices, this.goldPresence, this.selected, this.uuid);
+        return this.#copy({vertices: this.vertices.filter(vertex => vertex.uuid !== uuid)});
     }
 
     updateVertexIndexes(){
@@ -53,11 +59,16 @@ export class Area {
             updated.uuid = vertex.uuid;
             return updated;
         });
-        return new Area(this.name, this.description, vertices, this.goldPresence, this.selected, this.uuid);
+        return this.#copy({vertices});
     }
 
     withGoldPresence(goldPresence) {
-        return new Area(this.name, this.description, this.vertices, goldPresence, this.selected, this.uuid);
+        return this.#copy({goldPresence});
+    }
+
+    // region: a canton code ("BE") or a Region instance, null to clear it.
+    withRegion(region) {
+        return this.#copy({region: region instanceof Region ? region.code : region});
     }
 
     getPolygon(options = {}) {
@@ -71,8 +82,9 @@ export class Area {
         // `coordinates` is the legacy key used before the Coordinates -> Vertex rename;
         // still read it so data already saved in localStorage keeps loading.
         // A legacy `color` field is simply ignored: the color now comes from goldPresence.
+        // `region` is missing in data saved before regions existed -> null.
         const vertices = (obj.vertices ?? obj.coordinates ?? []).map(Vertex.fromJSON);
-        return new Area(obj.name, obj.description, vertices, obj.goldPresence, obj.selected, obj.uuid);
+        return new Area(obj.name, obj.description, vertices, obj.goldPresence, obj.selected, obj.uuid, obj.region);
     }
 
 }

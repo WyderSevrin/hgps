@@ -4,8 +4,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.acme.user.control.dto.UserRequestDto;
-import org.acme.user.control.dto.UserResponseDto;
+import org.acme.user.control.dto.UserCreateDto;
+import org.acme.user.control.dto.UserDto;
 import org.acme.user.entity.User;
 
 import java.util.List;
@@ -24,32 +24,32 @@ public class UserService {
 
     private final EntityManager em;
 
-    public List<UserResponseDto> findAll() {
+    public List<UserDto> findAll() {
         return em.createQuery("SELECT u FROM User u ORDER BY u.username", User.class)
                 .getResultStream()
-                .map(UserResponseDto::from)
+                .map(UserDto::from)
                 .toList();
     }
 
-    public UserResponseDto findById(UUID id) {
-        return UserResponseDto.from(getUser(id));
+    public UserDto findById(UUID id) {
+        return UserDto.from(getUser(id));
     }
 
     @Transactional
-    public UserResponseDto create(UserRequestDto request) {
+    public UserDto create(UserCreateDto request) {
         User user = new User();
         apply(user, request);
         em.persist(user);
         em.flush(); // so the generated timestamps are set in the response
-        return UserResponseDto.from(user);
+        return UserDto.from(user);
     }
 
     @Transactional
-    public UserResponseDto update(UUID id, UserRequestDto request) {
+    public UserDto update(UUID id, UserCreateDto request) {
         User user = getUser(id);
         apply(user, request);
         em.flush(); // so updatedAt is refreshed in the response
-        return UserResponseDto.from(user);
+        return UserDto.from(user);
     }
 
     @Transactional
@@ -67,13 +67,26 @@ public class UserService {
      * </ol>
      */
     @Transactional
-    public UserResponseDto findOrCreateFromToken(TokenUser token) {
-        User user = em.createQuery("SELECT u FROM User u WHERE u.keycloakId = :sub", User.class)
+    public UserDto findOrCreateFromToken(TokenUser token) {
+        return UserDto.from(currentUser(token));
+    }
+
+    /**
+     * Same as {@link #findOrCreateFromToken(TokenUser)} but returns the entity,
+     * for other services that need the logged-in user (e.g. invitations).
+     */
+    @Transactional
+    public User currentUser(TokenUser token) {
+        return em.createQuery("SELECT u FROM User u WHERE u.keycloakId = :sub", User.class)
                 .setParameter("sub", token.subject())
                 .getResultStream()
                 .findFirst()
                 .orElseGet(() -> linkOrCreate(token));
-        return UserResponseDto.from(user);
+    }
+
+    /** Looks a user up by its public uuid, for other services. */
+    public User getByUuid(UUID uuid) {
+        return getUser(uuid);
     }
 
     private User linkOrCreate(TokenUser token) {
@@ -122,15 +135,16 @@ public class UserService {
         return candidate;
     }
 
-    private User getUser(UUID id) {
-        User user = em.find(User.class, id);
-        if (user == null) {
-            throw new UserNotFoundException(id);
-        }
-        return user;
+    /** Looks a user up by its public uuid (the "id" of the API). */
+    private User getUser(UUID uuid) {
+        return em.createQuery("SELECT u FROM User u WHERE u.uuid = :uuid", User.class)
+                .setParameter("uuid", uuid)
+                .getResultStream()
+                .findFirst()
+                .orElseThrow(() -> new UserNotFoundException(uuid));
     }
 
-    private void apply(User user, UserRequestDto request) {
+    private void apply(User user, UserCreateDto request) {
         String username = request.getUsername().trim().toLowerCase(Locale.ROOT);
         String email = request.getEmail().trim();
 
@@ -148,7 +162,7 @@ public class UserService {
     }
 
     /** Case-insensitive, like the unique indexes on app_user. Ignores the user being updated. */
-    private boolean isTaken(String field, String value, UUID excludedId) {
+    private boolean isTaken(String field, String value, Long excludedId) {
         String jpql = "SELECT COUNT(u) FROM User u WHERE lower(u." + field + ") = lower(:value)";
         if (excludedId != null) {
             jpql += " AND u.id <> :excludedId";

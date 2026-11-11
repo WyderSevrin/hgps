@@ -1,5 +1,7 @@
 package org.acme.user.control;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
 /**
  * The claims of a Keycloak access token that describe the logged-in user.
  *
@@ -10,4 +12,13 @@ package org.acme.user.control;
  * @param locale   "locale": UI language chosen in Keycloak (may be null)
  */
 public record TokenUser(String subject, String username, String email, String name, String locale) {
+
+    public static TokenUser from(JsonWebToken jwt) {
+        return new TokenUser(
+                jwt.getSubject(),
+                jwt.getClaim("preferred_username"),
+                jwt.getClaim("email"),
+                jwt.getClaim("name"),
+                jwt.getClaim("locale"));
+    }
 }

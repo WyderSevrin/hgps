@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 import org.acme.user.control.TokenUser;
 import org.acme.user.control.UserService;
-import org.acme.user.control.dto.UserResponseDto;
+import org.acme.user.control.dto.UserDto;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 /**
@@ -26,12 +26,7 @@ public class MeResource {
     private final UserService userService;
 
     @GET
-    public UserResponseDto me() {
-        return userService.findOrCreateFromToken(new TokenUser(
-                jwt.getSubject(),
-                jwt.getClaim("preferred_username"),
-                jwt.getClaim("email"),
-                jwt.getClaim("name"),
-                jwt.getClaim("locale")));
+    public UserDto me() {
+        return userService.findOrCreateFromToken(TokenUser.from(jwt));
     }
 }
