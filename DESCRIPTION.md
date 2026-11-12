@@ -98,6 +98,22 @@ Each User can create an account and login to add their own spots.
   - Add/Alter/Delete Areas
   - Friend Requests
 - Load data from the API
-- Front add themes
-- Front add map themes ?
+  - Users Search, Areas of friends
+- Front add color themes
+- Front add map themes if possible ?
+- Front add Filters on the map Like by Kanton etc...
+- When adding a new Area, also add a Kanton to it automatically, also Make it possible to have multiple kanton
 - Side Menu, bottom add contact link and a legal information
+
+- Guide 
+  - Finish Guide with description (description should have translation)
+  - Add Guide for metal detecting
+
+- Rules
+  - Add legal rules by Kanton
+
+
+- For Fun, add a mini-game / test ?
+
+
+
