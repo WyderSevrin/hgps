@@ -26,7 +26,7 @@ export class GuidePage extends LitElement {
             padding: var(--hgps-size-5);
             width: fit-content;
             border-radius: var(--hgps-size-3);
-            background-color: rgba(38, 54, 63, 0.95);
+            background-color: color-mix(in srgb, var(--hgps-surface-2) 95%, transparent);
             box-sizing: border-box;
             display: flex;
             flex-direction: column;

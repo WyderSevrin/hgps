@@ -18,6 +18,7 @@ export class ButtonComponent extends LitElement {
             color: var(--hgps-text);
             border: none;
             padding: 10px;
+            font-family: inherit; /* buttons don't inherit the app font by default */
             font-size: 16px;
             border-radius: 5px;
             cursor: pointer;

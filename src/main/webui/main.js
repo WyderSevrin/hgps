@@ -1,3 +1,5 @@
+// Theme first: it sets the color tokens before anything renders
+import './src/services/theme/theme.js';
 import './style.css'
 import '@material-icons/font/css/all.css';
 

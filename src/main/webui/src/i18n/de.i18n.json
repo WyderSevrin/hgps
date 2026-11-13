@@ -190,6 +190,20 @@
         "title": "Darstellung",
         "description": "Design, Farben und Anzeigeeinstellungen."
       }
+    },
+    "appearance": {
+      "theme": "Farbschema",
+      "themeHint": "Gilt für die ganze App und wird auf diesem Gerät gespeichert.",
+      "themes": {
+        "slate-gold": {
+          "name": "Schiefer & Gold",
+          "description": "Dunkler Schiefer mit goldenen Akzenten, der ursprüngliche Look."
+        },
+        "alpine-light": {
+          "name": "Alpen hell",
+          "description": "Helle, warme Papiertöne mit dunklen Goldakzenten, für Tageslicht."
+        }
+      }
     }
   },
   "auth": {

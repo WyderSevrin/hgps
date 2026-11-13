@@ -20,7 +20,10 @@ export class LoginPage extends LitElement {
             padding: var(--hgps-size-4);
             box-sizing: border-box;
             background:
-                    linear-gradient(160deg, rgba(22, 35, 42, 0.92) 0%, rgba(22, 35, 42, 0.78) 55%, rgba(58, 50, 32, 0.85) 100%),
+                    linear-gradient(160deg,
+                        color-mix(in srgb, var(--hgps-bg) 92%, transparent) 0%,
+                        color-mix(in srgb, var(--hgps-bg) 78%, transparent) 55%,
+                        color-mix(in srgb, color-mix(in srgb, var(--hgps-bg) 80%, var(--hgps-gold-deep)) 85%, transparent) 100%),
                     url('/quinoa/river.png') center / cover no-repeat,
                     var(--hgps-bg);
         }

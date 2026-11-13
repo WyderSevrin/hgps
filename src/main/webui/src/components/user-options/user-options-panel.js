@@ -1,6 +1,8 @@
 import {LitElement, html, css} from 'lit';
+import {styleMap} from 'lit/directives/style-map.js';
 import '../icon/icon.js';
 import {I18nController, t} from '../../services/i18n/i18n.js';
+import {THEMES, ThemeController, getTheme, setTheme} from '../../services/theme/theme.js';
 
 // Option categories, in navigation order. Labels come from
 // userOptions.categories.<id>.{title,description}.
@@ -15,7 +17,8 @@ const CATEGORIES = [
  * the selected category's options on the right. On narrow screens the
  * navigation becomes a row of tabs above the content.
  *
- * The categories are empty for now; each one renders a placeholder.
+ * Appearance holds the color theme picker; the other categories are still
+ * empty and render a placeholder.
  *
  * @property {string} category - id of the selected category
  */
@@ -133,6 +136,158 @@ export class UserOptionsPanel extends LitElement {
             color: var(--hgps-text-faint);
         }
 
+        /* ---- Appearance: theme picker ---- */
+        fieldset {
+            margin: 0;
+            padding: 0;
+            border: none;
+            min-width: 0;
+        }
+
+        legend {
+            padding: 0;
+            margin-bottom: var(--hgps-size-1);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--hgps-text-strong);
+        }
+
+        .hint {
+            margin: 0 0 var(--hgps-size-3);
+            font-size: 0.8rem;
+            color: var(--hgps-text-subtle);
+        }
+
+        .themes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+            gap: var(--hgps-size-3);
+        }
+
+        .theme {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: var(--hgps-size-2);
+            padding: var(--hgps-size-2);
+            border: thin solid var(--hgps-border);
+            border-radius: var(--hgps-size-3);
+            background-color: var(--hgps-surface-2);
+            cursor: pointer;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+
+        .theme:hover {
+            border-color: var(--hgps-border-strong);
+        }
+
+        .theme.selected {
+            border-color: var(--hgps-accent);
+            box-shadow: 0 0 0 1px var(--hgps-accent);
+        }
+
+        /* Native radio kept for keyboard / screen readers, visually hidden */
+        .theme input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .theme:has(input:focus-visible) {
+            outline: 0.125rem solid var(--hgps-accent);
+            outline-offset: 0.125rem;
+        }
+
+        .check {
+            position: absolute;
+            top: var(--hgps-size-3);
+            right: var(--hgps-size-3);
+            display: inline-flex;
+            border-radius: 50%;
+            background-color: var(--hgps-accent);
+            color: var(--hgps-accent-contrast);
+        }
+
+        .check custom-icon {
+            transform: scale(0.7);
+        }
+
+        .theme-name {
+            font-size: 0.86rem;
+            font-weight: 600;
+            color: var(--hgps-text-strong);
+            padding: 0 var(--hgps-size-1);
+        }
+
+        .theme-description {
+            font-size: 0.76rem;
+            line-height: 1.4;
+            color: var(--hgps-text-subtle);
+            padding: 0 var(--hgps-size-1) var(--hgps-size-1);
+        }
+
+        /* Mini app drawn with the previewed theme's own tokens (set inline). */
+        .preview {
+            display: flex;
+            flex-direction: column;
+            height: 5.5rem;
+            overflow: hidden;
+            border-radius: var(--hgps-size-2);
+            border: thin solid var(--hgps-border);
+            background: var(--hgps-bg);
+        }
+
+        .p-header {
+            flex: 0 0 0.8rem;
+            background: var(--hgps-header-bg);
+            border-bottom: 2px solid var(--hgps-header-border);
+        }
+
+        .p-body {
+            flex: 1;
+            display: flex;
+            gap: 0.35rem;
+            padding: 0.4rem;
+        }
+
+        .p-side {
+            flex: 0 0 0.8rem;
+            border-radius: 0.2rem;
+            background: var(--hgps-surface);
+        }
+
+        .p-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0.35rem;
+            border-radius: 0.25rem;
+            border: thin solid var(--hgps-border);
+            border-top: 2px solid var(--hgps-accent);
+            background: var(--hgps-surface);
+        }
+
+        .p-line {
+            height: 0.22rem;
+            width: 75%;
+            border-radius: 0.2rem;
+            background: var(--hgps-text);
+        }
+
+        .p-line.muted {
+            width: 55%;
+            background: var(--hgps-text-muted);
+        }
+
+        .p-button {
+            margin-top: auto;
+            width: 1.8rem;
+            height: 0.55rem;
+            border-radius: 0.2rem;
+            background: var(--hgps-accent);
+        }
+
         /* ---- Narrow screens: tabs on top ---- */
         @media (max-width: 40rem) {
             :host {
@@ -174,6 +329,7 @@ export class UserOptionsPanel extends LitElement {
     constructor() {
         super();
         this.i18n = new I18nController(this);
+        this.theme = new ThemeController(this);
         this.category = CATEGORIES[0].id;
     }
 
@@ -197,6 +353,54 @@ export class UserOptionsPanel extends LitElement {
         event.preventDefault();
         this.category = CATEGORIES[next].id;
         this.updateComplete.then(() => this._tabs[next]?.focus());
+    }
+
+    _renderAppearance() {
+        const active = getTheme().id;
+        return html`
+            <fieldset>
+                <legend>${t('userOptions.appearance.theme')}</legend>
+                <p class="hint">${t('userOptions.appearance.themeHint')}</p>
+                <div class="themes">
+                    ${THEMES.map(theme => {
+                        const selected = theme.id === active;
+                        const key = `userOptions.appearance.themes.${theme.id}`;
+                        return html`
+                            <label class="theme ${selected ? 'selected' : ''}">
+                                <input type="radio" name="theme" value="${theme.id}"
+                                       .checked="${selected}"
+                                       @change="${() => setTheme(theme.id)}">
+                                <div class="preview" aria-hidden="true"
+                                     style="${styleMap({...theme.tokens, colorScheme: theme.colorScheme})}">
+                                    <div class="p-header"></div>
+                                    <div class="p-body">
+                                        <div class="p-side"></div>
+                                        <div class="p-card">
+                                            <div class="p-line"></div>
+                                            <div class="p-line muted"></div>
+                                            <div class="p-button"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                ${selected ? html`
+                                    <span class="check" aria-hidden="true"><custom-icon label="check"></custom-icon></span>
+                                ` : ''}
+                                <span class="theme-name">${t(`${key}.name`)}</span>
+                                <span class="theme-description">${t(`${key}.description`)}</span>
+                            </label>`;
+                    })}
+                </div>
+            </fieldset>
+        `;
+    }
+
+    _renderEmpty(category) {
+        return html`
+            <div class="empty">
+                <custom-icon label="${category.icon}"></custom-icon>
+                <span>${t('userOptions.empty')}</span>
+            </div>
+        `;
     }
 
     render() {
@@ -225,10 +429,7 @@ export class UserOptionsPanel extends LitElement {
                     <h3>${t(`${key}.title`)}</h3>
                     <p>${t(`${key}.description`)}</p>
                 </div>
-                <div class="empty">
-                    <custom-icon label="${current.icon}"></custom-icon>
-                    <span>${t('userOptions.empty')}</span>
-                </div>
+                ${current.id === 'appearance' ? this._renderAppearance() : this._renderEmpty(current)}
             </section>
         `;
     }

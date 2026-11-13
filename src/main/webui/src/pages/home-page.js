@@ -37,9 +37,12 @@ export class HomePage extends LitElement {
             height: 100%;
         }
 
-        /* Darkens the bright picture enough for the title and cards to stay readable. */
+        /* Tones the bright picture toward the theme background so the title and cards stay readable. */
         .shade {
-            background: linear-gradient(180deg, rgba(22, 35, 42, 0.55) 0%, rgba(22, 35, 42, 0.35) 40%, rgba(22, 35, 42, 0.7) 100%);
+            background: linear-gradient(180deg,
+                color-mix(in srgb, var(--hgps-bg) 55%, transparent) 0%,
+                color-mix(in srgb, var(--hgps-bg) 35%, transparent) 40%,
+                color-mix(in srgb, var(--hgps-bg) 70%, transparent) 100%);
         }
 
         .scroller {
@@ -59,12 +62,12 @@ export class HomePage extends LitElement {
         .hero {
             text-align: center;
             margin-bottom: calc(var(--hgps-size-10) * 1.5);
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
+            text-shadow: 0 2px 12px var(--hgps-bg), 0 0 4px var(--hgps-bg); /* halo in the background color */
         }
 
         .hero h1 {
             margin: 0 0 var(--hgps-size-3);
-            color: var(--hgps-gold-pale);
+            color: var(--hgps-title);
             font-size: clamp(1.75rem, 4vw, 2.75rem);
             line-height: 1.15;
         }
@@ -91,7 +94,7 @@ export class HomePage extends LitElement {
             border: 1px solid var(--hgps-border);
             border-top: 3px solid var(--hgps-accent);
             border-radius: var(--hgps-size-3);
-            background: rgba(31, 46, 53, 0.88); /* --hgps-surface, slightly see-through */
+            background: color-mix(in srgb, var(--hgps-surface) 88%, transparent); /* slightly see-through */
             backdrop-filter: blur(6px);
             box-shadow: 0 0.5rem 1.5rem var(--hgps-shadow);
         }

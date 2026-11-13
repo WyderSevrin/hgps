@@ -190,6 +190,20 @@
         "title": "Appearance",
         "description": "Theme, colors and display preferences."
       }
+    },
+    "appearance": {
+      "theme": "Color theme",
+      "themeHint": "Applies to the whole app and is remembered on this device.",
+      "themes": {
+        "slate-gold": {
+          "name": "Slate & Gold",
+          "description": "Dark slate with gold accents, the original look."
+        },
+        "alpine-light": {
+          "name": "Alpine Light",
+          "description": "Bright, warm paper tones with deep gold accents, for daylight."
+        }
+      }
     }
   },
   "auth": {

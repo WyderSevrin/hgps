@@ -190,6 +190,20 @@
         "title": "Aspetto",
         "description": "Tema, colori e preferenze di visualizzazione."
       }
+    },
+    "appearance": {
+      "theme": "Tema di colori",
+      "themeHint": "Si applica a tutta l'app e viene ricordato su questo dispositivo.",
+      "themes": {
+        "slate-gold": {
+          "name": "Ardesia & oro",
+          "description": "Ardesia scura con accenti dorati, lo stile originale."
+        },
+        "alpine-light": {
+          "name": "Alpi chiaro",
+          "description": "Toni chiari e caldi di carta con accenti oro scuro, per la luce del giorno."
+        }
+      }
     }
   },
   "auth": {

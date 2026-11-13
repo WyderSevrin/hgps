@@ -190,6 +190,20 @@
         "title": "Apparence",
         "description": "Thème, couleurs et préférences d'affichage."
       }
+    },
+    "appearance": {
+      "theme": "Thème de couleurs",
+      "themeHint": "S'applique à toute l'application et est mémorisé sur cet appareil.",
+      "themes": {
+        "slate-gold": {
+          "name": "Ardoise & or",
+          "description": "Ardoise sombre avec des accents dorés, le style d'origine."
+        },
+        "alpine-light": {
+          "name": "Alpes clair",
+          "description": "Tons clairs et chaleureux de papier avec des accents or foncé, pour la lumière du jour."
+        }
+      }
     }
   },
   "auth": {
