@@ -19,7 +19,34 @@
     "save": "Save"
   },
   "home": {
-    "welcome": "Welcome to the Home Page"
+    "hero": {
+      "title": "Hobby Gold Prospecting Switzerland",
+      "subtitle": "Follow the creek: from your first flake of gold to your own map of spots."
+    },
+    "cards": {
+      "prospecting": {
+        "title": "The Joy of Gold Prospecting",
+        "text": "Gold prospecting means searching for the small flakes and nuggets that rivers have carried down from the Alps for thousands of years. All you need is a pan, some patience and a good creek. It gets you outdoors, teaches you to read the landscape, and every glint of gold in your pan is a small treasure you found yourself."
+      },
+      "problem": {
+        "title": "Why a Modern Prospecting Tool?",
+        "text": "Knowing where to look is the hardest part. Information about gold-bearing rivers is scattered across old reports, forums and word of mouth, and your own findings often end up in a notebook or forgotten. Without a clear overview, it is hard to tell which spots are promising and which ones have already been tried."
+      },
+      "map": {
+        "title": "A Map to Read the Rivers",
+        "text": "The interactive map brings it all together. Draw your own prospecting areas, rate their gold presence, keep them private or share them with friends, and filter the map to spot the most promising places at a glance.",
+        "cta": "Open the map"
+      },
+      "guide": {
+        "title": "A Guide for Beginners and Beyond",
+        "text": "New to prospecting? The guide explains where gold settles in a creek, how to pan step by step, where Swiss gold comes from and how to get started with metal detecting. Experienced prospectors will find tips to sharpen their eye for good spots.",
+        "cta": "Read the guide"
+      },
+      "legal": {
+        "title": "Prospect Legally, Leave No Trace",
+        "text": "In Switzerland every canton sets its own rules, and some communes add their own: where you may prospect, in which season and with which equipment. Know the regulations, respect protected areas and fish spawning periods, and leave every riverbank as you found it, so the hobby stays legal and nature stays intact."
+      }
+    }
   },
   "notFound": {
     "title": "404 - Page Not Found"

@@ -19,7 +19,34 @@
     "save": "Salva"
   },
   "home": {
-    "welcome": "Benvenuto nella pagina iniziale"
+    "hero": {
+      "title": "Hobby Gold Prospecting Svizzera",
+      "subtitle": "Segui il ruscello: dalla tua prima pagliuzza d'oro alla tua mappa dei posti."
+    },
+    "cards": {
+      "prospecting": {
+        "title": "Il piacere della ricerca dell'oro",
+        "text": "Cercare l'oro significa trovare le pagliuzze e le pepite che i fiumi trasportano giù dalle Alpi da migliaia di anni. Bastano una batea, un po' di pazienza e un buon ruscello. Si sta all'aria aperta, si impara a leggere il paesaggio, e ogni riflesso dorato nella batea è un piccolo tesoro trovato con le proprie mani."
+      },
+      "problem": {
+        "title": "Perché uno strumento moderno?",
+        "text": "Sapere dove cercare è la parte più difficile. Le informazioni sui fiumi auriferi sono sparse tra vecchi rapporti, forum e passaparola, e i propri ritrovamenti finiscono spesso in un taccuino o vengono dimenticati. Senza una visione d'insieme è difficile capire quali posti sono promettenti e quali sono già stati provati."
+      },
+      "map": {
+        "title": "Una mappa per leggere i fiumi",
+        "text": "La mappa interattiva riunisce tutto. Disegna le tue zone di ricerca, valuta la presenza d'oro, tienile private o condividile con gli amici, e filtra la mappa per individuare a colpo d'occhio i posti più promettenti.",
+        "cta": "Apri la mappa"
+      },
+      "guide": {
+        "title": "Una guida per principianti e non solo",
+        "text": "Alle prime armi? La guida spiega dove l'oro si deposita in un ruscello, come usare la batea passo dopo passo, da dove viene l'oro svizzero e come iniziare con il metal detecting. I cercatori esperti troveranno consigli per affinare l'occhio.",
+        "cta": "Leggi la guida"
+      },
+      "legal": {
+        "title": "Cercare legalmente, senza lasciare tracce",
+        "text": "In Svizzera ogni cantone stabilisce le proprie regole, e alcuni comuni ne aggiungono altre: dove si può cercare, in quale stagione e con quale attrezzatura. Conosci le norme, rispetta le zone protette e i periodi di frega dei pesci, e lascia ogni riva come l'hai trovata, affinché l'hobby resti legale e la natura intatta."
+      }
+    }
   },
   "notFound": {
     "title": "404 - Pagina non trovata"

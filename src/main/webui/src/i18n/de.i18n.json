@@ -19,7 +19,34 @@
     "save": "Speichern"
   },
   "home": {
-    "welcome": "Willkommen auf der Startseite"
+    "hero": {
+      "title": "Hobby Gold Prospecting Schweiz",
+      "subtitle": "Folge dem Bach: vom ersten Goldflitter bis zu deiner eigenen Karte der Fundstellen."
+    },
+    "cards": {
+      "prospecting": {
+        "title": "Die Freude am Goldwaschen",
+        "text": "Beim Goldwaschen sucht man nach den feinen Flittern und Nuggets, die Flüsse seit Jahrtausenden aus den Alpen heruntertragen. Alles, was du brauchst, ist eine Waschpfanne, etwas Geduld und ein guter Bach. Du bist draussen in der Natur, lernst die Landschaft zu lesen, und jedes Glitzern in der Pfanne ist ein kleiner Schatz, den du selbst gefunden hast."
+      },
+      "problem": {
+        "title": "Warum ein modernes Werkzeug?",
+        "text": "Zu wissen, wo man suchen soll, ist das Schwierigste. Informationen über goldführende Flüsse sind über alte Berichte, Foren und Mundpropaganda verstreut, und die eigenen Funde landen oft in einem Notizbuch oder geraten in Vergessenheit. Ohne klare Übersicht ist schwer zu erkennen, welche Stellen vielversprechend sind und welche schon ausprobiert wurden."
+      },
+      "map": {
+        "title": "Eine Karte, um die Flüsse zu lesen",
+        "text": "Die interaktive Karte bringt alles zusammen. Zeichne deine eigenen Suchgebiete, bewerte ihr Goldvorkommen, halte sie privat oder teile sie mit Freunden, und filtere die Karte, um die vielversprechendsten Stellen auf einen Blick zu finden.",
+        "cta": "Karte öffnen"
+      },
+      "guide": {
+        "title": "Ein Leitfaden für Einsteiger und mehr",
+        "text": "Neu beim Goldwaschen? Der Leitfaden erklärt, wo sich Gold im Bach ablagert, wie man Schritt für Schritt wäscht, woher das Schweizer Gold stammt und wie man mit der Metalldetektion beginnt. Erfahrene Goldsucher finden Tipps, um ihren Blick für gute Stellen zu schärfen.",
+        "cta": "Leitfaden lesen"
+      },
+      "legal": {
+        "title": "Legal suchen, keine Spuren hinterlassen",
+        "text": "In der Schweiz legt jeder Kanton eigene Regeln fest, und manche Gemeinden ergänzen sie noch: wo gesucht werden darf, in welcher Jahreszeit und mit welcher Ausrüstung. Kenne die Vorschriften, respektiere Schutzgebiete und die Laichzeiten der Fische, und hinterlasse jedes Ufer so, wie du es vorgefunden hast, damit das Hobby legal und die Natur intakt bleibt."
+      }
+    }
   },
   "notFound": {
     "title": "404 - Seite nicht gefunden"

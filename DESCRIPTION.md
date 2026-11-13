@@ -105,6 +105,44 @@ Each User can create an account and login to add their own spots.
 - When adding a new Area, also add a Kanton to it automatically, also Make it possible to have multiple kanton
 - Side Menu, bottom add contact link and a legal information
 
+- Landing Page
+I want for the Home page I want something like a landing page. Different cards with text, linked between not with an arrows but with like a svg sort of creek flow.
+The link should be a representation of the water flow, like a waterfall. You can make it with svg or I could look if I find a Picture if that would be better.
+
+Card 1 : Title : Gold Prospecting, description : what gold prospecting is, why it's fun/interessting
+Card 2 : Title : Modern gold Prospecting tool, description : difficulty to have a clear visual of gold bearing spots and prospecting spots
+Card 3 : Tilte : A Map for visualization, description : A map with a set of visual tools to locate the best spots 
+Card 4 : Title : A Guide for Beginner and more.., description : A prospecting guide for findings spots, gold panning and gold detection
+Card 5 : Title : Legal limitation, description : Legal aspect and preservation of nature, keep the gold prospecting hobby legal and clean.
+
+(feel free to elaborate but not more than 5 paragraphs, keep it simple. Feel free to make better titles.)
+
+Visually like this format :
+
+------------
+Texte Title |
+Description |
+-------------
+    |
+    |         ------------
+     -------- |Text Title |
+              |description|
+              ------------
+                  |
+-----------       |
+Texte Title| -------
+Description| 
+------------
+
+make the river be more like
+          |
+          |        
+          -------->
+
+Don't show too much river bank 
+
+
+
 - Guide 
   - Finish Guide with description (description should have translation)
   - Add Guide for metal detecting

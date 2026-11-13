@@ -19,7 +19,34 @@
     "save": "Enregistrer"
   },
   "home": {
-    "welcome": "Bienvenue sur la page d'accueil"
+    "hero": {
+      "title": "Hobby Gold Prospecting Suisse",
+      "subtitle": "Suivez le ruisseau : de votre première paillette d'or à votre propre carte des spots."
+    },
+    "cards": {
+      "prospecting": {
+        "title": "Le plaisir de l'orpaillage",
+        "text": "L'orpaillage consiste à chercher les paillettes et pépites que les rivières transportent depuis les Alpes depuis des milliers d'années. Il suffit d'une batée, d'un peu de patience et d'un bon ruisseau. On passe du temps dehors, on apprend à lire le paysage, et chaque reflet d'or dans la batée est un petit trésor trouvé de ses propres mains."
+      },
+      "problem": {
+        "title": "Pourquoi un outil moderne ?",
+        "text": "Savoir où chercher est le plus difficile. Les informations sur les rivières aurifères sont dispersées entre vieux rapports, forums et bouche-à-oreille, et vos propres trouvailles finissent souvent dans un carnet ou dans l'oubli. Sans vue d'ensemble, difficile de savoir quels spots sont prometteurs et lesquels ont déjà été prospectés."
+      },
+      "map": {
+        "title": "Une carte pour lire les rivières",
+        "text": "La carte interactive rassemble tout. Dessinez vos propres zones de prospection, évaluez leur présence d'or, gardez-les privées ou partagez-les avec vos amis, et filtrez la carte pour repérer d'un coup d'œil les endroits les plus prometteurs.",
+        "cta": "Ouvrir la carte"
+      },
+      "guide": {
+        "title": "Un guide pour débutants et plus",
+        "text": "Débutant ? Le guide explique où l'or se dépose dans un ruisseau, comment utiliser la batée pas à pas, d'où vient l'or suisse et comment débuter la détection de métaux. Les orpailleurs expérimentés y trouveront des astuces pour affûter leur œil.",
+        "cta": "Lire le guide"
+      },
+      "legal": {
+        "title": "Orpailler légalement, sans laisser de traces",
+        "text": "En Suisse, chaque canton fixe ses propres règles, et certaines communes y ajoutent les leurs : où l'on peut prospecter, à quelle saison et avec quel matériel. Connaissez la réglementation, respectez les zones protégées et les périodes de frai des poissons, et laissez chaque berge comme vous l'avez trouvée, pour que le hobby reste légal et la nature intacte."
+      }
+    }
   },
   "notFound": {
     "title": "404 - Page introuvable"
