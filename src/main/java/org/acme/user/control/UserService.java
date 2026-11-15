@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.acme.user.control.dto.UserCreateDto;
 import org.acme.user.control.dto.UserDto;
 import org.acme.user.control.dto.UserPublicDto;
+import org.acme.user.control.dto.UserSettingsDto;
 import org.acme.user.entity.User;
 
 import java.util.List;
@@ -70,6 +71,22 @@ public class UserService {
     @Transactional
     public UserDto findOrCreateFromToken(TokenUser token) {
         return UserDto.from(currentUser(token));
+    }
+
+    /**
+     * Saves the preferences of the logged-in user. Null fields are left unchanged.
+     */
+    @Transactional
+    public UserDto updateSettings(TokenUser token, UserSettingsDto settings) {
+        User user = currentUser(token);
+        if (settings.getLanguage() != null) {
+            user.setLanguage(settings.getLanguage());
+        }
+        if (settings.getTheme() != null) {
+            user.setTheme(settings.getTheme());
+        }
+        em.flush(); // so updatedAt is refreshed in the response
+        return UserDto.from(user);
     }
 
     /**

@@ -29,4 +29,13 @@ export class UserService {
     static search(term, limit = 10) {
         return apiRequest('GET', '/users/search', {query: {q: term, limit}});
     }
+
+    /**
+     * Saves preferences of the logged-in user. Fields left out are unchanged.
+     * @param {{theme?: string, language?: string}} settings
+     * @returns {Promise<object>} the updated user, like /api/me
+     */
+    static updateSettings(settings) {
+        return apiRequest('PATCH', '/me/settings', {body: settings});
+    }
 }

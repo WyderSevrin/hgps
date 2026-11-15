@@ -55,6 +55,16 @@ export function setTheme(id) {
 }
 
 /**
+ * Calls listener(theme) after every theme change. Returns a function that
+ * removes the listener.
+ */
+export function onThemeChange(listener) {
+    const handler = event => listener(event.detail);
+    events.addEventListener(CHANGE_EVENT, handler);
+    return () => events.removeEventListener(CHANGE_EVENT, handler);
+}
+
+/**
  * Lit reactive controller: re-renders its host whenever the theme changes.
  * Only needed by components that read colors from JS (e.g. the map) or show
  * the current theme; plain CSS using var(--hgps-*) updates by itself.

@@ -33,6 +33,13 @@ public class UserDto {
     private String displayName;
     private String language;
 
+    /**
+     * Color theme id, null when none was saved. READ_ONLY: changed through
+     * PATCH /api/me/settings, not through the user CRUD.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String theme;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OffsetDateTime createdAt;
 
@@ -46,6 +53,7 @@ public class UserDto {
                 .email(user.getEmail())
                 .displayName(user.getDisplayName())
                 .language(user.getLanguage())
+                .theme(user.getTheme())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();

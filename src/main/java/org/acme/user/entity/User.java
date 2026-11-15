@@ -65,6 +65,10 @@ public class User {
     @Column(nullable = false, length = 2)
     private String language;
 
+    /** Id of the chosen frontend color theme (e.g. "slate-gold"), null when none was saved yet. */
+    @Column(length = 30)
+    private String theme;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     @Setter(AccessLevel.NONE)
