@@ -78,7 +78,7 @@ export class LeafletMap extends LitElement {
 
     updated(changedProperties) {
         // Redraw whenever the selected area changes, edit mode toggles
-        // (which controls marker draggability), or the underlying data set
+        // (which shows or hides the vertex markers), or the underlying data set
         // changes (e.g. an area was added or deleted).
         if (changedProperties.has('selectedArea')
             || changedProperties.has('editMode')
@@ -145,9 +145,13 @@ export class LeafletMap extends LitElement {
             });
         }
 
+        // Vertex markers are only for editing: outside edit mode they would
+        // hide the areas when zoomed out (fixed pixel size vs. shrinking area).
+        if (!this.editMode) return;
+
         vertices.forEach((vertex) => {
             const marker = L.marker([vertex.lat, vertex.lng], {
-                draggable: !!this.editMode && area?.selected === true,
+                draggable: area?.selected === true,
                 icon: this.createIndexIcon(vertex.index)
             }).addTo(this.vertexLayer);
 
