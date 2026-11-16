@@ -191,6 +191,20 @@
         "description": "Theme, colors and display preferences."
       }
     },
+    "map": {
+      "style": "Map style",
+      "styleHint": "Background of the map. Saved to your account.",
+      "styles": {
+        "standard": {
+          "name": "Standard",
+          "description": "OpenStreetMap: roads, towns and places."
+        },
+        "topographic": {
+          "name": "Topographic",
+          "description": "Contour lines, relief and waterways, ideal in the field."
+        }
+      }
+    },
     "appearance": {
       "theme": "Color theme",
       "themeHint": "Applies to the whole app and is remembered on this device.",

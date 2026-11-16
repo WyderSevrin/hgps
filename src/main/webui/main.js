@@ -1,7 +1,7 @@
 // Theme first: it sets the color tokens before anything renders
 import './src/services/theme/theme.js';
-// Then keep it in sync with the logged-in user's settings
-import './src/services/theme/themeSync.js';
+// Then keep the theme and the map style in sync with the logged-in user's settings
+import './src/services/preferences/userSettingsSync.js';
 import './style.css'
 import '@material-icons/font/css/all.css';
 

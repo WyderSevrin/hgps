@@ -2,6 +2,8 @@ import {LitElement, html} from 'lit';
 import { leafletMapStyles } from './leaflet-map.styles.js';
 import L from 'leaflet'; // Importer Leaflet
 import 'leaflet/dist/leaflet.css'; // Importer les styles pour que Leaflet fonctionne correctement
+import { MAP_MAX_ZOOM } from '../../map-styles/index.js';
+import { getMapStyle, onMapStyleChange } from '../../services/mapStyle/mapStyle.js';
 
 
 export class LeafletMap extends LitElement {
@@ -22,6 +24,7 @@ export class LeafletMap extends LitElement {
     constructor() {
         super();
         this.map = null;
+        this.tileLayer = null;
         this.selectedArea = null;
         this.vertexLayer = null;
         this.resizeObserver = null;
@@ -29,10 +32,8 @@ export class LeafletMap extends LitElement {
 
     firstUpdated() {
         const mapEl = this.shadowRoot.querySelector('#mapid');
-        this.map = L.map(mapEl).setView([46.94809, 7.44744], 13);
-
-        let urlTemplate = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        this.map.addLayer(L.tileLayer(urlTemplate, {maxZoom: 19}));
+        this.map = L.map(mapEl, {maxZoom: MAP_MAX_ZOOM}).setView([46.94809, 7.44744], 13);
+        this.showMapStyle(getMapStyle());
 
         //Bern
         L.marker([46.94809, 7.44744]).addTo(this.map);
@@ -51,10 +52,28 @@ export class LeafletMap extends LitElement {
         this.drawVertices();
     }
 
+    connectedCallback() {
+        super.connectedCallback();
+        // Follow the map style chosen in User options > Map
+        this.unsubscribeMapStyle = onMapStyleChange(style => this.showMapStyle(style));
+    }
+
     disconnectedCallback() {
+        this.unsubscribeMapStyle?.();
         this.resizeObserver?.disconnect();
         this.resizeObserver = null;
         super.disconnectedCallback();
+    }
+
+    // Replace the background tiles with the given map style (see map-styles/index.js).
+    showMapStyle(style) {
+        if (!this.map) return; // not created yet: firstUpdated shows the current style
+        this.tileLayer?.remove();
+        this.tileLayer = L.tileLayer(style.url, {
+            maxNativeZoom: style.maxNativeZoom,
+            maxZoom: MAP_MAX_ZOOM,
+            attribution: style.attribution,
+        }).addTo(this.map);
     }
 
     updated(changedProperties) {

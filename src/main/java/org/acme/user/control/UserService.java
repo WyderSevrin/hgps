@@ -85,6 +85,9 @@ public class UserService {
         if (settings.getTheme() != null) {
             user.setTheme(settings.getTheme());
         }
+        if (settings.getMapStyle() != null) {
+            user.setMapStyle(settings.getMapStyle());
+        }
         em.flush(); // so updatedAt is refreshed in the response
         return UserDto.from(user);
     }

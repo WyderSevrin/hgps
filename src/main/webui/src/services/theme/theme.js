@@ -1,24 +1,18 @@
 import { THEMES, DEFAULT_THEME_ID } from '../../themes/index.js';
+import { Preference, PreferenceController } from '../preferences/preference.js';
 
 // Color theme service: applies a theme's --hgps-* tokens as inline custom
 // properties on <html>, so they reach every component (custom properties
-// inherit through shadow DOM). The choice is remembered in localStorage.
-
-const STORAGE_KEY = 'theme';
-const CHANGE_EVENT = 'theme-changed';
-const events = new EventTarget();
+// inherit through shadow DOM). The choice is remembered in localStorage
+// and saved to the user's settings (see preferences/userSettingsSync.js).
 
 export { THEMES };
 
-const findTheme = id => THEMES.find(theme => theme.id === id);
-
-function readStoredTheme() {
-    try {
-        return localStorage.getItem(STORAGE_KEY);
-    } catch {
-        return null;
-    }
-}
+export const themePreference = new Preference({
+    storageKey: 'theme',
+    options: THEMES,
+    defaultId: DEFAULT_THEME_ID,
+});
 
 /**
  * Write a theme's tokens onto an element. Used for the whole app (<html>) and
@@ -31,38 +25,26 @@ export function applyThemeTo(element, theme) {
     element.style.colorScheme = theme.colorScheme;
 }
 
-let current = findTheme(readStoredTheme()) ?? findTheme(DEFAULT_THEME_ID);
-
-// Applied as soon as this module is imported, before the app renders,
-// so there is no flash of the default theme.
-applyThemeTo(document.documentElement, current);
-document.documentElement.dataset.theme = current.id;
-
-export const getTheme = () => current;
-
-export function setTheme(id) {
-    const theme = findTheme(id);
-    if (!theme || theme === current) return;
-    current = theme;
+function applyToApp(theme) {
     applyThemeTo(document.documentElement, theme);
     document.documentElement.dataset.theme = theme.id;
-    try {
-        localStorage.setItem(STORAGE_KEY, theme.id);
-    } catch {
-        // storage unavailable: the choice just won't be remembered
-    }
-    events.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: theme }));
 }
+
+// Applied as soon as this module is imported, before the app renders,
+// so there is no flash of the default theme. Registered first, so the
+// theme is applied before any other listener runs.
+applyToApp(themePreference.current);
+themePreference.onChange(applyToApp);
+
+export const getTheme = () => themePreference.current;
+
+export const setTheme = id => themePreference.set(id);
 
 /**
  * Calls listener(theme) after every theme change. Returns a function that
  * removes the listener.
  */
-export function onThemeChange(listener) {
-    const handler = event => listener(event.detail);
-    events.addEventListener(CHANGE_EVENT, handler);
-    return () => events.removeEventListener(CHANGE_EVENT, handler);
-}
+export const onThemeChange = listener => themePreference.onChange(listener);
 
 /**
  * Lit reactive controller: re-renders its host whenever the theme changes.
@@ -70,18 +52,8 @@ export function onThemeChange(listener) {
  * the current theme; plain CSS using var(--hgps-*) updates by itself.
  * Usage in a component constructor: `new ThemeController(this);`
  */
-export class ThemeController {
+export class ThemeController extends PreferenceController {
     constructor(host) {
-        this.host = host;
-        this._onChange = () => this.host.requestUpdate();
-        host.addController(this);
-    }
-
-    hostConnected() {
-        events.addEventListener(CHANGE_EVENT, this._onChange);
-    }
-
-    hostDisconnected() {
-        events.removeEventListener(CHANGE_EVENT, this._onChange);
+        super(host, themePreference);
     }
 }

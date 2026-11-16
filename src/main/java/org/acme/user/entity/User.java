@@ -69,6 +69,10 @@ public class User {
     @Column(length = 30)
     private String theme;
 
+    /** Id of the chosen frontend map style (e.g. "topographic"), null when none was saved yet. */
+    @Column(name = "map_style", length = 30)
+    private String mapStyle;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     @Setter(AccessLevel.NONE)

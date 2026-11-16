@@ -40,6 +40,10 @@ public class UserDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String theme;
 
+    /** Map style id, null when none was saved. READ_ONLY, like the theme. */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String mapStyle;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OffsetDateTime createdAt;
 
@@ -54,6 +58,7 @@ public class UserDto {
                 .displayName(user.getDisplayName())
                 .language(user.getLanguage())
                 .theme(user.getTheme())
+                .mapStyle(user.getMapStyle())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();

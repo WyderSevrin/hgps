@@ -191,6 +191,20 @@
         "description": "Tema, colori e preferenze di visualizzazione."
       }
     },
+    "map": {
+      "style": "Stile della mappa",
+      "styleHint": "Sfondo della mappa. Salvato nel tuo account.",
+      "styles": {
+        "standard": {
+          "name": "Standard",
+          "description": "OpenStreetMap: strade, località e luoghi."
+        },
+        "topographic": {
+          "name": "Topografica",
+          "description": "Curve di livello, rilievo e corsi d’acqua, ideale sul terreno."
+        }
+      }
+    },
     "appearance": {
       "theme": "Tema di colori",
       "themeHint": "Si applica a tutta l'app e viene ricordato su questo dispositivo.",

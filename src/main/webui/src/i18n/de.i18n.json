@@ -191,6 +191,20 @@
         "description": "Design, Farben und Anzeigeeinstellungen."
       }
     },
+    "map": {
+      "style": "Kartenstil",
+      "styleHint": "Hintergrund der Karte. Wird in deinem Konto gespeichert.",
+      "styles": {
+        "standard": {
+          "name": "Standard",
+          "description": "OpenStreetMap: Strassen, Orte und Plätze."
+        },
+        "topographic": {
+          "name": "Topografisch",
+          "description": "Höhenlinien, Relief und Gewässer, ideal im Gelände."
+        }
+      }
+    },
     "appearance": {
       "theme": "Farbschema",
       "themeHint": "Gilt für die ganze App und wird auf diesem Gerät gespeichert.",

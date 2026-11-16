@@ -103,7 +103,7 @@ export const userOptionsPanelStyles = css`
         font-size: 0.86rem;
     }
 
-    /* ---- Appearance: theme picker ---- */
+    /* ---- Pickers: cards of the map style and color theme options ---- */
     fieldset {
         margin: 0;
         padding: 0;
@@ -125,13 +125,13 @@ export const userOptionsPanelStyles = css`
         color: var(--hgps-text-subtle);
     }
 
-    .themes {
+    .choices {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
         gap: var(--hgps-size-3);
     }
 
-    .theme {
+    .choice {
         position: relative;
         display: flex;
         flex-direction: column;
@@ -144,23 +144,23 @@ export const userOptionsPanelStyles = css`
         transition: border-color 0.15s ease, background-color 0.15s ease;
     }
 
-    .theme:hover {
+    .choice:hover {
         border-color: var(--hgps-border-strong);
     }
 
-    .theme.selected {
+    .choice.selected {
         border-color: var(--hgps-accent);
         box-shadow: 0 0 0 1px var(--hgps-accent);
     }
 
     /* Native radio kept for keyboard / screen readers, visually hidden */
-    .theme input {
+    .choice input {
         position: absolute;
         opacity: 0;
         pointer-events: none;
     }
 
-    .theme:has(input:focus-visible) {
+    .choice:has(input:focus-visible) {
         outline: 0.125rem solid var(--hgps-accent);
         outline-offset: 0.125rem;
     }
@@ -179,14 +179,14 @@ export const userOptionsPanelStyles = css`
         transform: scale(0.7);
     }
 
-    .theme-name {
+    .choice-name {
         font-size: 0.86rem;
         font-weight: 600;
         color: var(--hgps-text-strong);
         padding: 0 var(--hgps-size-1);
     }
 
-    .theme-description {
+    .choice-description {
         font-size: 0.76rem;
         line-height: 1.4;
         color: var(--hgps-text-subtle);
@@ -202,6 +202,14 @@ export const userOptionsPanelStyles = css`
         border-radius: var(--hgps-size-2);
         border: thin solid var(--hgps-border);
         background: var(--hgps-bg);
+    }
+
+    /* Map style preview: one tile of the style */
+    img.preview {
+        width: 100%;
+        box-sizing: border-box;
+        object-fit: cover;
+        background: var(--hgps-surface-3); /* while loading */
     }
 
     .p-header {

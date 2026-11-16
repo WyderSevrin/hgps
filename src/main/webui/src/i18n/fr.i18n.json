@@ -191,6 +191,20 @@
         "description": "Thème, couleurs et préférences d'affichage."
       }
     },
+    "map": {
+      "style": "Style de carte",
+      "styleHint": "Fond de la carte. Enregistré dans votre compte.",
+      "styles": {
+        "standard": {
+          "name": "Standard",
+          "description": "OpenStreetMap : routes, localités et lieux."
+        },
+        "topographic": {
+          "name": "Topographique",
+          "description": "Courbes de niveau, relief et cours d’eau, idéal sur le terrain."
+        }
+      }
+    },
     "appearance": {
       "theme": "Thème de couleurs",
       "themeHint": "S'applique à toute l'application et est mémorisé sur cet appareil.",

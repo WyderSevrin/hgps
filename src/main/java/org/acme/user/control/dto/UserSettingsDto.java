@@ -16,11 +16,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserSettingsDto {
 
+    /**
+     * Format of the ids of options defined in the frontend (themes, map styles).
+     * The lists themselves live in the frontend, so only the format is checked.
+     */
+    private static final String FRONTEND_ID = "[a-z0-9-]{1,30}";
+    private static final String FRONTEND_ID_MESSAGE = "must be 1 to 30 characters: lower-case letters, digits or '-'";
+
     /** UI language. */
     @Pattern(regexp = "en|de|fr|it", message = "must be one of en, de, fr, it")
     private String language;
 
     /** Id of a frontend color theme, e.g. "slate-gold". */
-    @Pattern(regexp = "[a-z0-9-]{1,30}", message = "must be 1 to 30 characters: lower-case letters, digits or '-'")
+    @Pattern(regexp = FRONTEND_ID, message = FRONTEND_ID_MESSAGE)
     private String theme;
+
+    /** Id of a frontend map style, e.g. "topographic". */
+    @Pattern(regexp = FRONTEND_ID, message = FRONTEND_ID_MESSAGE)
+    private String mapStyle;
 }
