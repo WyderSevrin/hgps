@@ -105,7 +105,7 @@ Each User can create an account and login to add their own spots.
 - When adding a new Area, also add a Kanton to it automatically, also Make it possible to have multiple kanton
 - Side Menu, bottom add contact link and a legal information
 
-- Landing Page --> Rework needed
+
 
 
 
@@ -120,4 +120,3 @@ Each User can create an account and login to add their own spots.
 - For Fun, add a mini-game / test ?
 
 
-- Adding themes in front and saving theme as user Settings in the backend/db

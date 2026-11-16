@@ -1,30 +1,11 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html} from 'lit';
+import { leafletMapStyles } from './leaflet-map.styles.js';
 import L from 'leaflet'; // Importer Leaflet
 import 'leaflet/dist/leaflet.css'; // Importer les styles pour que Leaflet fonctionne correctement
 
 
 export class LeafletMap extends LitElement {
-    static get styles() {
-        return [css`
-            :host {
-                display: block;
-                height: 200px;
-            }
-
-            .vertex-marker {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--hgps-map-marker);
-                color: var(--hgps-text-strong);
-                border: 2px solid var(--hgps-text-strong);
-                border-radius: 50%;
-                font-size: 12px;
-                font-weight: 600;
-                box-shadow: 0 1px 4px var(--hgps-shadow-soft);
-            }
-        `];
-    }
+    static styles = leafletMapStyles;
 
     static properties = {
         data: {type: Object},

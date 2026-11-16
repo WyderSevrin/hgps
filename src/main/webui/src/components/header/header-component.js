@@ -1,4 +1,6 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
+import { headerControlStyles } from '../../styles/shared.styles.js';
+import { headerComponentStyles } from './header-component.styles.js';
 import '../icon/icon.js';
 import '../modal/modal-component.js';
 import '../friends/friends-panel.js';
@@ -9,87 +11,7 @@ import { I18nController, t } from '../../services/i18n/i18n.js';
 import { auth } from '../../services/auth/authService.js';
 
 export class HeaderComponent extends LitElement {
-    static styles = css`
-        :host {
-            display: block;
-        }
-
-        header {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-sizing: border-box;
-            padding: 6px 24px;
-            /* Match the 60px slot reserved by the app layout (main margin-top) */
-            height: 60px;
-            background: var(--hgps-header-bg);
-            color: var(--hgps-on-header);
-            border-bottom: 2px solid var(--hgps-header-border);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .pickaxe {
-            width: 30px;
-            height: 30px;
-            flex: 0 0 auto;
-            color: var(--hgps-gold);
-        }
-
-        .title {
-            margin: 0;
-            font-size: clamp(18px, 3vw, 24px);
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            color: var(--hgps-gold-bright);
-        }
-
-        /* Actions (friends, user options, language) pinned to the far right */
-        .actions {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .icon-btn {
-            all: unset;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: var(--hgps-header-control);
-            border: 1px solid var(--hgps-gold);
-            color: var(--hgps-gold-bright);
-            cursor: pointer;
-            transition: background-color 0.25s ease, border-color 0.25s ease;
-        }
-        .icon-btn:hover {
-            background-color: var(--hgps-header-control-hover);
-            border-color: var(--hgps-gold-bright);
-        }
-        .icon-btn:focus-visible {
-            outline: none;
-            border-color: var(--hgps-gold-bright);
-            box-shadow: 0 0 0 2px var(--hgps-accent-ring);
-        }
-        .icon-btn custom-icon {
-            font-size: 20px;
-        }
-
-
-        @media (max-width: 520px) {
-            header { padding: 6px 12px; }
-            .brand { gap: 8px; }
-        }
-    `;
+    static styles = [headerControlStyles, headerComponentStyles];
 
     static properties = {
         friendsOpen: { type: Boolean, state: true },
@@ -132,14 +54,14 @@ export class HeaderComponent extends LitElement {
                 <!-- Far-right actions: notifications, friends, user options, language -->
                 <div class="actions">
                     <notifications-menu></notifications-menu>
-                    <button class="icon-btn"
+                    <button class="header-control"
                             title="${t('header.friends')}"
                             aria-label="${t('header.friends')}"
                             aria-haspopup="dialog"
                             @click="${() => this.friendsOpen = true}">
                         <custom-icon label="group"></custom-icon>
                     </button>
-                    <button class="icon-btn"
+                    <button class="header-control"
                             title="${t('header.userOptions')}"
                             aria-label="${t('header.userOptions')}"
                             aria-haspopup="dialog"
@@ -147,7 +69,7 @@ export class HeaderComponent extends LitElement {
                         <custom-icon label="manage_accounts"></custom-icon>
                     </button>
                     <language-menu></language-menu>
-                    <button class="icon-btn"
+                    <button class="header-control"
                             title="${t('auth.logoutAs', {username: auth.user?.username})}"
                             aria-label="${t('auth.logout')}"
                             @click="${() => auth.logout()}">

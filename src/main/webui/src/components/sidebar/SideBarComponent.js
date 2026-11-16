@@ -1,36 +1,9 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
+import { sideBarComponentStyles } from './SideBarComponent.styles.js';
 import { I18nController, t } from '../../services/i18n/i18n.js';
 
 export class SideBarComponent extends LitElement {
-    static styles = css`
-        aside {
-            background-color: var(--hgps-surface);
-            height: 100%;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            width: 180px;
-            transition: width 0.3s ease;
-        }
-
-        aside.collapsed {
-            width: 64px;
-        }
-
-        .aside-container {
-            height: 100%;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-sizing: border-box;
-        }
-
-        /* The toggle sits apart from the navigation buttons. */
-        .toggle {
-            margin-bottom: 6px;
-        }
-    `;
+    static styles = sideBarComponentStyles;
 
     static properties = {
         currentHash: { type: String },

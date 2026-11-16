@@ -18,11 +18,11 @@ import './src/components/router/app-router.js';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // pages
-import './src/pages/home-page.js';
-import './src/pages/map-page.js';
-import './src/pages/guide-page.js';
-import './src/pages/not-found-page.js';
-import './src/pages/login-page.js';
+import './src/pages/home/home-page.js';
+import './src/pages/map/map-page.js';
+import './src/pages/guide/guide-page.js';
+import './src/pages/not-found/not-found-page.js';
+import './src/pages/login/login-page.js';
 
 
 

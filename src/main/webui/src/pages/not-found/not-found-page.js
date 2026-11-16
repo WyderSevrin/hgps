@@ -1,13 +1,10 @@
 // not-found-page.js
-import { LitElement, html, css } from 'lit';
-import { I18nController, t } from '../services/i18n/i18n.js';
+import { LitElement, html } from 'lit';
+import { notFoundPageStyles } from './not-found-page.styles.js';
+import { I18nController, t } from '../../services/i18n/i18n.js';
 
 export class NotFoundPage extends LitElement {
-    static styles = css`
-    h1 {
-      color: var(--hgps-danger);
-    }
-  `;
+    static styles = notFoundPageStyles;
 
     constructor() {
         super();

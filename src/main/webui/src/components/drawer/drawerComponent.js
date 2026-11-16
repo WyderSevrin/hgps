@@ -1,32 +1,9 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html} from 'lit';
+import { drawerComponentStyles } from './drawerComponent.styles.js';
 import {I18nController, t} from '../../services/i18n/i18n.js';
 
 export class DrawerComponent extends LitElement {
-    static styles = css`
-
-        :host {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-            background-color: var(--hgps-surface);
-        }
-
-        .drawer {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .drawer-header {
-            display: flex;
-            flex-direction: row;
-        }
-        
-        .drawer-content{
-            height: 100%;
-        }
-    `;
+    static styles = drawerComponentStyles;
 
     static properties = {
         open: {type: Boolean}, // Gère l'état du tiroir (ouvert ou fermé)
