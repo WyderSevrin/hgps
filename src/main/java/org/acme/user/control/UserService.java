@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.acme.invitation.control.Friendship;
 import org.acme.user.control.dto.UserCreateDto;
 import org.acme.user.control.dto.UserDto;
 import org.acme.user.control.dto.UserPublicDto;
@@ -115,11 +116,13 @@ public class UserService {
      * Order: matches at the start of the username or of a word of the display name first
      * ("mar" finds "Alice Martin" before "Omar"), then by username.
      *
-     * @param term  what the user typed; a leading "@" is ignored, % and _ are taken literally
-     * @param limit maximum number of results
+     * @param term             what the user typed; a leading "@" is ignored, % and _ are taken literally
+     * @param limit            maximum number of results
+     * @param areasVisibleOnly only the users whose public areas the logged-in user may see:
+     *                         their friends and the users with a public profile (see AreaService)
      */
     @Transactional
-    public List<UserPublicDto> search(TokenUser token, String term, int limit) {
+    public List<UserPublicDto> search(TokenUser token, String term, int limit, boolean areasVisibleOnly) {
         User me = currentUser(token);
         String text = term.trim().toLowerCase(Locale.ROOT);
         if (text.startsWith("@")) {
@@ -129,18 +132,22 @@ public class UserService {
             return List.of();
         }
         String escaped = text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+        String areasVisibleFilter = areasVisibleOnly
+                ? "AND (u.publicProfile = true OR " + Friendship.areFriends(":me", "u") + ")"
+                : "";
 
         return em.createQuery("""
                         SELECT u FROM User u
-                        WHERE u.id <> :me
+                        WHERE u <> :me
+                          %s
                           AND (lower(u.username) LIKE :contains ESCAPE '\\'
                                OR lower(u.displayName) LIKE :contains ESCAPE '\\')
                         ORDER BY CASE WHEN lower(u.username) LIKE :prefix ESCAPE '\\'
                                         OR lower(u.displayName) LIKE :prefix ESCAPE '\\'
                                         OR lower(u.displayName) LIKE :wordPrefix ESCAPE '\\'
                                       THEN 0 ELSE 1 END,
-                                 u.username""", User.class)
-                .setParameter("me", me.getId())
+                                 u.username""".formatted(areasVisibleFilter), User.class)
+                .setParameter("me", me)
                 .setParameter("contains", "%" + escaped + "%")
                 .setParameter("prefix", escaped + "%")
                 .setParameter("wordPrefix", "% " + escaped + "%")

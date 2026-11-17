@@ -46,6 +46,12 @@ export class Area {
         return this.createdAt !== null;
     }
 
+    // True for the given user's areas, and for a new area (no owner until it is saved).
+    // The backend checks it again: only the owner can update or delete an area.
+    isOwnedBy(userId) {
+        return this.owner === null || this.owner.id === userId;
+    }
+
     // Copy of this area with some fields changed; everything else (uuid, region, owner, ...) is kept.
     #copy({
               name = this.name,

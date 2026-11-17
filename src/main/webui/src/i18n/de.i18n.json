@@ -92,7 +92,16 @@
   "mapFilters": {
     "open": "Suche und Filter anzeigen",
     "close": "Suche und Filter ausblenden",
-    "searchPlaceholder": "Suchen…",
+    "userSearch": {
+      "placeholder": "Freunde und öffentliche Profile suchen…",
+      "info": "Zeigen Sie die öffentlichen Abschnitte Ihrer Freunde und öffentlicher Profile an.",
+      "hint": "Geben Sie mindestens {{count}} Zeichen ein.",
+      "noResults": "Kein Freund und kein öffentliches Profil passt zu „{{term}}“.",
+      "error": "Die Suche ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "selected": "Auf der Karte angezeigt",
+      "remove": "{{name}} entfernen",
+      "loadError": "Die Abschnitte dieser Benutzer konnten nicht geladen werden. Bitte versuchen Sie es erneut."
+    },
     "goldPresence": "Nach Goldvorkommen filtern",
     "showAll": "Alle anzeigen"
   },

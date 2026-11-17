@@ -92,7 +92,16 @@
   "mapFilters": {
     "open": "Show search and filters",
     "close": "Hide search and filters",
-    "searchPlaceholder": "Search…",
+    "userSearch": {
+      "placeholder": "Search friends and public profiles…",
+      "info": "Show the public areas of your friends and of public profiles.",
+      "hint": "Type at least {{count}} characters.",
+      "noResults": "No friend or public profile matches “{{term}}”.",
+      "error": "The search failed. Please try again.",
+      "selected": "Shown on the map",
+      "remove": "Remove {{name}}",
+      "loadError": "Their areas could not be loaded. Please try again."
+    },
     "goldPresence": "Filter by gold presence",
     "showAll": "Show all"
   },

@@ -8,6 +8,7 @@ import '../../components/slider/slider-component.js';
 import '../../components/top-drawer/top-drawer-component.js';
 import {GoldPresenceFilter} from '../../components/filter/gold-presence-filter.js';
 import '../../components/collapsible/collapsible-component.js';
+import '../../components/user-picker/user-picker.js';
 import {Area} from "../../models/area.js";
 import {Vertex} from "../../models/vertex.js";
 import {MapData} from "../../models/mapData.js";
@@ -31,13 +32,18 @@ export class MapPage extends LitElement {
         selectedArea: {type: Object, state: true},
         // Gold presence levels whose areas are shown on the map (top drawer filter).
         visibleGoldPresence: {type: Array, state: true},
-        // The saved areas. Always replaced by a new MapData (see _setAreas) so the map redraws.
+        // The areas on the map: own ones and the shared ones of the users picked in the top drawer.
+        // Always replaced by a new MapData (see _setAreas / _setSharedAreas) so the map redraws.
         mapData: {type: Object, state: true},
         // True while a save is in progress, to ignore double clicks.
         saving: {type: Boolean, state: true},
         // Message shown in the editor, null = no error.
         errorMessage: {type: String, state: true},
+        // Message shown in the top drawer when the shared areas could not be loaded, null = no error.
+        sharedAreasError: {type: String, state: true},
     };
+
+    #sharedAreasSeq = 0; // to ignore answers of loads that are no longer current
 
     constructor() {
         super();
@@ -51,6 +57,7 @@ export class MapPage extends LitElement {
         this.mapData = new MapData();
         this.saving = false;
         this.errorMessage = null;
+        this.sharedAreasError = null;
     }
 
     connectedCallback() {
@@ -69,9 +76,27 @@ export class MapPage extends LitElement {
         }
     }
 
+    // Loads the public areas of the users picked in the top drawer (replaces the previous ones).
+    async _loadSharedAreas(users) {
+        const seq = ++this.#sharedAreasSeq;
+        this.sharedAreasError = null;
+        try {
+            const areas = await AreaService.listPublicOf(users.map(user => user.id));
+            if (seq === this.#sharedAreasSeq) this._setSharedAreas(areas);
+        } catch (e) {
+            if (seq !== this.#sharedAreasSeq) return;
+            console.warn('[map] Shared areas could not be loaded', e);
+            this.sharedAreasError = t('mapFilters.userSearch.loadError');
+        }
+    }
+
     // A new MapData (not a changed one) so leaflet-map notices it and redraws.
     _setAreas(areas) {
-        this.mapData = new MapData(areas, this.mapData.points);
+        this.mapData = new MapData(areas, this.mapData.sharedAreas, this.mapData.points);
+    }
+
+    _setSharedAreas(sharedAreas) {
+        this.mapData = new MapData(this.mapData.areas, sharedAreas, this.mapData.points);
     }
 
     // The empty area the editor starts with.
@@ -110,13 +135,16 @@ export class MapPage extends LitElement {
                     <top-drawer openLabel="${t('mapFilters.open')}"
                                 closeLabel="${t('mapFilters.close')}">
                         <div class="top-drawer-content">
-                            <!-- Search: UI only for now, not wired to anything yet -->
-                            <div class="search">
-                                <custom-icon label="search"></custom-icon>
-                                <input type="search" class="text-input"
-                                       placeholder="${t('mapFilters.searchPlaceholder')}"
-                                       aria-label="${t('mapFilters.searchPlaceholder')}">
-                            </div>
+                            <!-- Friends and public profiles whose public areas are shown -->
+                            <user-picker
+                                    @selection-change="${e => this._loadSharedAreas(e.detail.users)}">
+                            </user-picker>
+                            ${this.sharedAreasError
+                                    ? html`<p class="error-message" role="alert">
+                                        <custom-icon label="error"></custom-icon>
+                                        ${this.sharedAreasError}
+                                    </p>`
+                                    : null}
                             <gold-presence-filter
                                     .levels="${this.visibleGoldPresence}"
                                     @filter-change="${e => this.visibleGoldPresence = e.detail.levels}">
@@ -310,6 +338,7 @@ export class MapPage extends LitElement {
 
     // The editor works on a copy: the saved area in the list stays unchanged until it is saved.
     mapSelectArea = (area) => {
+        if (!area.isOwnedBy(auth.user.id)) return; // other users' areas are read only
         this.selectedArea = area.withSelected(true);
         this.errorMessage = null;
     }

@@ -50,23 +50,6 @@ export const mapPageStyles = css`
         gap: var(--hgps-size-4);
     }
 
-    .search {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-
-    .search custom-icon {
-        position: absolute;
-        left: var(--hgps-size-3);
-        color: var(--hgps-text-subtle);
-        pointer-events: none;
-    }
-
-    .search .text-input {
-        padding-left: calc(var(--hgps-size-3) * 2 + 1.25rem);
-    }
-
     leaflet-map {
         flex: 1; /* fill remaining height under the nav */
         width: 100%; /* was 75vw  */

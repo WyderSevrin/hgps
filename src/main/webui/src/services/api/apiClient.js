@@ -38,7 +38,8 @@ export class ApiError extends Error {
  * @param {string} method  GET, POST, PUT, DELETE
  * @param {string} path    e.g. '/areas' or '/areas/<id>'
  * @param {object} [options]
- * @param {object} [options.query] query parameters; null/undefined values are left out
+ * @param {object} [options.query] query parameters; null/undefined values are left out,
+ *                                 an array is sent as a repeated parameter (?owner=a&owner=b)
  * @param {*}      [options.body]  sent as JSON
  * @returns {Promise<*>} the parsed JSON, or null for an empty answer (204)
  * @throws {ApiError} when the backend answers with an error status
@@ -61,8 +62,11 @@ export async function apiRequest(method, path, {query, body} = {}) {
 function queryString(query = {}) {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(query)) {
-        if (value !== null && value !== undefined && value !== '') {
-            params.set(key, value);
+        const values = Array.isArray(value) ? value : [value];
+        for (const item of values) {
+            if (item !== null && item !== undefined && item !== '') {
+                params.append(key, item);
+            }
         }
     }
     const text = params.toString();

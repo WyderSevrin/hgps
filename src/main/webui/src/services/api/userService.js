@@ -9,6 +9,9 @@ import {apiRequest} from "./apiClient.js";
  */
 export class UserService {
 
+    /** Shortest search term the backend accepts (GET /api/users/search). */
+    static MIN_SEARCH_LENGTH = 2;
+
     /** @returns {Promise<object[]>} sorted by username */
     static list() {
         return apiRequest('GET', '/users');
@@ -24,10 +27,13 @@ export class UserService {
      * the logged-in user excluded. Requires a logged-in user.
      * @param {string} term  at least 2 characters; a leading "@" is ignored
      * @param {number} [limit] 1 to 20, default 10
+     * @param {object} [options]
+     * @param {boolean} [options.areasVisible] only the users whose public areas the logged-in
+     *                                         user may see: friends and public profiles
      * @returns {Promise<Array<{id, username, displayName}>>} best matches first
      */
-    static search(term, limit = 10) {
-        return apiRequest('GET', '/users/search', {query: {q: term, limit}});
+    static search(term, limit = 10, {areasVisible = false} = {}) {
+        return apiRequest('GET', '/users/search', {query: {q: term, limit, areasVisible}});
     }
 
     /**

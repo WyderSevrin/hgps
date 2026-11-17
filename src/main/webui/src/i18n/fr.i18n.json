@@ -92,7 +92,16 @@
   "mapFilters": {
     "open": "Afficher la recherche et les filtres",
     "close": "Masquer la recherche et les filtres",
-    "searchPlaceholder": "Rechercher…",
+    "userSearch": {
+      "placeholder": "Rechercher des amis et des profils publics…",
+      "info": "Affichez les sections publiques de vos amis et des profils publics.",
+      "hint": "Saisissez au moins {{count}} caractères.",
+      "noResults": "Aucun ami ni profil public ne correspond à « {{term}} ».",
+      "error": "La recherche a échoué. Veuillez réessayer.",
+      "selected": "Affichés sur la carte",
+      "remove": "Retirer {{name}}",
+      "loadError": "Leurs sections n'ont pas pu être chargées. Veuillez réessayer."
+    },
     "goldPresence": "Filtrer par présence d'or",
     "showAll": "Tout afficher"
   },

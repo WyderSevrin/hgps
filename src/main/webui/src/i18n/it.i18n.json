@@ -92,7 +92,16 @@
   "mapFilters": {
     "open": "Mostra ricerca e filtri",
     "close": "Nascondi ricerca e filtri",
-    "searchPlaceholder": "Cerca…",
+    "userSearch": {
+      "placeholder": "Cerca amici e profili pubblici…",
+      "info": "Mostra le sezioni pubbliche dei tuoi amici e dei profili pubblici.",
+      "hint": "Digita almeno {{count}} caratteri.",
+      "noResults": "Nessun amico o profilo pubblico corrisponde a «{{term}}».",
+      "error": "La ricerca non è riuscita. Riprova.",
+      "selected": "Mostrati sulla mappa",
+      "remove": "Rimuovi {{name}}",
+      "loadError": "Non è stato possibile caricare le loro sezioni. Riprova."
+    },
     "goldPresence": "Filtra per presenza d'oro",
     "showAll": "Mostra tutto"
   },

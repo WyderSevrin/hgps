@@ -52,14 +52,17 @@ public class UserResource {
     /**
      * Search by part of the username or display name, e.g. to add a friend:
      * GET /users/search?q=mar&amp;limit=10
+     * With areasVisible=true, only the users whose public areas the logged-in user may see
+     * (friends and public profiles), e.g. to show their areas on the map.
      * Returns the public view of the users (no e-mail), the logged-in user excluded.
      */
     @GET
     @Path("/search")
     @Authenticated
     public List<UserPublicDto> search(@QueryParam("q") @NotBlank @Size(min = 2, max = 100) String term,
-                                      @QueryParam("limit") @DefaultValue("10") @Min(1) @Max(20) int limit) {
-        return userService.search(TokenUser.from(jwt), term, limit);
+                                      @QueryParam("limit") @DefaultValue("10") @Min(1) @Max(20) int limit,
+                                      @QueryParam("areasVisible") @DefaultValue("false") boolean areasVisible) {
+        return userService.search(TokenUser.from(jwt), term, limit, areasVisible);
     }
 
     @GET

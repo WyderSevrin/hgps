@@ -3,6 +3,7 @@ package org.acme.area.boundary;
 import io.quarkus.security.Authenticated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -29,7 +30,8 @@ import java.util.UUID;
  * REST API for the areas: /api/areas
  * Requires a valid Keycloak bearer token. Errors are mapped in ExceptionMappers.
  * <pre>
- * GET    /areas?owner={userId}&amp;region=BE   visible areas, see AreaService (both filters optional)
+ * GET    /areas?owner={userId}&amp;region=BE   visible areas, see AreaService (both filters optional,
+ *                                            owner can be repeated: ?owner=a&amp;owner=b)
  * GET    /areas/{id}                         one visible area
  * POST   /areas                              create, owned by the logged-in user
  * PUT    /areas/{id}                         replace (owner only)
@@ -43,13 +45,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AreaResource {
 
+    /** Most owners in one GET /areas, to keep the query small. */
+    private static final int MAX_OWNERS = 50;
+
     private final JsonWebToken jwt;
     private final AreaService areaService;
 
     @GET
-    public List<AreaDto> list(@QueryParam("owner") UUID ownerId,
+    public List<AreaDto> list(@QueryParam("owner") @Size(max = MAX_OWNERS) List<UUID> ownerIds,
                               @QueryParam("region") String region) {
-        return areaService.findVisible(me(), ownerId, region);
+        return areaService.findVisible(me(), ownerIds, region);
     }
 
     @GET

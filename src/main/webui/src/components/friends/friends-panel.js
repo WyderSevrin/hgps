@@ -13,7 +13,7 @@ const AVATAR_TOKENS = [
     '--hgps-gold-level-4', '--hgps-gold-level-5',
 ];
 
-const MIN_SEARCH_LENGTH = 2; // same as the backend (GET /api/users/search)
+const MIN_SEARCH_LENGTH = UserService.MIN_SEARCH_LENGTH;
 const SEARCH_DELAY_MS = 250; // wait for a pause in typing before searching
 const SEARCH_LIMIT = 8;
 

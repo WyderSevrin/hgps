@@ -9,7 +9,7 @@ import org.acme.area.control.dto.AreaCreateDto;
 import org.acme.area.control.dto.AreaDto;
 import org.acme.area.control.dto.VertexDto;
 import org.acme.area.entity.Area;
-import org.acme.invitation.entity.InvitationStatus;
+import org.acme.invitation.control.Friendship;
 import org.acme.region.control.RegionService;
 import org.acme.user.control.TokenUser;
 import org.acme.user.control.UserService;
@@ -43,13 +43,11 @@ public class AreaService {
 
     /**
      * The visibility rule (see the class comment) as a JPQL condition on the area "a".
-     * Parameters: :me (the logged-in user) and :accepted, set by {@link #visibleQuery}.
-     * Friends = an ACCEPTED invitation between the two users, in either direction.
+     * Parameter :me (the logged-in user), set by {@link #visibleQuery}.
      */
     private static final String VISIBLE_TO_ME = " (a.owner = :me"
             + " OR (a.isPrivate = false AND (a.owner.publicProfile = true"
-            + " OR EXISTS (SELECT f.id FROM FriendInvitation f WHERE f.status = :accepted"
-            + " AND ((f.sender = :me AND f.receiver = a.owner) OR (f.receiver = :me AND f.sender = a.owner))))))";
+            + " OR " + Friendship.areFriends(":me", "a.owner") + ")))";
 
     private final EntityManager em;
     private final UserService userService;
@@ -58,22 +56,23 @@ public class AreaService {
     /**
      * The areas visible to the logged-in user, newest first.
      *
-     * @param ownerId only the areas of this user (public uuid), or null for all owners
-     * @param region  only the areas in this canton, or null for all regions
+     * @param ownerIds only the areas of these users (public uuids), or empty for all owners
+     * @param region   only the areas in this canton, or null for all regions
      */
     @Transactional
-    public List<AreaDto> findVisible(TokenUser token, UUID ownerId, String region) {
+    public List<AreaDto> findVisible(TokenUser token, List<UUID> ownerIds, String region) {
         User me = userService.currentUser(token);
+        boolean filterOwners = !ownerIds.isEmpty();
 
         String jpql = SELECT_WITH_DETAILS
                 + " WHERE" + VISIBLE_TO_ME
-                + (ownerId != null ? " AND a.owner.uuid = :ownerId" : "")
+                + (filterOwners ? " AND a.owner.uuid IN :ownerIds" : "")
                 + (region != null ? " AND a.region.code = :region" : "")
                 + " ORDER BY a.createdAt DESC";
 
         var query = visibleQuery(jpql, me);
-        if (ownerId != null) {
-            query.setParameter("ownerId", ownerId);
+        if (filterOwners) {
+            query.setParameter("ownerIds", ownerIds);
         }
         if (region != null) {
             query.setParameter("region", region.trim().toUpperCase(Locale.ROOT));
@@ -133,11 +132,9 @@ public class AreaService {
                 .orElseThrow(() -> new AreaNotFoundException(id));
     }
 
-    /** A query whose condition contains {@link #VISIBLE_TO_ME}, with its parameters set. */
+    /** A query whose condition contains {@link #VISIBLE_TO_ME}, with its parameter set. */
     private TypedQuery<Area> visibleQuery(String jpql, User me) {
-        return em.createQuery(jpql, Area.class)
-                .setParameter("me", me)
-                .setParameter("accepted", InvitationStatus.ACCEPTED);
+        return em.createQuery(jpql, Area.class).setParameter("me", me);
     }
 
     /** The area, if the user owns it. A visible area of someone else gives 403, an invisible one 404. */

@@ -15,7 +15,7 @@ export class AreaService {
 
     /**
      * @param {object} [filter]
-     * @param {string} [filter.owner]  public id of a user: only their areas
+     * @param {string|string[]} [filter.owner]  public id(s) of users: only their areas
      * @param {string} [filter.region] canton code, e.g. 'BE'
      * @returns {Promise<Area[]>} newest first
      */
@@ -32,6 +32,18 @@ export class AreaService {
      */
     static listMine({region} = {}) {
         return AreaService.list({owner: auth.user.id, region});
+    }
+
+    /**
+     * The public areas of other users, in one request. The backend only returns
+     * the ones the logged-in user may see (friends' areas, public profiles' areas).
+     * @param {string[]} userIds  public ids of the users, not the logged-in user's
+     * @returns {Promise<Area[]>} newest first; empty when no user is given
+     */
+    static async listPublicOf(userIds) {
+        if (userIds.length === 0) return [];
+        const areas = await AreaService.list({owner: userIds});
+        return areas.filter(area => !area.isPrivate);
     }
 
     /** @returns {Promise<Area>} */

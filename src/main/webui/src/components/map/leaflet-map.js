@@ -115,6 +115,23 @@ export class LeafletMap extends LitElement {
                 this.drawArea(area);
             }
         });
+
+        //Draw the public areas of other users (read only). Hidden in edit mode,
+        //so only the user's own areas are shown while editing.
+        if (this.editMode) return;
+        this.data.sharedAreas
+            .filter(area => area.vertices.length > 0 && (!visible || visible.has(area.goldPresence)))
+            .forEach(this.drawSharedArea);
+    }
+
+    // An area of another user: dashed outline, no vertex markers, never selectable.
+    drawSharedArea = area => {
+        area.getPolygon({
+            color: this._themeColor(area.colorVar, '#7d8a91'),
+            weight: 2,
+            dashArray: '6 4',
+            fillOpacity: 0.15,
+        }).addTo(this.vertexLayer);
     }
 
 
@@ -145,34 +162,33 @@ export class LeafletMap extends LitElement {
             });
         }
 
-        // Vertex markers are only for editing: outside edit mode they would
-        // hide the areas when zoomed out (fixed pixel size vs. shrinking area).
-        if (!this.editMode) return;
+        // Vertex markers only for the area being edited (the selected one, in edit mode):
+        // on the other areas they would clutter the map and hide the areas when zoomed out
+        // (fixed pixel size vs. shrinking area).
+        if (!this.editMode || area?.selected !== true) return;
 
         vertices.forEach((vertex) => {
             const marker = L.marker([vertex.lat, vertex.lng], {
-                draggable: area?.selected === true,
+                draggable: true,
                 icon: this.createIndexIcon(vertex.index)
             }).addTo(this.vertexLayer);
 
-            if(area?.selected === true) {
-                //Start drag event
-                marker.on('drag', (event) => {
-                    const {lat, lng} = event.latlng;
-                    if (polygon) {
-                        const latlngs = vertices.map(c =>
-                            c.uuid === vertex.uuid ? [lat, lng] : [c.lat, c.lng]
-                        );
-                        polygon.setLatLngs([latlngs]);
-                    }
-                });
+            //Start drag event
+            marker.on('drag', (event) => {
+                const {lat, lng} = event.latlng;
+                if (polygon) {
+                    const latlngs = vertices.map(c =>
+                        c.uuid === vertex.uuid ? [lat, lng] : [c.lat, c.lng]
+                    );
+                    polygon.setLatLngs([latlngs]);
+                }
+            });
 
-                //End drag event
-                marker.on('dragend', (event) => {
-                    const {lat, lng} = event.target.getLatLng();
-                    this.updateSelectedArea?.(vertex.uuid, lat, lng);
-                });
-            }
+            //End drag event
+            marker.on('dragend', (event) => {
+                const {lat, lng} = event.target.getLatLng();
+                this.updateSelectedArea?.(vertex.uuid, lat, lng);
+            });
         });
     }
 
