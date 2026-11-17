@@ -2,12 +2,14 @@ package org.acme.area.control;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.acme.area.control.dto.AreaCreateDto;
 import org.acme.area.control.dto.AreaDto;
 import org.acme.area.control.dto.VertexDto;
 import org.acme.area.entity.Area;
+import org.acme.invitation.entity.InvitationStatus;
 import org.acme.region.control.RegionService;
 import org.acme.user.control.TokenUser;
 import org.acme.user.control.UserService;
@@ -21,8 +23,13 @@ import java.util.UUID;
  * Business logic and persistence for areas.
  * Every method acts on behalf of the logged-in user (the token).
  * <p>
- * Visibility: a user sees their own areas and the public areas of everyone.
- * Private areas of others are reported as not found. Only the owner can change or delete an area.
+ * Visibility: a user sees
+ * <ul>
+ *     <li>their own areas, private or public,</li>
+ *     <li>the public areas of their friends,</li>
+ *     <li>the public areas of users with a public profile (User.publicProfile), friends or not.</li>
+ * </ul>
+ * Areas a user may not see are reported as not found. Only the owner can change or delete an area.
  * <p>
  * All methods are transactional because resolving the logged-in user may create it (first login).
  */
@@ -33,6 +40,16 @@ public class AreaService {
     /** Loads everything AreaDto needs in one query (no lazy loading per area). */
     private static final String SELECT_WITH_DETAILS = "SELECT a FROM Area a"
             + " JOIN FETCH a.owner LEFT JOIN FETCH a.region LEFT JOIN FETCH a.vertices";
+
+    /**
+     * The visibility rule (see the class comment) as a JPQL condition on the area "a".
+     * Parameters: :me (the logged-in user) and :accepted, set by {@link #visibleQuery}.
+     * Friends = an ACCEPTED invitation between the two users, in either direction.
+     */
+    private static final String VISIBLE_TO_ME = " (a.owner = :me"
+            + " OR (a.isPrivate = false AND (a.owner.publicProfile = true"
+            + " OR EXISTS (SELECT f.id FROM FriendInvitation f WHERE f.status = :accepted"
+            + " AND ((f.sender = :me AND f.receiver = a.owner) OR (f.receiver = :me AND f.sender = a.owner))))))";
 
     private final EntityManager em;
     private final UserService userService;
@@ -49,12 +66,12 @@ public class AreaService {
         User me = userService.currentUser(token);
 
         String jpql = SELECT_WITH_DETAILS
-                + " WHERE (a.owner = :me OR a.isPrivate = false)"
+                + " WHERE" + VISIBLE_TO_ME
                 + (ownerId != null ? " AND a.owner.uuid = :ownerId" : "")
                 + (region != null ? " AND a.region.code = :region" : "")
                 + " ORDER BY a.createdAt DESC";
 
-        var query = em.createQuery(jpql, Area.class).setParameter("me", me);
+        var query = visibleQuery(jpql, me);
         if (ownerId != null) {
             query.setParameter("ownerId", ownerId);
         }
@@ -107,17 +124,20 @@ public class AreaService {
         area.markUpdated();
     }
 
-    /** The area, if the user may see it: their own, or a public one. */
+    /** The area, if the user may see it (see the class comment). */
     private Area getVisible(User me, UUID id) {
-        Area area = em.createQuery(SELECT_WITH_DETAILS + " WHERE a.uuid = :uuid", Area.class)
+        return visibleQuery(SELECT_WITH_DETAILS + " WHERE a.uuid = :uuid AND" + VISIBLE_TO_ME, me)
                 .setParameter("uuid", id)
                 .getResultStream()
                 .findFirst()
                 .orElseThrow(() -> new AreaNotFoundException(id));
-        if (area.isPrivate() && !area.isOwnedBy(me)) {
-            throw new AreaNotFoundException(id);
-        }
-        return area;
+    }
+
+    /** A query whose condition contains {@link #VISIBLE_TO_ME}, with its parameters set. */
+    private TypedQuery<Area> visibleQuery(String jpql, User me) {
+        return em.createQuery(jpql, Area.class)
+                .setParameter("me", me)
+                .setParameter("accepted", InvitationStatus.ACCEPTED);
     }
 
     /** The area, if the user owns it. A visible area of someone else gives 403, an invisible one 404. */

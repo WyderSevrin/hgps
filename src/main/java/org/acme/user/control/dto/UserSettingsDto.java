@@ -34,4 +34,7 @@ public class UserSettingsDto {
     /** Id of a frontend map style, e.g. "topographic". */
     @Pattern(regexp = FRONTEND_ID, message = FRONTEND_ID_MESSAGE)
     private String mapStyle;
+
+    /** True: everyone may see the user's public areas. False: only their friends. */
+    private Boolean publicProfile;
 }

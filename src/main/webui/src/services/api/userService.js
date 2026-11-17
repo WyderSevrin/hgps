@@ -32,7 +32,7 @@ export class UserService {
 
     /**
      * Saves preferences of the logged-in user. Fields left out are unchanged.
-     * @param {{theme?: string, language?: string}} settings
+     * @param {{theme?: string, mapStyle?: string, language?: string, publicProfile?: boolean}} settings
      * @returns {Promise<object>} the updated user, like /api/me
      */
     static updateSettings(settings) {

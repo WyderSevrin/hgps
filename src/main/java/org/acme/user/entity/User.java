@@ -73,6 +73,13 @@ public class User {
     @Column(name = "map_style", length = 30)
     private String mapStyle;
 
+    /**
+     * Who sees the user's public areas: false (default) = only friends, true = every logged-in user.
+     * Private areas are only ever seen by their owner. See AreaService.
+     */
+    @Column(name = "public_profile", nullable = false)
+    private boolean publicProfile;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     @Setter(AccessLevel.NONE)

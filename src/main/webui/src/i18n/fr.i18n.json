@@ -62,6 +62,7 @@
     "goldPresence": "Présence d'or",
     "goldPresenceUnset": "Non défini",
     "save": "Enregistrer",
+    "saving": "Enregistrement…",
     "reset": "Réinitialiser",
     "savedSections": "Sections enregistrées",
     "emptyPoints": "Cliquez sur la carte pour ajouter des points.",
@@ -71,7 +72,22 @@
     "points_other": "{{count}} points",
     "deleteTitle": "Supprimer la section",
     "deleteMessage": "Supprimer « {{name}} » ? Cette action est irréversible.",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "privacy": {
+      "label": "Section privée",
+      "private": "Privée",
+      "public": "Publique",
+      "onlyMe": "Vous seul pouvez voir cette section.",
+      "friends": "Vos amis peuvent voir cette section.",
+      "everyone": "Tout le monde peut voir cette section, car votre profil est public."
+    },
+    "errors": {
+      "load": "Vos sections n'ont pas pu être chargées. Veuillez réessayer plus tard.",
+      "save": "La section n'a pas pu être enregistrée. Veuillez réessayer.",
+      "delete": "La section n'a pas pu être supprimée. Veuillez réessayer.",
+      "nameRequired": "Donnez un nom à la section.",
+      "minPoints": "Une section doit avoir au moins {{count}} points."
+    }
   },
   "mapFilters": {
     "open": "Afficher la recherche et les filtres",
@@ -190,6 +206,17 @@
         "title": "Apparence",
         "description": "Thème, couleurs et préférences d'affichage."
       }
+    },
+    "account": {
+      "visibility": "Visibilité du profil",
+      "visibilityHint": "Qui peut voir vos sections publiques. Enregistré dans votre compte.",
+      "publicProfile": "Profil public",
+      "publicOn": "Public : tout le monde, amis ou non, peut voir vos sections publiques. Vos sections privées restent privées.",
+      "publicOff": "Non public : seuls vos amis peuvent voir vos sections publiques. Vos sections privées restent privées.",
+      "confirmTitle": "Rendre votre profil public ?",
+      "confirmMessage": "Avec un profil public, vos sections publiques peuvent être vues par tout le monde, amis ou non. Vos sections privées resteront privées.",
+      "confirmLabel": "Rendre public",
+      "saveError": "Le paramètre n'a pas pu être enregistré. Veuillez réessayer."
     },
     "map": {
       "style": "Style de carte",

@@ -21,7 +21,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
  * Requires a valid Keycloak bearer token. On the first call for a Keycloak
  * account, the matching application user is created (or linked by e-mail).
  * <p>
- * PATCH /api/me/settings saves the user's preferences (language, color theme, map style).
+ * PATCH /api/me/settings saves the user's preferences (language, color theme, map style, public profile).
  */
 @Path("/me")
 @Produces(MediaType.APPLICATION_JSON)
@@ -37,7 +37,7 @@ public class MeResource {
         return userService.findOrCreateFromToken(TokenUser.from(jwt));
     }
 
-    /** Body: {"theme": "...", "mapStyle": "...", "language": "..."}, all optional. Returns the updated user. */
+    /** Body: {"theme": "...", "mapStyle": "...", "language": "...", "publicProfile": true}, all optional. Returns the updated user. */
     @PATCH
     @Path("/settings")
     @Consumes(MediaType.APPLICATION_JSON)

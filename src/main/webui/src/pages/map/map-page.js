@@ -1,5 +1,5 @@
 import {html, LitElement} from 'lit';
-import { fieldLabelStyles } from '../../styles/shared.styles.js';
+import { fieldLabelStyles, switchStyles } from '../../styles/shared.styles.js';
 import { mapPageStyles } from './map-page.styles.js';
 import '../../components/map/leaflet-map.js';
 import '../../components/drawer/drawerComponent.js';
@@ -10,13 +10,18 @@ import {GoldPresenceFilter} from '../../components/filter/gold-presence-filter.j
 import '../../components/collapsible/collapsible-component.js';
 import {Area} from "../../models/area.js";
 import {Vertex} from "../../models/vertex.js";
-import {LocalStorageService} from "../../services/localStorage/localStorageService.js";
 import {MapData} from "../../models/mapData.js";
 import {I18nController, t} from "../../services/i18n/i18n.js";
+import {auth} from "../../services/auth/authService.js";
+import {AreaService} from "../../services/api/areaService.js";
 
 
+/**
+ * The map with the logged-in user's own areas (loaded from and saved to the backend).
+ * The areas of other users are not shown here.
+ */
 export class MapPage extends LitElement {
-    static styles = [fieldLabelStyles, mapPageStyles];
+    static styles = [fieldLabelStyles, switchStyles, mapPageStyles];
 
     static properties = {
         isEditMode: {type: Boolean, state: true},
@@ -26,6 +31,12 @@ export class MapPage extends LitElement {
         selectedArea: {type: Object, state: true},
         // Gold presence levels whose areas are shown on the map (top drawer filter).
         visibleGoldPresence: {type: Array, state: true},
+        // The saved areas. Always replaced by a new MapData (see _setAreas) so the map redraws.
+        mapData: {type: Object, state: true},
+        // True while a save is in progress, to ignore double clicks.
+        saving: {type: Boolean, state: true},
+        // Message shown in the editor, null = no error.
+        errorMessage: {type: String, state: true},
     };
 
     constructor() {
@@ -36,14 +47,52 @@ export class MapPage extends LitElement {
         // 0 = not determined yet; 1..5 = rated gold presence.
         this.defaultGoldPresence = 0;
         this.visibleGoldPresence = [...GoldPresenceFilter.ALL_LEVELS];
-        this.selectedArea = new Area(t('map.newSection'), "", [], this.defaultGoldPresence, true);
-        this.mapData = LocalStorageService.getMapData() ?? new MapData();
+        this.selectedArea = this._newArea();
+        this.mapData = new MapData();
+        this.saving = false;
+        this.errorMessage = null;
     }
 
-    reLoad(){
-        console.log("reloading")
-        this.mapData = LocalStorageService.getMapData() ?? new MapData();
-        this.requestUpdate();
+    connectedCallback() {
+        super.connectedCallback();
+        auth.init().then(() => this._loadAreas());
+    }
+
+    // ---------------------------------------------------------------- data
+
+    async _loadAreas() {
+        if (!auth.authenticated) return; // the router shows the login page instead
+        try {
+            this._setAreas(await AreaService.listMine());
+        } catch (e) {
+            this._showError('map.errors.load', e);
+        }
+    }
+
+    // A new MapData (not a changed one) so leaflet-map notices it and redraws.
+    _setAreas(areas) {
+        this.mapData = new MapData(areas, this.mapData.points);
+    }
+
+    // The empty area the editor starts with.
+    _newArea() {
+        return new Area(t('map.newSection'), "", [], this.defaultGoldPresence, true);
+    }
+
+    _showError(i18nKey, error) {
+        console.warn(`[map] ${i18nKey}`, error);
+        this.errorMessage = t(i18nKey);
+    }
+
+    // The reason the area cannot be saved yet, or null when it can (same rules as the backend).
+    _validationError(area) {
+        if (!area.name.trim()) {
+            return t('map.errors.nameRequired');
+        }
+        if (area.vertices.length < Area.MIN_VERTICES) {
+            return t('map.errors.minPoints', {count: Area.MIN_VERTICES});
+        }
+        return null;
     }
 
     changeMode = () => {
@@ -111,6 +160,12 @@ export class MapPage extends LitElement {
                         ${t('map.editor')}
                     </h3>
                     <div class="drawer-content-body">
+                        ${this.errorMessage
+                                ? html`<p class="error-message" role="alert">
+                                    <custom-icon label="error"></custom-icon>
+                                    ${this.errorMessage}
+                                </p>`
+                                : null}
                         <div class="card">
                             <div class="card-header">
                                 <span>${t('map.currentSection')}</span>
@@ -151,11 +206,14 @@ export class MapPage extends LitElement {
                                 ${this._renderCurrentAreaVertices()}
                             </div>
 
-
+                            <div class="field">
+                                ${this._renderPrivacySwitch()}
+                            </div>
 
                             <div class="drawer-actions">
-                                <custom-button label="${t('map.save')}" icon="save" .active="${true}"
-                                               @click="${() => this._createArea()}"></custom-button>
+                                <custom-button label="${this.saving ? t('map.saving') : t('map.save')}"
+                                               icon="save" .active="${true}"
+                                               @click="${() => this._saveArea()}"></custom-button>
                                 <custom-button label="${t('map.reset')}" icon="restart_alt"
                                                @click="${() => this._resetCurrentArea()}"></custom-button>
                             </div>
@@ -198,6 +256,24 @@ export class MapPage extends LitElement {
         });
     }
 
+    // On = private. The description says who sees the area, which for a public
+    // area depends on the user's "public profile" setting (User options > Account).
+    _renderPrivacySwitch = () => {
+        const {isPrivate} = this.selectedArea;
+        const audience = isPrivate ? 'onlyMe'
+            : auth.user?.publicProfile ? 'everyone' : 'friends';
+        return html`
+            <label class="switch">
+                <span class="switch-text">
+                    <span class="switch-name">${t('map.privacy.label')}</span>
+                    <span class="switch-description">${t(`map.privacy.${audience}`)}</span>
+                </span>
+                <input type="checkbox" role="switch"
+                       .checked="${isPrivate}"
+                       @change="${this._updateAreaPrivacy}">
+            </label>`;
+    }
+
     _renderAreas = () => {
         if (this.mapData.areas.length === 0) {
             return html`
@@ -213,7 +289,10 @@ export class MapPage extends LitElement {
                     <custom-icon label="hexagon" style="color: var(${area.colorVar})"></custom-icon>
                     <div class="row-main">
                         <span class="row-title">${area.name}</span>
-                        <span class="row-sub">${t('map.points', {count: area.vertices.length})}</span>
+                        <span class="row-sub">
+                            ${t('map.points', {count: area.vertices.length})}
+                            · ${t(area.isPrivate ? 'map.privacy.private' : 'map.privacy.public')}
+                        </span>
                     </div>
                     <div class="row-actions">
                         <custom-button class="icon-btn" icon="edit"
@@ -227,34 +306,33 @@ export class MapPage extends LitElement {
 
     mapAddVertex = (lat, lng) => {
         this.selectedArea = this.selectedArea.addVertex(new Vertex(this.selectedArea.vertices.length, lat, lng));
-        this.reLoad();
     }
 
-
+    // The editor works on a copy: the saved area in the list stays unchanged until it is saved.
     mapSelectArea = (area) => {
-        area.selected = true;
-        this.selectedArea.selected = false;
-        this.selectedArea = area;
-        this.reLoad();
+        this.selectedArea = area.withSelected(true);
+        this.errorMessage = null;
     }
 
     mapMoveVertex = (uuid, lat, lng) => {
         this.selectedArea = this.selectedArea.updateVertex(uuid, lat, lng);
-        this.reLoad();
     }
 
     _removePoint = uuid => {
         this.selectedArea = this.selectedArea.removeVertex(uuid);
         this.selectedArea.updateVertexIndexes();
-        this.reLoad();
     }
 
     _updateAreaName = e => {
-        this.selectedArea.name = e.target.value;
+        this.selectedArea = this.selectedArea.withName(e.target.value);
     }
 
     _updateAreaDescription = e => {
-        this.selectedArea.description = e.target.value;
+        this.selectedArea = this.selectedArea.withDescription(e.target.value);
+    }
+
+    _updateAreaPrivacy = e => {
+        this.selectedArea = this.selectedArea.withPrivacy(e.target.checked);
     }
 
     // A new instance is assigned so the map redraws and previews the color live.
@@ -273,7 +351,7 @@ export class MapPage extends LitElement {
 
     _confirmRemoveArea = () => {
         if (this.areaToDelete) {
-            this._removeArea(this.areaToDelete.uuid);
+            this._removeArea(this.areaToDelete);
         }
         this.areaToDelete = null;
     }
@@ -282,46 +360,61 @@ export class MapPage extends LitElement {
         this.areaToDelete = null;
     }
 
-    _removeArea = uuid => {
-        this.mapData.areas = this.mapData.areas.filter(area => area.uuid !== uuid);
-        LocalStorageService.saveMapData(this.mapData);
+    _removeArea = async area => {
+        try {
+            await AreaService.delete(area.uuid);
+        } catch (e) {
+            this._showError('map.errors.delete', e);
+            return;
+        }
+        this._setAreas(this.mapData.areas.filter(saved => saved.uuid !== area.uuid));
 
         // If the area being edited is the one deleted, drop it from the
         // editor so it also disappears from the map right away.
-        if (this.selectedArea?.uuid === uuid) {
-            this.selectedArea.selected = false;
-            this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultGoldPresence, true);
+        if (this.selectedArea.uuid === area.uuid) {
+            this._clearEditor();
         }
-
-        this.reLoad();
     }
 
-    _createArea = () => {
-        this.selectedArea.selected = false;
-        const alreadyExsits = this.mapData.areas.filter(area => area.uuid === this.selectedArea.uuid).length > 0
+    // Creates the area in the backend, or updates it when it was saved before.
+    _saveArea = async () => {
+        if (this.saving) return;
 
-        if(alreadyExsits){
-             const index = this.mapData.areas.findIndex(area => area.uuid === this.selectedArea.uuid)
-            this.mapData.areas[index] = this.selectedArea
-        }else{
-            this.mapData.areas.push(this.selectedArea);
+        const area = this.selectedArea;
+        this.errorMessage = this._validationError(area);
+        if (this.errorMessage) return;
+
+        this.saving = true;
+        try {
+            if (area.isSaved) {
+                const updated = await AreaService.update(area);
+                this._setAreas(this.mapData.areas.map(saved => saved.uuid === updated.uuid ? updated : saved));
+            } else {
+                const created = await AreaService.create(area);
+                this._setAreas([created, ...this.mapData.areas]); // newest first, like the API
+            }
+            this._clearEditor();
+        } catch (e) {
+            this._showError('map.errors.save', e);
+        } finally {
+            this.saving = false;
         }
-
-        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultGoldPresence,true);
-
-        LocalStorageService.saveMapData(this.mapData);
-        this.reLoad();
     }
 
+    // Unsaved changes are dropped: the saved areas in the list were never modified.
     _resetCurrentArea = () => {
-        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultGoldPresence,true);
-        this.reLoad();
+        this._clearEditor();
     }
 
     _closeDrawer = () => {
-        this.selectedArea.selected = false;
-        this.selectedArea = new Area(t('map.newSection'), "",[], this.defaultGoldPresence,true);
-        this.isEditMode = false
+        this._clearEditor();
+        this.isEditMode = false;
+    }
+
+    // Back to an empty new area, without an error message.
+    _clearEditor() {
+        this.selectedArea = this._newArea();
+        this.errorMessage = null;
     }
 
     //------------------------------------------------------------------------------------------------------------------

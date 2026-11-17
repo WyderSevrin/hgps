@@ -8,14 +8,20 @@ export class Area {
         this.name = name;
         this.description = description;
         this.vertices = vertices;
-        this.private = true;
+        this.isPrivate = true; // true: only the owner sees it; false: friends too (everyone if the profile is public)
         this.goldPresence = Area.normalizeGoldPresence(goldPresence);
         this.selected = selected;
         this.region = Region.normalizeCode(region); // canton code (BE, LU, ...), null = not set yet
+
+        // Set by the backend (see AreaService), null while the area is not saved yet
+        this.owner = null; // {id, username, displayName}
+        this.createdAt = null;
+        this.updatedAt = null;
     }
 
     static GOLD_PRESENCE_MIN = 0; // 0 = not determined yet
     static GOLD_PRESENCE_MAX = 5;
+    static MIN_VERTICES = 3; // a polygon needs at least 3 corners (same rule as the backend)
 
     // Always store an integer between 0 and 5, also for older saved data
     // (where it could be a string like "0", or missing).
@@ -35,9 +41,27 @@ export class Area {
         return Area.goldPresenceColorVar(this.goldPresence);
     }
 
-    // Copy of this area with some fields changed; everything else (uuid, region, ...) is kept.
-    #copy({vertices = this.vertices, goldPresence = this.goldPresence, region = this.region} = {}) {
-        return new Area(this.name, this.description, vertices, goldPresence, this.selected, this.uuid, region);
+    // True once the area exists in the backend: saving it again is an update, not a creation.
+    get isSaved() {
+        return this.createdAt !== null;
+    }
+
+    // Copy of this area with some fields changed; everything else (uuid, region, owner, ...) is kept.
+    #copy({
+              name = this.name,
+              description = this.description,
+              vertices = this.vertices,
+              goldPresence = this.goldPresence,
+              region = this.region,
+              selected = this.selected,
+              isPrivate = this.isPrivate,
+          } = {}) {
+        const copy = new Area(name, description, vertices, goldPresence, selected, this.uuid, region);
+        copy.isPrivate = isPrivate;
+        copy.owner = this.owner;
+        copy.createdAt = this.createdAt;
+        copy.updatedAt = this.updatedAt;
+        return copy;
     }
 
     addVertex(vertex) {
@@ -62,6 +86,22 @@ export class Area {
         return this.#copy({vertices});
     }
 
+    withSelected(selected) {
+        return this.#copy({selected});
+    }
+
+    withName(name) {
+        return this.#copy({name});
+    }
+
+    withDescription(description) {
+        return this.#copy({description});
+    }
+
+    withPrivacy(isPrivate) {
+        return this.#copy({isPrivate});
+    }
+
     withGoldPresence(goldPresence) {
         return this.#copy({goldPresence});
     }
@@ -75,16 +115,6 @@ export class Area {
         return L.polygon([
             this.vertices.map(vertex => [vertex.lat, vertex.lng])
         ], options);
-    }
-
-
-    static fromJSON(obj) {
-        // `coordinates` is the legacy key used before the Coordinates -> Vertex rename;
-        // still read it so data already saved in localStorage keeps loading.
-        // A legacy `color` field is simply ignored: the color now comes from goldPresence.
-        // `region` is missing in data saved before regions existed -> null.
-        const vertices = (obj.vertices ?? obj.coordinates ?? []).map(Vertex.fromJSON);
-        return new Area(obj.name, obj.description, vertices, obj.goldPresence, obj.selected, obj.uuid, obj.region);
     }
 
 }

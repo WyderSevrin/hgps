@@ -13,6 +13,8 @@ export class ConfirmDialogComponent extends LitElement {
         message: {type: String},
         confirmLabel: {type: String},
         cancelLabel: {type: String},
+        // Icon of the confirm button (a Material icon name)
+        confirmIcon: {type: String},
     };
 
     constructor() {
@@ -24,6 +26,7 @@ export class ConfirmDialogComponent extends LitElement {
         this.message = '';
         this.confirmLabel = '';
         this.cancelLabel = '';
+        this.confirmIcon = 'delete';
         this._onKeyDown = this._onKeyDown.bind(this);
     }
 
@@ -65,7 +68,7 @@ export class ConfirmDialogComponent extends LitElement {
                         ${this.cancelLabel || t('common.cancel')}
                     </button>
                     <button class="btn btn-danger" @click="${() => this._confirm()}">
-                        <custom-icon label="delete"></custom-icon>
+                        <custom-icon label="${this.confirmIcon}"></custom-icon>
                         ${this.confirmLabel || t('common.confirm')}
                     </button>
                 </div>

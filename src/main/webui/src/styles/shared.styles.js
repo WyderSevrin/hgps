@@ -63,6 +63,91 @@ export const emptyStateStyles = css`
     }
 `;
 
+// On/off switch: a native checkbox styled as a switch, in a clickable row
+//     <label class="switch">
+//         <span class="switch-text">
+//             <span class="switch-name">...</span>
+//             <span class="switch-description">...</span>  (optional)
+//         </span>
+//         <input type="checkbox" role="switch">
+//     </label>
+export const switchStyles = css`
+    .switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--hgps-size-3);
+        padding: var(--hgps-size-3);
+        border: thin solid var(--hgps-border);
+        border-radius: var(--hgps-size-3);
+        background-color: var(--hgps-surface-2);
+        cursor: pointer;
+    }
+
+    .switch-text {
+        display: flex;
+        flex-direction: column;
+        gap: var(--hgps-size-1);
+        min-width: 0;
+    }
+
+    .switch-name {
+        font-size: 0.86rem;
+        font-weight: 600;
+        color: var(--hgps-text-strong);
+    }
+
+    .switch-description {
+        font-size: 0.74rem;
+        line-height: 1.4;
+        color: var(--hgps-text-subtle);
+    }
+
+    .switch input {
+        appearance: none;
+        position: relative;
+        flex-shrink: 0;
+        width: 2.5rem;
+        height: 1.4rem;
+        margin: 0;
+        border-radius: 1rem;
+        background-color: var(--hgps-border-strong);
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+    }
+
+    /* The knob */
+    .switch input::before {
+        content: "";
+        position: absolute;
+        top: 0.2rem;
+        left: 0.2rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: var(--hgps-surface);
+        transition: transform 0.15s ease;
+    }
+
+    .switch input:checked {
+        background-color: var(--hgps-accent);
+    }
+
+    .switch input:checked::before {
+        transform: translateX(1.1rem);
+    }
+
+    .switch input:focus-visible {
+        outline: 0.125rem solid var(--hgps-accent);
+        outline-offset: 0.125rem;
+    }
+
+    .switch input:disabled {
+        opacity: 0.6;
+        cursor: progress;
+    }
+`;
+
 // Round gold button in the header bar
 export const headerControlStyles = css`
     .header-control {

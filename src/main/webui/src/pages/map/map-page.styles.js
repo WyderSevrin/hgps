@@ -123,6 +123,15 @@ export const mapPageStyles = css`
         height: calc(100% - var(--hgps-size-10));
     }
 
+    .error-message {
+        display: flex;
+        align-items: center;
+        gap: var(--hgps-size-2);
+        margin: 0;
+        font-size: 0.82rem;
+        color: var(--hgps-danger-text);
+    }
+
     /* Card wrapper for each logical block of the drawer */
 
     .card {

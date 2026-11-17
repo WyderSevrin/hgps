@@ -62,6 +62,7 @@
     "goldPresence": "Gold presence",
     "goldPresenceUnset": "Not set",
     "save": "Save",
+    "saving": "Saving…",
     "reset": "Reset",
     "savedSections": "Saved sections",
     "emptyPoints": "Click on the map to add points.",
@@ -71,7 +72,22 @@
     "points_other": "{{count}} points",
     "deleteTitle": "Delete section",
     "deleteMessage": "Delete “{{name}}”? This action cannot be undone.",
-    "delete": "Delete"
+    "delete": "Delete",
+    "privacy": {
+      "label": "Private section",
+      "private": "Private",
+      "public": "Public",
+      "onlyMe": "Only you can see this section.",
+      "friends": "Your friends can see this section.",
+      "everyone": "Everyone can see this section, because your profile is public."
+    },
+    "errors": {
+      "load": "Your sections could not be loaded. Please try again later.",
+      "save": "The section could not be saved. Please try again.",
+      "delete": "The section could not be deleted. Please try again.",
+      "nameRequired": "Give the section a name.",
+      "minPoints": "A section needs at least {{count}} points."
+    }
   },
   "mapFilters": {
     "open": "Show search and filters",
@@ -190,6 +206,17 @@
         "title": "Appearance",
         "description": "Theme, colors and display preferences."
       }
+    },
+    "account": {
+      "visibility": "Profile visibility",
+      "visibilityHint": "Who can see your public areas. Saved to your account.",
+      "publicProfile": "Public profile",
+      "publicOn": "Public: anyone, friends and not friends, can see your public areas. Your private areas are still private.",
+      "publicOff": "Not public: only your friends can see your public areas. Your private areas are still private.",
+      "confirmTitle": "Make your profile public?",
+      "confirmMessage": "With a public profile, your public areas can be seen by anyone, friends and not friends. Your private areas will still be private.",
+      "confirmLabel": "Make public",
+      "saveError": "The setting could not be saved. Please try again."
     },
     "map": {
       "style": "Map style",

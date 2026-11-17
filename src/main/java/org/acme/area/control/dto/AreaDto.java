@@ -37,8 +37,11 @@ public class AreaDto {
     /** 0 = not determined yet, 1..5 = increasing presence. */
     private Integer goldPresence;
 
-    /** "private" in JSON, like the frontend model (a Java field cannot be named private). */
-    @JsonProperty("private")
+    /**
+     * True: only the owner sees the area. False: visible to the owner's friends,
+     * and to everyone when the owner's profile is public (see AreaService).
+     */
+    @JsonProperty("isPrivate") // same name as the frontend model (Area.isPrivate)
     private Boolean isPrivate;
 
     /** Canton code (BE, LU, ...), null while not set. See GET /api/regions. */

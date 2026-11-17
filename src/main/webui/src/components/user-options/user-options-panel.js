@@ -1,11 +1,14 @@
 import {LitElement, html} from 'lit';
-import { emptyStateStyles } from '../../styles/shared.styles.js';
+import { emptyStateStyles, switchStyles } from '../../styles/shared.styles.js';
 import { userOptionsPanelStyles } from './user-options-panel.styles.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import '../icon/icon.js';
+import '../dialog/confirmDialogComponent.js';
 import {I18nController, t} from '../../services/i18n/i18n.js';
 import {THEMES, ThemeController, getTheme, setTheme} from '../../services/theme/theme.js';
 import {MAP_STYLES, MapStyleController, getMapStyle, setMapStyle, previewTileUrl} from '../../services/mapStyle/mapStyle.js';
+import {auth, AuthController} from '../../services/auth/authService.js';
+import {UserService} from '../../services/api/userService.js';
 
 // Option categories, in navigation order. Labels come from
 // userOptions.categories.<id>.{title,description}.
@@ -20,16 +23,19 @@ const CATEGORIES = [
  * the selected category's options on the right. On narrow screens the
  * navigation becomes a row of tabs above the content.
  *
- * Map holds the map style picker and Appearance the color theme picker;
- * the other categories are still empty and render a placeholder.
+ * Account holds the public profile switch, Map the map style picker and
+ * Appearance the color theme picker. A category without options renders a placeholder.
  *
  * @property {string} category - id of the selected category
  */
 export class UserOptionsPanel extends LitElement {
-    static styles = [emptyStateStyles, userOptionsPanelStyles];
+    static styles = [emptyStateStyles, switchStyles, userOptionsPanelStyles];
 
     static properties = {
         category: {type: String},
+        _confirmPublicProfile: {state: true}, // true while the "make public?" dialog is open
+        _savingPublicProfile: {state: true},
+        _publicProfileError: {state: true},
     };
 
     constructor() {
@@ -37,7 +43,11 @@ export class UserOptionsPanel extends LitElement {
         this.i18n = new I18nController(this);
         this.theme = new ThemeController(this);
         this.mapStyle = new MapStyleController(this);
+        this.authState = new AuthController(this); // re-render when auth.user is loaded
         this.category = CATEGORIES[0].id;
+        this._confirmPublicProfile = false;
+        this._savingPublicProfile = false;
+        this._publicProfileError = false;
     }
 
     get _tabs() {
@@ -146,8 +156,81 @@ export class UserOptionsPanel extends LitElement {
         `;
     }
 
+    // ------------------------------------------------------------- account
+
+    get _isPublicProfile() {
+        return auth.user?.publicProfile === true;
+    }
+
+    _renderAccount() {
+        const isPublic = this._isPublicProfile;
+        return html`
+            <fieldset>
+                <legend>${t('userOptions.account.visibility')}</legend>
+                <p class="hint">${t('userOptions.account.visibilityHint')}</p>
+                <label class="switch">
+                    <span class="switch-text">
+                        <span class="switch-name">${t('userOptions.account.publicProfile')}</span>
+                    </span>
+                    <input type="checkbox" role="switch"
+                           .checked="${isPublic}"
+                           ?disabled="${this._savingPublicProfile}"
+                           @change="${this._onPublicProfileChange}">
+                </label>
+                ${this._publicProfileError
+                        ? html`<p class="notice error" role="alert">
+                            <custom-icon label="error"></custom-icon>
+                            ${t('userOptions.account.saveError')}
+                        </p>`
+                        : html`<p class="notice">
+                            <custom-icon label="${isPublic ? 'public' : 'group'}"></custom-icon>
+                            ${t(isPublic ? 'userOptions.account.publicOn' : 'userOptions.account.publicOff')}
+                        </p>`}
+            </fieldset>
+            <confirm-dialog
+                    .open="${this._confirmPublicProfile}"
+                    title="${t('userOptions.account.confirmTitle')}"
+                    message="${t('userOptions.account.confirmMessage')}"
+                    confirmLabel="${t('userOptions.account.confirmLabel')}"
+                    confirmIcon="public"
+                    @confirm="${() => this._savePublicProfile(true)}"
+                    @cancel="${() => this._confirmPublicProfile = false}">
+            </confirm-dialog>
+        `;
+    }
+
+    // Making the profile public is confirmed first; making it private again is saved directly.
+    _onPublicProfileChange(event) {
+        const wantsPublic = event.target.checked;
+        event.target.checked = this._isPublicProfile; // the switch only moves once the change is saved
+        if (wantsPublic) {
+            this._confirmPublicProfile = true;
+        } else {
+            this._savePublicProfile(false);
+        }
+    }
+
+    async _savePublicProfile(publicProfile) {
+        this._confirmPublicProfile = false;
+        this._savingPublicProfile = true;
+        this._publicProfileError = false;
+        try {
+            const user = await UserService.updateSettings({publicProfile});
+            auth.user.publicProfile = user.publicProfile;
+        } catch (e) {
+            console.warn('[settings] "publicProfile" could not be saved', e);
+            this._publicProfileError = true;
+        } finally {
+            this._savingPublicProfile = false;
+        }
+    }
+
+    // ------------------------------------------------------------ category
+
     _renderCategory(category) {
         switch (category.id) {
+            case 'account':
+                return this._renderAccount();
             case 'appearance':
                 return this._renderAppearance();
             case 'map':

@@ -29,8 +29,8 @@ import java.util.UUID;
  * REST API for the areas: /api/areas
  * Requires a valid Keycloak bearer token. Errors are mapped in ExceptionMappers.
  * <pre>
- * GET    /areas?owner={userId}&amp;region=BE   own + public areas (both filters optional)
- * GET    /areas/{id}                         one area (own, or public)
+ * GET    /areas?owner={userId}&amp;region=BE   visible areas, see AreaService (both filters optional)
+ * GET    /areas/{id}                         one visible area
  * POST   /areas                              create, owned by the logged-in user
  * PUT    /areas/{id}                         replace (owner only)
  * DELETE /areas/{id}                         delete (owner only)

@@ -88,6 +88,9 @@ public class UserService {
         if (settings.getMapStyle() != null) {
             user.setMapStyle(settings.getMapStyle());
         }
+        if (settings.getPublicProfile() != null) {
+            user.setPublicProfile(settings.getPublicProfile());
+        }
         em.flush(); // so updatedAt is refreshed in the response
         return UserDto.from(user);
     }

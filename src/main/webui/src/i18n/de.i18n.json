@@ -62,6 +62,7 @@
     "goldPresence": "Goldvorkommen",
     "goldPresenceUnset": "Nicht festgelegt",
     "save": "Speichern",
+    "saving": "Wird gespeichert…",
     "reset": "Zurücksetzen",
     "savedSections": "Gespeicherte Abschnitte",
     "emptyPoints": "Klicken Sie auf die Karte, um Punkte hinzuzufügen.",
@@ -71,7 +72,22 @@
     "points_other": "{{count}} Punkte",
     "deleteTitle": "Abschnitt löschen",
     "deleteMessage": "«{{name}}» löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
-    "delete": "Löschen"
+    "delete": "Löschen",
+    "privacy": {
+      "label": "Privater Abschnitt",
+      "private": "Privat",
+      "public": "Öffentlich",
+      "onlyMe": "Nur Sie können diesen Abschnitt sehen.",
+      "friends": "Ihre Freunde können diesen Abschnitt sehen.",
+      "everyone": "Alle können diesen Abschnitt sehen, da Ihr Profil öffentlich ist."
+    },
+    "errors": {
+      "load": "Ihre Abschnitte konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
+      "save": "Der Abschnitt konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+      "delete": "Der Abschnitt konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+      "nameRequired": "Geben Sie dem Abschnitt einen Namen.",
+      "minPoints": "Ein Abschnitt braucht mindestens {{count}} Punkte."
+    }
   },
   "mapFilters": {
     "open": "Suche und Filter anzeigen",
@@ -190,6 +206,17 @@
         "title": "Darstellung",
         "description": "Design, Farben und Anzeigeeinstellungen."
       }
+    },
+    "account": {
+      "visibility": "Sichtbarkeit des Profils",
+      "visibilityHint": "Wer Ihre öffentlichen Abschnitte sehen kann. Wird in Ihrem Konto gespeichert.",
+      "publicProfile": "Öffentliches Profil",
+      "publicOn": "Öffentlich: Alle, Freunde und Nicht-Freunde, können Ihre öffentlichen Abschnitte sehen. Ihre privaten Abschnitte bleiben privat.",
+      "publicOff": "Nicht öffentlich: Nur Ihre Freunde können Ihre öffentlichen Abschnitte sehen. Ihre privaten Abschnitte bleiben privat.",
+      "confirmTitle": "Profil öffentlich machen?",
+      "confirmMessage": "Mit einem öffentlichen Profil können Ihre öffentlichen Abschnitte von allen gesehen werden, von Freunden und Nicht-Freunden. Ihre privaten Abschnitte bleiben weiterhin privat.",
+      "confirmLabel": "Öffentlich machen",
+      "saveError": "Die Einstellung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
     },
     "map": {
       "style": "Kartenstil",

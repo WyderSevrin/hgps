@@ -62,6 +62,7 @@
     "goldPresence": "Presenza d'oro",
     "goldPresenceUnset": "Non definito",
     "save": "Salva",
+    "saving": "Salvataggio…",
     "reset": "Reimposta",
     "savedSections": "Sezioni salvate",
     "emptyPoints": "Clicca sulla mappa per aggiungere punti.",
@@ -71,7 +72,22 @@
     "points_other": "{{count}} punti",
     "deleteTitle": "Elimina sezione",
     "deleteMessage": "Eliminare «{{name}}»? Questa azione non può essere annullata.",
-    "delete": "Elimina"
+    "delete": "Elimina",
+    "privacy": {
+      "label": "Sezione privata",
+      "private": "Privata",
+      "public": "Pubblica",
+      "onlyMe": "Solo tu puoi vedere questa sezione.",
+      "friends": "I tuoi amici possono vedere questa sezione.",
+      "everyone": "Tutti possono vedere questa sezione, perché il tuo profilo è pubblico."
+    },
+    "errors": {
+      "load": "Non è stato possibile caricare le tue sezioni. Riprova più tardi.",
+      "save": "Non è stato possibile salvare la sezione. Riprova.",
+      "delete": "Non è stato possibile eliminare la sezione. Riprova.",
+      "nameRequired": "Dai un nome alla sezione.",
+      "minPoints": "Una sezione deve avere almeno {{count}} punti."
+    }
   },
   "mapFilters": {
     "open": "Mostra ricerca e filtri",
@@ -190,6 +206,17 @@
         "title": "Aspetto",
         "description": "Tema, colori e preferenze di visualizzazione."
       }
+    },
+    "account": {
+      "visibility": "Visibilità del profilo",
+      "visibilityHint": "Chi può vedere le tue sezioni pubbliche. Salvato nel tuo account.",
+      "publicProfile": "Profilo pubblico",
+      "publicOn": "Pubblico: chiunque, amici e non, può vedere le tue sezioni pubbliche. Le tue sezioni private restano private.",
+      "publicOff": "Non pubblico: solo i tuoi amici possono vedere le tue sezioni pubbliche. Le tue sezioni private restano private.",
+      "confirmTitle": "Rendere pubblico il tuo profilo?",
+      "confirmMessage": "Con un profilo pubblico, le tue sezioni pubbliche possono essere viste da chiunque, amici e non. Le tue sezioni private resteranno private.",
+      "confirmLabel": "Rendi pubblico",
+      "saveError": "Non è stato possibile salvare l'impostazione. Riprova."
     },
     "map": {
       "style": "Stile della mappa",

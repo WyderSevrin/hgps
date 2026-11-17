@@ -44,6 +44,10 @@ public class UserDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String mapStyle;
 
+    /** True when everyone may see the user's public areas, false when only friends may. READ_ONLY, like the theme. */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Boolean publicProfile;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OffsetDateTime createdAt;
 
@@ -59,6 +63,7 @@ public class UserDto {
                 .language(user.getLanguage())
                 .theme(user.getTheme())
                 .mapStyle(user.getMapStyle())
+                .publicProfile(user.isPublicProfile())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();

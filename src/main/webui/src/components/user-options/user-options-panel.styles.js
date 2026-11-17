@@ -263,6 +263,27 @@ export const userOptionsPanelStyles = css`
         background: var(--hgps-accent);
     }
 
+    /* ---- Account: explanation of the current setting, under the switch (switchStyles) ---- */
+    .notice {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--hgps-size-2);
+        margin: var(--hgps-size-3) 0 0;
+        font-size: 0.8rem;
+        line-height: 1.4;
+        color: var(--hgps-text-muted);
+    }
+
+    .notice custom-icon {
+        flex-shrink: 0;
+        color: var(--hgps-accent);
+    }
+
+    .notice.error,
+    .notice.error custom-icon {
+        color: var(--hgps-danger-text);
+    }
+
     /* ---- Narrow screens: tabs on top ---- */
     @media (max-width: 40rem) {
         :host {

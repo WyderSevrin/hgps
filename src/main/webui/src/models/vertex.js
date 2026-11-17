@@ -7,11 +7,4 @@ export class Vertex {
         this.lng = lng;
     }
 
-
-    static fromJSON(obj) {
-        const vertex = new Vertex(obj.index, obj.lat, obj.lng);
-        vertex.uuid = obj.uuid;
-        return vertex;
-    }
-
 }

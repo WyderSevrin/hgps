@@ -73,7 +73,8 @@ echo     App:      http://localhost:8080  (demo / demo)
 echo     Keycloak: http://localhost:8180/admin  (admin / admin)
 echo     Dev UI:   http://localhost:8080/q/dev/
 echo.
-call mvnw.cmd quarkus:dev %*
+rem Full path, so it also works when the current folder is not searched for programs
+call "%~dp0mvnw.cmd" quarkus:dev %*
 goto :end
 
 :stop

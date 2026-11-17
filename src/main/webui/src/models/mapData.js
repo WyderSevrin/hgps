@@ -1,18 +1,9 @@
-import {Area} from "./area.js";
-
+/** What the map shows: the areas (loaded from the backend, see AreaService) and, later, points. */
 export class MapData {
 
-    constructor(areas=[], points=[]) {
+    constructor(areas = [], points = []) {
         this.areas = areas;
         this.points = points;
-    }
-
-    static fromJSON(obj) {
-        if (!obj) return null;
-        // `sections` is the legacy key used before the Section -> Area rename;
-        // still read it so data already saved in localStorage keeps loading.
-        const areas = (obj.areas ?? obj.sections ?? []).map(Area.fromJSON);
-        return new MapData(areas, obj.points ?? []);
     }
 
 }

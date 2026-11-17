@@ -1,12 +1,14 @@
 import {apiRequest} from "./apiClient.js";
 import {Area} from "../../models/area.js";
 import {Vertex} from "../../models/vertex.js";
+import {auth} from "../auth/authService.js";
 
 /**
  * Areas from the backend (/api/areas), as Area models.
  * Requires a logged-in user. Errors are thrown as ApiError.
  *
- * Visibility (backend rules): own areas + public areas of everyone;
+ * Visibility (backend rules, see AreaService.java): own areas, public areas of friends
+ * and public areas of users with a public profile;
  * only the owner can update or delete an area.
  */
 export class AreaService {
@@ -20,6 +22,16 @@ export class AreaService {
     static async list({owner, region} = {}) {
         const areas = await apiRequest('GET', '/areas', {query: {owner, region}});
         return areas.map(AreaService.#toArea);
+    }
+
+    /**
+     * The logged-in user's own areas (private and public), without the public areas of others.
+     * @param {object} [filter]
+     * @param {string} [filter.region] canton code, e.g. 'BE'
+     * @returns {Promise<Area[]>} newest first
+     */
+    static listMine({region} = {}) {
+        return AreaService.list({owner: auth.user.id, region});
     }
 
     /** @returns {Promise<Area>} */
@@ -57,7 +69,7 @@ export class AreaService {
             name: area.name,
             description: area.description,
             goldPresence: area.goldPresence,
-            private: area.private,
+            isPrivate: area.isPrivate,
             region: area.region,
             // The backend takes the order of the list as polygon order
             vertices: [...area.vertices]
@@ -70,9 +82,8 @@ export class AreaService {
     static #toArea(dto) {
         const vertices = dto.vertices.map(v => new Vertex(v.index, v.lat, v.lng)); // new local uuid per vertex
         const area = new Area(dto.name, dto.description ?? "", vertices, dto.goldPresence, false, dto.id, dto.region);
-        // Not (yet) constructor parameters of Area, so set afterwards.
-        // Note: Area's copy methods (addVertex, withGoldPresence, ...) do not carry them over.
-        area.private = dto.private;
+        // Not constructor parameters of Area, so set afterwards (Area's copy methods keep them)
+        area.isPrivate = dto.isPrivate;
         area.owner = dto.owner;          // {id, username, displayName}
         area.createdAt = dto.createdAt;
         area.updatedAt = dto.updatedAt;
