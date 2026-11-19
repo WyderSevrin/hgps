@@ -6,6 +6,7 @@ import {I18nController, t, getLanguage} from '../../services/i18n/i18n.js';
 import {auth} from '../../services/auth/authService.js';
 import {UserService} from '../../services/api/userService.js';
 import {InvitationService} from '../../services/api/invitationService.js';
+import {notificationStore} from '../../services/notifications/notificationStore.js';
 
 // Avatar tints, picked deterministically from the person's id.
 const AVATAR_TOKENS = [
@@ -28,6 +29,7 @@ const {PENDING, ACCEPTED} = InvitationService.STATUS;
  *  - the requests the user sent that are still pending (can be cancelled: deleted),
  *  - the incoming requests (accept / decline),
  *  - the friends (= accepted invitations; can be removed: deleted).
+ * Reloads when a notification arrives or is removed live (a request received, accepted or withdrawn meanwhile).
  */
 export class FriendsPanel extends LitElement {
     static styles = [fieldLabelStyles, emptyStateStyles, friendsPanelStyles];
@@ -51,7 +53,7 @@ export class FriendsPanel extends LitElement {
 
     #searchTimer = null;
     #searchSeq = 0; // to ignore answers of searches that are no longer current
-    #onAuthChanged = () => this._loadInvitations();
+    #reload = () => this._loadInvitations();
 
     constructor() {
         super();
@@ -74,13 +76,17 @@ export class FriendsPanel extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
-        auth.addEventListener('auth-changed', this.#onAuthChanged);
+        auth.addEventListener('auth-changed', this.#reload);
+        notificationStore.addEventListener('notification', this.#reload);
+        notificationStore.addEventListener('notification-removed', this.#reload);
         auth.init().then(() => this._loadInvitations());
     }
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        auth.removeEventListener('auth-changed', this.#onAuthChanged);
+        auth.removeEventListener('auth-changed', this.#reload);
+        notificationStore.removeEventListener('notification', this.#reload);
+        notificationStore.removeEventListener('notification-removed', this.#reload);
         clearTimeout(this.#searchTimer);
     }
 

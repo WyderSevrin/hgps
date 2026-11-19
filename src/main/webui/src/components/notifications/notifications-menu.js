@@ -3,27 +3,18 @@ import { headerControlStyles, popoverStyles, emptyStateStyles } from '../../styl
 import { notificationsMenuStyles } from './notifications-menu.styles.js';
 import '../icon/icon.js';
 import {I18nController, getLanguage, t} from '../../services/i18n/i18n.js';
+import {notificationStore, NotificationsController} from '../../services/notifications/notificationStore.js';
+import {NotificationService} from '../../services/api/notificationService.js';
 
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
-// Placeholder data until notifications come from the backend.
-// `type` picks the icon and the translated message (notifications.types.<type>).
-const sampleNotifications = () => {
-    const now = Date.now();
-    return [
-        {id: 'n1', type: 'friendRequest', params: {name: 'Emma Weber'}, date: new Date(now - 4 * MINUTE), read: false},
-        {id: 'n2', type: 'areaShared', params: {name: 'Alice Martin', area: 'Aare bend'}, date: new Date(now - 2 * HOUR), read: false},
-        {id: 'n3', type: 'requestAccepted', params: {name: 'Bruno Keller'}, date: new Date(now - DAY - 3 * HOUR), read: true},
-        {id: 'n4', type: 'friendRequest', params: {name: 'Lukas Huber'}, date: new Date(now - 3 * DAY), read: true},
-    ];
-};
-
-const TYPE_ICONS = {
-    friendRequest: 'person_add',
-    requestAccepted: 'how_to_reg',
-    areaShared: 'map',
+// Per backend type: the icon and the translated message (notifications.types.<key>)
+const {FRIEND_REQUEST, REQUEST_ACCEPTED} = NotificationService.TYPE;
+const TYPES = {
+    [FRIEND_REQUEST]: {icon: 'person_add', key: 'friendRequest'},
+    [REQUEST_ACCEPTED]: {icon: 'how_to_reg', key: 'requestAccepted'},
 };
 
 /**
@@ -31,21 +22,26 @@ const TYPE_ICONS = {
  * bubble anchored under the button listing notifications with timestamps.
  * Closes on a second click, Escape, or a click anywhere outside.
  *
- * @property {Array<{id, type, params, date: Date, read: boolean}>} notifications
+ * The notifications come live from notificationStore. Opening the bubble marks
+ * them all as read (the badge goes away); the ones that were unread stay
+ * highlighted until the bubble closes, so the user still sees what is new.
+ * Each notification can be cleared, or all at once.
  */
 export class NotificationsMenu extends LitElement {
     static styles = [headerControlStyles, popoverStyles, emptyStateStyles, notificationsMenuStyles];
 
     static properties = {
         open: {type: Boolean, reflect: true},
-        notifications: {type: Array},
     };
+
+    /** Ids of the notifications that were unread when the bubble opened. */
+    #newIds = new Set();
 
     constructor() {
         super();
         this.i18n = new I18nController(this);
+        this.notifications = new NotificationsController(this);
         this.open = false;
-        this.notifications = sampleNotifications();
         this._onDocumentClick = this._onDocumentClick.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
     }
@@ -60,6 +56,16 @@ export class NotificationsMenu extends LitElement {
         document.removeEventListener('click', this._onDocumentClick);
         window.removeEventListener('keydown', this._onKeyDown);
         super.disconnectedCallback();
+    }
+
+    willUpdate(changed) {
+        if (!changed.has('open')) return;
+        if (this.open) {
+            this.#newIds = new Set(notificationStore.notifications.filter(n => !n.read).map(n => n.id));
+            notificationStore.markAllRead();
+        } else {
+            this.#newIds = new Set();
+        }
     }
 
     // composedPath() crosses shadow roots, so clicks inside the bubble count as inside.
@@ -91,24 +97,33 @@ export class NotificationsMenu extends LitElement {
     }
 
     _renderNotification(n) {
+        const type = TYPES[n.type];
+        if (!type) return null; // a type this frontend does not know yet
+        const isNew = !n.read || this.#newIds.has(n.id);
         return html`
-            <li class="${n.read ? '' : 'unread'}">
+            <li class="${isNew ? 'unread' : ''}">
                 <span class="type-icon" aria-hidden="true">
-                    <custom-icon label="${TYPE_ICONS[n.type] ?? 'notifications'}"></custom-icon>
+                    <custom-icon label="${type.icon}"></custom-icon>
                 </span>
                 <div class="text">
-                    <span class="message">${t(`notifications.types.${n.type}`, n.params)}</span>
-                    <time datetime="${n.date.toISOString()}" title="${this._fullDate(n.date)}">
-                        ${this._relativeTime(n.date)}
+                    <span class="message">${t(`notifications.types.${type.key}`, {name: n.actor?.displayName})}</span>
+                    <time datetime="${n.createdAt.toISOString()}" title="${this._fullDate(n.createdAt)}">
+                        ${this._relativeTime(n.createdAt)}
                     </time>
                 </div>
-                ${n.read ? null : html`<span class="dot" aria-label="${t('notifications.unread')}"></span>`}
+                ${isNew ? html`<span class="dot" aria-label="${t('notifications.unread')}"></span>` : null}
+                <button class="dismiss"
+                        title="${t('notifications.dismiss')}"
+                        aria-label="${t('notifications.dismiss')}"
+                        @click="${() => notificationStore.remove(n.id)}">
+                    <custom-icon label="close"></custom-icon>
+                </button>
             </li>`;
     }
 
     render() {
-        const notifications = [...(this.notifications ?? [])].sort((a, b) => b.date - a.date);
-        const unread = notifications.filter(n => !n.read).length;
+        const notifications = notificationStore.notifications;
+        const unread = notificationStore.unreadCount;
         const label = unread
             ? `${t('notifications.title')} (${t('notifications.unreadCount', {count: unread})})`
             : t('notifications.title');
@@ -128,7 +143,11 @@ export class NotificationsMenu extends LitElement {
             <div class="bubble popover" id="bubble" role="region" aria-labelledby="bubble-title" ?inert="${!this.open}">
                 <div class="bubble-header">
                     <h2 class="bubble-title" id="bubble-title">${t('notifications.title')}</h2>
-                    ${unread ? html`<span class="unread-count">${t('notifications.unreadCount', {count: unread})}</span>` : null}
+                    ${notifications.length
+                        ? html`<button class="clear-all" @click="${() => notificationStore.clear()}">
+                                   ${t('notifications.clearAll')}
+                               </button>`
+                        : null}
                 </div>
                 ${notifications.length
                     ? html`<ul>${notifications.map(n => this._renderNotification(n))}</ul>`

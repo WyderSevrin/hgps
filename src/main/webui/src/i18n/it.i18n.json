@@ -191,12 +191,13 @@
     "title": "Notifiche",
     "empty": "Non hai notifiche.",
     "unread": "Non letta",
+    "clearAll": "Cancella tutto",
+    "dismiss": "Cancella notifica",
     "unreadCount_one": "{{count}} non letta",
     "unreadCount_other": "{{count}} non lette",
     "types": {
       "friendRequest": "{{name}} ti ha inviato una richiesta di amicizia",
-      "requestAccepted": "{{name}} ha accettato la tua richiesta di amicizia",
-      "areaShared": "{{name}} ha condiviso con te l'area «{{area}}»"
+      "requestAccepted": "{{name}} ha accettato la tua richiesta di amicizia"
     }
   },
   "userOptions": {

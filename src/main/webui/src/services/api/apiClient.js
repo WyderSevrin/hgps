@@ -59,6 +59,52 @@ export async function apiRequest(method, path, {query, body} = {}) {
     return response.status === 204 ? null : response.json();
 }
 
+/**
+ * Opens a Server-Sent Events stream under /api with the logged-in user's token.
+ * The browser's EventSource cannot send an Authorization header, hence fetch + a small parser.
+ *
+ * @param {string} path  e.g. '/notifications/stream'
+ * @param {object} handlers
+ * @param {() => void}                  [handlers.onOpen]   once the connection is established
+ * @param {(name: string, data: string) => void} handlers.onEvent for each event (comments are skipped)
+ * @param {AbortSignal} [signal] aborts the stream
+ * @returns {Promise<void>} resolves when the server closes the stream
+ * @throws {ApiError} when the backend refuses the connection; other errors on network failures
+ */
+export async function apiStream(path, {onOpen, onEvent}, signal) {
+    const response = await auth.fetch(`/api${path}`, {headers: {Accept: 'text/event-stream'}, signal});
+    if (!response.ok) {
+        throw await ApiError.from(response);
+    }
+    onOpen?.();
+
+    const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+    let buffer = '';
+    while (true) {
+        const {value, done} = await reader.read();
+        if (done) return;
+        // Events are separated by a blank line
+        buffer += value.replace(/\r\n?/g, '\n');
+        let end;
+        while ((end = buffer.indexOf('\n\n')) >= 0) {
+            const event = parseSseEvent(buffer.slice(0, end));
+            buffer = buffer.slice(end + 2);
+            if (event) onEvent(event.name, event.data);
+        }
+    }
+}
+
+/** One SSE block ("event: x\ndata: y") to {name, data}; null for a comment-only block (heartbeat). */
+function parseSseEvent(block) {
+    let name = 'message';
+    const data = [];
+    for (const line of block.split('\n')) {
+        if (line.startsWith('event:')) name = line.slice(6).trim();
+        else if (line.startsWith('data:')) data.push(line.slice(5).replace(/^ /, ''));
+    }
+    return data.length ? {name, data: data.join('\n')} : null;
+}
+
 function queryString(query = {}) {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(query)) {

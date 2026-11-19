@@ -7,6 +7,7 @@ import org.acme.area.control.AreaNotFoundException;
 import org.acme.invitation.control.InvitationConflictException;
 import org.acme.invitation.control.InvitationForbiddenException;
 import org.acme.invitation.control.InvitationNotFoundException;
+import org.acme.notification.control.NotificationNotFoundException;
 import org.acme.region.control.UnknownRegionException;
 import org.acme.user.control.UserAlreadyExistsException;
 import org.acme.user.control.UserNotFoundException;
@@ -44,6 +45,11 @@ public class ExceptionMappers {
 
     @ServerExceptionMapper
     public Response mapAreaNotFound(AreaNotFoundException e) {
+        return error(Response.Status.NOT_FOUND, e);
+    }
+
+    @ServerExceptionMapper
+    public Response mapNotificationNotFound(NotificationNotFoundException e) {
         return error(Response.Status.NOT_FOUND, e);
     }
 

@@ -191,12 +191,13 @@
     "title": "Benachrichtigungen",
     "empty": "Du hast keine Benachrichtigungen.",
     "unread": "Ungelesen",
+    "clearAll": "Alle löschen",
+    "dismiss": "Benachrichtigung löschen",
     "unreadCount_one": "{{count}} ungelesen",
     "unreadCount_other": "{{count}} ungelesen",
     "types": {
       "friendRequest": "{{name}} hat dir eine Freundschaftsanfrage gesendet",
-      "requestAccepted": "{{name}} hat deine Freundschaftsanfrage angenommen",
-      "areaShared": "{{name}} hat das Gebiet «{{area}}» mit dir geteilt"
+      "requestAccepted": "{{name}} hat deine Freundschaftsanfrage angenommen"
     }
   },
   "userOptions": {

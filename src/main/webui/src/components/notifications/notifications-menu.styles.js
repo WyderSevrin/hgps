@@ -51,9 +51,19 @@ export const notificationsMenuStyles = css`
         color: var(--hgps-text-strong);
     }
 
-    .unread-count {
-        font-size: 0.75rem;
-        color: var(--hgps-text-subtle);
+    .clear-all {
+        padding: var(--hgps-size-1) var(--hgps-size-2);
+        border: none;
+        border-radius: var(--hgps-size-2);
+        background: none;
+        color: var(--hgps-accent);
+        font: inherit;
+        font-size: 0.78rem;
+        cursor: pointer;
+    }
+
+    .clear-all:hover {
+        background-color: var(--hgps-surface-2);
     }
 
     ul {
@@ -123,6 +133,38 @@ export const notificationsMenuStyles = css`
         margin-top: 0.4rem;
         border-radius: 50%;
         background-color: var(--hgps-accent);
+    }
+
+    /* Clear one notification: discreet until the row is hovered or the button focused */
+    .dismiss {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background: none;
+        color: var(--hgps-text-subtle);
+        cursor: pointer;
+        opacity: 0;
+    }
+
+    li:hover .dismiss,
+    .dismiss:focus-visible {
+        opacity: 1;
+    }
+
+    .dismiss:hover {
+        background-color: var(--hgps-surface-3);
+        color: var(--hgps-text-strong);
+    }
+
+    /* Touch screens have no hover: always show it */
+    @media (hover: none) {
+        .dismiss { opacity: 1; }
     }
 
     .empty {

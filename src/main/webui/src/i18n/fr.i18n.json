@@ -191,12 +191,13 @@
     "title": "Notifications",
     "empty": "Vous n'avez aucune notification.",
     "unread": "Non lue",
+    "clearAll": "Tout effacer",
+    "dismiss": "Effacer la notification",
     "unreadCount_one": "{{count}} non lue",
     "unreadCount_other": "{{count}} non lues",
     "types": {
       "friendRequest": "{{name}} vous a envoyé une demande d'ami",
-      "requestAccepted": "{{name}} a accepté votre demande d'ami",
-      "areaShared": "{{name}} a partagé la zone « {{area}} » avec vous"
+      "requestAccepted": "{{name}} a accepté votre demande d'ami"
     }
   },
   "userOptions": {

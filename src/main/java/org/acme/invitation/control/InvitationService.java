@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.acme.invitation.control.dto.InvitationDto;
 import org.acme.invitation.entity.FriendInvitation;
 import org.acme.invitation.entity.InvitationStatus;
+import org.acme.notification.control.NotificationService;
+import org.acme.notification.entity.NotificationType;
 import org.acme.user.control.TokenUser;
 import org.acme.user.control.UserService;
 import org.acme.user.entity.User;
@@ -26,6 +28,9 @@ import java.util.UUID;
  * by its sender, and an ACCEPTED one (friendship) ended by one of the friends, are deleted.
  * <p>
  * All methods are transactional because resolving the logged-in user may create it (first login).
+ * <p>
+ * The other user is notified when a request is sent (the receiver) and when it is accepted (the sender).
+ * A request withdrawn by its sender also disappears from the receiver's notifications.
  */
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class InvitationService {
 
     private final EntityManager em;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     /**
      * The invitations of the logged-in user, newest first.
@@ -90,19 +96,22 @@ public class InvitationService {
             }
             throw e;
         }
+        notificationService.notify(receiver, me, NotificationType.FRIEND_REQUEST);
         return InvitationDto.from(invitation);
     }
 
     /** The receiver accepts: both users are now friends. */
     @Transactional
     public InvitationDto accept(TokenUser token, UUID id) {
-        return respondAsReceiver(token, id, InvitationStatus.ACCEPTED);
+        FriendInvitation invitation = respondAsReceiver(token, id, InvitationStatus.ACCEPTED);
+        notificationService.notify(invitation.getSender(), invitation.getReceiver(), NotificationType.REQUEST_ACCEPTED);
+        return InvitationDto.from(invitation);
     }
 
     /** The receiver declines. */
     @Transactional
     public InvitationDto decline(TokenUser token, UUID id) {
-        return respondAsReceiver(token, id, InvitationStatus.DECLINED);
+        return InvitationDto.from(respondAsReceiver(token, id, InvitationStatus.DECLINED));
     }
 
     /**
@@ -123,6 +132,7 @@ public class InvitationService {
                 if (!isSender(me, invitation)) {
                     throw new InvitationForbiddenException("Only the sender can withdraw a request, the receiver can decline it");
                 }
+                notificationService.removeFriendRequest(invitation.getReceiver(), me);
             }
             case ACCEPTED -> {
                 // either friend may end the friendship
@@ -132,7 +142,7 @@ public class InvitationService {
         em.remove(invitation);
     }
 
-    private InvitationDto respondAsReceiver(TokenUser token, UUID id, InvitationStatus newStatus) {
+    private FriendInvitation respondAsReceiver(TokenUser token, UUID id, InvitationStatus newStatus) {
         User me = userService.currentUser(token);
         FriendInvitation invitation = getForParticipant(me, id);
         if (isSender(me, invitation)) {
@@ -142,13 +152,13 @@ public class InvitationService {
     }
 
     /** Moves a PENDING invitation to its final status. */
-    private InvitationDto close(FriendInvitation invitation, InvitationStatus newStatus) {
+    private FriendInvitation close(FriendInvitation invitation, InvitationStatus newStatus) {
         if (invitation.getStatus() != InvitationStatus.PENDING) {
             throw new InvitationConflictException("The invitation is already " + invitation.getStatus());
         }
         invitation.setStatus(newStatus);
         invitation.setRespondedAt(OffsetDateTime.now());
-        return InvitationDto.from(invitation);
+        return invitation;
     }
 
     /** Mirrors ux_friend_invitation_pair: one PENDING or ACCEPTED invitation per pair, in either direction. */

@@ -191,12 +191,13 @@
     "title": "Notifications",
     "empty": "You have no notifications.",
     "unread": "Unread",
+    "clearAll": "Clear all",
+    "dismiss": "Clear notification",
     "unreadCount_one": "{{count}} unread",
     "unreadCount_other": "{{count}} unread",
     "types": {
       "friendRequest": "{{name}} sent you a friend request",
-      "requestAccepted": "{{name}} accepted your friend request",
-      "areaShared": "{{name}} shared the area \"{{area}}\" with you"
+      "requestAccepted": "{{name}} accepted your friend request"
     }
   },
   "userOptions": {
